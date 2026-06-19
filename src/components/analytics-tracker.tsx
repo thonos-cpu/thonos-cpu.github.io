@@ -4,8 +4,9 @@ import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 
 import { analyticsOptedOut, analyticsSessionId } from "@/lib/analytics-client";
+import { sendEdgeFunction, supabaseConfigured } from "@/lib/supabase-browser";
 
-const enabled = process.env.NEXT_PUBLIC_ANALYTICS_ENABLED === "true";
+const enabled = process.env.NEXT_PUBLIC_ANALYTICS_ENABLED === "true" && supabaseConfigured();
 
 type EventPayload = {
   sessionId: string;
@@ -19,12 +20,7 @@ type EventPayload = {
 
 function send(payload: EventPayload, beacon = false) {
   if (!enabled || analyticsOptedOut() || payload.path.startsWith("/admin")) return;
-  const body = JSON.stringify(payload);
-  if (beacon && navigator.sendBeacon) {
-    navigator.sendBeacon("/api/analytics", new Blob([body], { type: "application/json" }));
-    return;
-  }
-  void fetch("/api/analytics", { method: "POST", headers: { "Content-Type": "application/json" }, body, keepalive: true }).catch(() => undefined);
+  void sendEdgeFunction("analytics-ingest", payload, beacon)?.catch(() => undefined);
 }
 
 function deviceClass(): "mobile" | "tablet" | "desktop" {

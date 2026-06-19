@@ -12,7 +12,7 @@ export default defineConfig({
     screenshot: "only-on-failure",
   },
   webServer: process.env.CI ? {
-    command: "npm run start -- --hostname 127.0.0.1 --port 3000",
+    command: "npm run start",
     url: "http://127.0.0.1:3000",
     reuseExistingServer: false,
     timeout: 30_000,

@@ -5,6 +5,7 @@ import { useCallback, useState } from "react";
 
 import { Turnstile } from "@/components/turnstile";
 import { analyticsSessionId } from "@/lib/analytics-client";
+import { invokeEdgeFunction } from "@/lib/supabase-browser";
 
 const languages = [
   ["python", "Python", "print(\"Hello from Athanasios's Code Lab\")\n\nvalues = [3, 8, 13, 21]\nprint(\"sum:\", sum(values))"],
@@ -47,13 +48,12 @@ export function CodeLab() {
     setOutput("Compiling and running in an isolated sandbox…");
     const started = performance.now();
     try {
-      const response = await fetch("/api/execute", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "x-analytics-session": analyticsSessionId() },
-        body: JSON.stringify({ language, code, turnstileToken: token }),
+      const data = await invokeEdgeFunction<{ output?: string }>("execute", {
+        language,
+        code,
+        turnstileToken: token,
+        sessionId: analyticsSessionId(),
       });
-      const data = await response.json() as { output?: string; error?: string };
-      if (!response.ok) throw new Error(data.error || "Execution failed");
       setOutput(data.output || "Program completed without output.");
       setStatus(`Done · ${Math.round(performance.now() - started)} ms`);
     } catch (error) {
@@ -84,7 +84,7 @@ export function CodeLab() {
           </div>
         </div>
         <Turnstile onToken={onToken} />
-        <p className="submission-notice">Submitted source is redacted for common secrets, encrypted, and retained for abuse review. Do not paste private or proprietary code. <a href="/privacy">Privacy details</a>.</p>
+        <p className="submission-notice">Submitted source is redacted for common secrets, encrypted in Supabase, and retained for abuse review. Do not paste private or proprietary code. <a href="/privacy">Privacy details</a>.</p>
         <div className="editor-grid">
           <textarea className="code-editor" value={code} onChange={(event) => setCode(event.target.value)} spellCheck={false} aria-label="Source code" />
           <div className="output-wrap">

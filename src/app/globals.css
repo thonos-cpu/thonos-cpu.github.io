@@ -245,7 +245,9 @@ button, a, input, textarea, select { -webkit-tap-highlight-color: transparent; }
   .code-editor { min-height: 330px; }
   .output-wrap { min-height: 250px; border-left: 0; border-top: 1px solid var(--line-dark); }
   .tool-controls { width: 100%; flex-wrap: wrap; }
-  .select { flex: 1; }
+  .tool-controls label { min-width: 0; flex: 1 1 12rem; }
+  .select { width: 100%; }
+  .tool-controls .button { flex: 1 1 8rem; }
   .chat-form { align-items: stretch; }
   .chat-input { font-size: .84rem; }
   .capability-grid { grid-template-columns: 1fr; }
@@ -253,6 +255,8 @@ button, a, input, textarea, select { -webkit-tap-highlight-color: transparent; }
   .footer { flex-direction: column; }
   .privacy-control { align-items: stretch; flex-direction: column; }
   .privacy-control button { width: 100%; }
+  .clone-line { align-items: stretch; flex-direction: column; }
+  .clone-line .icon-button { width: 100%; }
 }
 
 @media (prefers-reduced-motion: reduce) {

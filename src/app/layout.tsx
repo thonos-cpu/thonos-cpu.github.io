@@ -1,9 +1,9 @@
 import type { Metadata, Viewport } from "next";
-import { SpeedInsights } from "@vercel/speed-insights/next";
 import { GeistMono } from "geist/font/mono";
 import { GeistSans } from "geist/font/sans";
 
 import { AnalyticsTracker } from "@/components/analytics-tracker";
+import { PerformanceInsights } from "@/components/performance-insights";
 
 import "./globals.css";
 
@@ -33,14 +33,14 @@ export const viewport: Viewport = {
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  const vercelObservability = process.env.VERCEL === "1";
+  const onVercel = process.env.VERCEL === "1";
   return (
     <html lang="en" className={`${GeistSans.variable} ${GeistMono.variable}`}>
       <body>
         <a className="skip-link" href="#main">Skip to content</a>
         {children}
         <AnalyticsTracker />
-        {vercelObservability ? <SpeedInsights /> : null}
+        <PerformanceInsights deployedOnVercel={onVercel} />
       </body>
     </html>
   );

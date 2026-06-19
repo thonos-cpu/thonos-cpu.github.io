@@ -66,15 +66,3 @@ export async function getGitHubData(): Promise<{ profile: GitHubProfile; reposit
     };
   }
 }
-
-export async function getRepositoryReadme(name: string): Promise<string | null> {
-  const safeName = name.replace(/[^a-zA-Z0-9_.-]/g, "");
-  if (safeName !== name) return null;
-  try {
-    const result = await githubFetch<{ content?: string; encoding?: string }>(`/repos/${USER}/${safeName}/readme`);
-    if (result.encoding !== "base64" || !result.content) return null;
-    return Buffer.from(result.content.replace(/\n/g, ""), "base64").toString("utf8").slice(0, 24000);
-  } catch {
-    return null;
-  }
-}

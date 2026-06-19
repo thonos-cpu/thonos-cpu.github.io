@@ -5,6 +5,7 @@ import { FormEvent, useCallback, useState } from "react";
 
 import { Turnstile } from "@/components/turnstile";
 import { analyticsSessionId } from "@/lib/analytics-client";
+import { invokeEdgeFunction } from "@/lib/supabase-browser";
 
 const prompts = ["What is your experience?", "What is your education?", "Show your repositories.", "How can I clone a repository?"];
 
@@ -21,13 +22,11 @@ export function ThanosGPT() {
     setLoading(true);
     setAnswer("Checking the portfolio record…");
     try {
-      const response = await fetch("/api/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "x-analytics-session": analyticsSessionId() },
-        body: JSON.stringify({ message: question.trim(), turnstileToken: token }),
+      const data = await invokeEdgeFunction<{ answer?: string }>("chat", {
+        message: question.trim(),
+        turnstileToken: token,
+        sessionId: analyticsSessionId(),
       });
-      const data = await response.json() as { answer?: string; error?: string };
-      if (!response.ok) throw new Error(data.error || "ThanosGPT is unavailable");
       setAnswer(data.answer || "I could not find that in the portfolio record.");
     } catch (error) {
       setAnswer(error instanceof Error ? error.message : "ThanosGPT is unavailable right now.");

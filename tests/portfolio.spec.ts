@@ -71,7 +71,15 @@ test("repository explorer changes the in-site detail", async ({ page }) => {
 });
 
 test("ThanosGPT answers scoped questions and refuses unrelated coding", async ({ page }) => {
+  await page.route("**/functions/v1/chat", async (route) => {
+    const request = route.request().postDataJSON() as { message?: string };
+    const answer = /write me code/i.test(request.message || "")
+      ? "I’m scoped to Athanasios—his experience, education, skills, and repositories."
+      : "Athanasios studies Computer Engineering & Informatics at the University of Patras.";
+    await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ answer }) });
+  });
   await page.goto("/#thanosgpt");
+  await page.waitForTimeout(300);
   const input = page.getByLabel("Question for ThanosGPT");
   await input.fill("What is Athanasios's education?");
   await page.getByRole("button", { name: "Ask ThanosGPT" }).click();
@@ -83,7 +91,11 @@ test("ThanosGPT answers scoped questions and refuses unrelated coding", async ({
 });
 
 test("compiler accepts a supported language and returns a bounded response", async ({ page }) => {
+  await page.route("**/functions/v1/execute", async (route) => {
+    await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ output: "qa-ok\n", exitCode: 0 }) });
+  });
   await page.goto("/#lab");
+  await page.waitForTimeout(300);
   await page.getByLabel("Programming language").selectOption("javascript");
   await page.getByLabel("Source code").fill("console.log('qa-ok')");
   await page.getByRole("button", { name: /^Run$/ }).click();
@@ -92,13 +104,16 @@ test("compiler accepts a supported language and returns a bounded response", asy
 });
 
 test("private analytics requires authentication", async ({ page }) => {
+  await page.route("**/auth/v1/token**", async (route) => {
+    await route.fulfill({ status: 400, contentType: "application/json", body: JSON.stringify({ error: "invalid_grant", error_description: "Invalid login credentials" }) });
+  });
   await page.goto("/admin");
-  await expect(page).toHaveURL(/\/admin\/login/);
+  await page.waitForTimeout(300);
+  await expect(page).toHaveURL(/\/admin\/?$/);
   await expect(page.getByRole("heading", { name: "Analytics access" })).toBeVisible();
-  await page.getByLabel("Username").fill("invalid");
+  await page.getByLabel("Email").fill("invalid@example.com");
   await page.getByLabel("Password").fill("definitely-not-the-password");
   await page.getByRole("button", { name: "Sign in" }).click();
-  await expect(page).toHaveURL(/error=invalid/);
   await expect(page.locator(".admin-alert")).toContainText("did not match");
 });
 

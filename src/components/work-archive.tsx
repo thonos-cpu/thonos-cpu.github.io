@@ -64,11 +64,18 @@ export function WorkArchive({ repositories }: { repositories: Repository[] }) {
     setLoading(true);
     document.querySelector("#repository-archive")?.scrollIntoView({ behavior: "smooth", block: "start" });
     try {
-      const response = await fetch(`/api/repositories/${encodeURIComponent(repo.name)}`);
+      const response = await fetch(`https://api.github.com/repos/thonos-cpu/${encodeURIComponent(repo.name)}/readme`, {
+        headers: { Accept: "application/vnd.github+json", "X-GitHub-Api-Version": "2022-11-28" },
+      });
       if (response.ok) {
-        const data = await response.json() as { readme?: string };
-        if (data.readme) setReadme(data.readme);
+        const data = await response.json() as { content?: string; encoding?: string };
+        if (data.encoding === "base64" && data.content) {
+          const bytes = Uint8Array.from(atob(data.content.replace(/\n/g, "")), (character) => character.charCodeAt(0));
+          setReadme(new TextDecoder().decode(bytes).slice(0, 24000));
+        }
       }
+    } catch {
+      setReadme(fallbackReadme(repo));
     } finally {
       setLoading(false);
     }

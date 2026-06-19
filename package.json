@@ -11,23 +11,20 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
-    "admin:secrets": "node scripts/generate-admin-secrets.mjs",
-    "db:migrate": "node --env-file=.env.local scripts/migrate.mjs",
     "start": "next start",
+    "preview": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "test:e2e": "playwright test"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.108.2",
     "@vercel/speed-insights": "^2.0.0",
-    "ai": "^6.0.208",
     "geist": "^1.5.1",
     "lucide-react": "^0.468.0",
     "next": "^16.2.9",
-    "postgres": "^3.4.7",
     "react": "^19.2.7",
-    "react-dom": "^19.2.7",
-    "zod": "^4.1.12"
+    "react-dom": "^19.2.7"
   },
   "devDependencies": {
     "@playwright/test": "^1.61.0",
