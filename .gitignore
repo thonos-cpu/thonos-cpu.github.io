@@ -1,0 +1,20 @@
+# dependencies
+/node_modules
+
+# next
+/.next/
+/out/
+
+# production
+/build
+
+# local environment
+.env*
+!.env.example
+
+# logs and tooling
+*.log
+.vercel
+tsconfig.tsbuildinfo
+playwright-report
+test-results

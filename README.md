@@ -1,60 +1,80 @@
-# tasis.info — Personal Portfolio
+# tasis.info — Engineering Observatory
 
-> Live at **[tasis.info](https://tasis.info)** · Built with vanilla HTML/CSS/JS · Powered by the GitHub API
-
----
-
-## Overview
-
-A personal portfolio site that **auto-updates from GitHub** — no rebuilds, no CMS, no manual edits. Every time someone visits, the site fetches live data directly from the GitHub API, so profile, projects, and stats are always current.
-
-## Features
-
-- **Live GitHub profile** — name, bio, avatar, location, and join date pulled in real time
-- **Auto-updating projects** — all public repos appear automatically; new ones show up the moment they're created
-- **Stats dashboard** — total repositories, followers, following, stars, and forks aggregated live
-- **Language breakdown** — animated bar chart of most-used languages across all repos
-- **Search & sort** — filter repos by name/description, sort by most recent, most starred, or alphabetical
-- **Terminal block** — displays  raw GitHub API response as a styled code readout
-- **Zero dependencies** — pure HTML, CSS, and JavaScript; no frameworks, no build step
+Athanasios Tasis's personal portfolio: a fast, accessible Next.js application with an in-site GitHub repository explorer, a 15-language code lab, and a tightly scoped portfolio assistant.
 
 ## Stack
 
-| Layer | Tech |
-|-------|------|
-| Hosting | GitHub Pages |
-| Data | GitHub REST API v3 |
-| Fonts | Syne + Space Mono (Google Fonts) |
-| Styling | Vanilla CSS with custom properties |
-| Scripting | Vanilla JavaScript (ES2020+) |
+- Next.js 16 App Router, React 19, TypeScript, Tailwind CSS 4
+- Server Components by default; client JavaScript limited to interactive tools
+- First-party Postgres analytics plus Vercel Speed Insights
+- Vercel AI SDK 6 with a factual local fallback
+- Cloudflare Turnstile-ready API protection
+- Playwright desktop and mobile end-to-end tests
 
-## How It Works
-
-The site calls `https://api.github.com/users/thonos-cpu` and `https://api.github.com/users/thonos-cpu/repos` on every page load. No token required — public data only. GitHub's API allows up to 60 unauthenticated requests per hour per IP, which is plenty for a portfolio.
-
-```
-Browser → GitHub API → renders live data
-```
-
-To update portfolio, I just update GitHub profile or push a new repo. Done.
-
-## Local Development
-
-No build tools needed — just open the file:
+## Local development
 
 ```bash
-git clone https://github.com/thonos-cpu/thonos-cpu.github.io
-cd thonos-cpu.github.io
-open index.html
+npm install
+copy .env.example .env.local
+npm run dev
+```
+
+Open `http://127.0.0.1:3000`.
+
+## Environment
+
+| Variable | Purpose |
+|---|---|
+| `GITHUB_TOKEN` | Optional server-only token for higher GitHub API limits |
+| `VERCEL_OIDC_TOKEN` / `AI_GATEWAY_API_KEY` | Enables the hosted ThanosGPT model |
+| `THANOSGPT_MODEL` | AI Gateway model, defaults to `openai/gpt-5.4` |
+| `PISTON_API_URL` | Code execution service; self-host Piston for production |
+| `NEXT_PUBLIC_TURNSTILE_SITE_KEY` | Public Turnstile widget key |
+| `TURNSTILE_SECRET_KEY` | Server-only Turnstile verification key |
+| `NEXT_PUBLIC_ANALYTICS_ENABLED` | Enables the first-party tracker after database setup |
+| `DATABASE_URL` | Server-only Postgres/Neon connection string |
+| `ANALYTICS_HASH_SALT` | HMAC salt used before visitor identity storage |
+| `ANALYTICS_ENCRYPTION_KEY` | 32-byte base64 AES key for GPT/compiler records |
+| `ADMIN_USERNAME` | Private dashboard username |
+| `ADMIN_PASSWORD_HASH` | Scrypt password hash; plaintext is never stored |
+| `ADMIN_SESSION_SECRET` | Signs 12-hour HTTP-only admin sessions |
+
+Never prefix GitHub, AI Gateway, or Turnstile secrets with `NEXT_PUBLIC_`.
+
+## Private analytics setup
+
+1. Provision Postgres or Neon and place its connection string in `.env.local` as `DATABASE_URL`.
+2. Generate the administrator hash and encryption secrets:
+
+   ```powershell
+   $env:ADMIN_PASSWORD="choose-a-long-unique-password"
+   npm run admin:secrets
+   ```
+
+3. Copy the four generated values into `.env.local`, add `ADMIN_USERNAME`, and run:
+
+   ```bash
+   npm run db:migrate
+   ```
+
+4. Set `NEXT_PUBLIC_ANALYTICS_ENABLED=true`, restart the app, and open `/admin/login`.
+
+The dashboard includes live visitors, daily/monthly/yearly history, unique visitors, page views, foreground time, popular routes and long-page sections, plus encrypted GPT/compiler records. Anonymous history defaults to 730 days; sensitive submissions default to 30 days.
+
+The public privacy page includes an anonymous-analytics opt-out. Deliberately submitted GPT questions and compiler source are disclosed beside those controls, redacted for common credential formats, and encrypted at rest.
+
+## Quality checks
+
+```bash
+npm run lint
+npm run typecheck
+npm run build
+npm run test:e2e
+npm audit --omit=dev
 ```
 
 ## Deployment
 
-The site deploys automatically via GitHub Pages on every push to `main`.
+This version needs server routes, so it cannot run as a plain GitHub Pages site. Import this GitHub repository into Vercel, add the environment variables, and attach `tasis.info`. Put the domain behind Cloudflare in proxied mode and follow [SECURITY.md](./SECURITY.md).
 
-Custom domain is configured via the `CNAME` file:
-```
-tasis.info
-```
-
-Made by [@thonos-cpu](https://github.com/thonos-cpu)
+The homepage is statically generated and revalidates GitHub data hourly. The compiler and chat endpoints run only on demand.
