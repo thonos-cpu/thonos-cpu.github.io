@@ -1,97 +1,128 @@
-# tasis.info — Engineering Observatory
+# Athanasios Tasis — portfolio platform
 
-Production portfolio for Athanasios Tasis. Vercel serves the Next.js frontend; Supabase provides PostgreSQL history, Auth, Row Level Security, persistent rate limits, and Edge Functions for analytics, ThanosGPT, code execution, and the private dashboard.
+A production Next.js portfolio using exactly three hosted platforms:
 
-## Architecture
+- **Vercel:** web hosting, server functions, Web Analytics, Speed Insights, Firewall, bot protection, and isolated code execution.
+- **Supabase:** Postgres analytics history, encrypted submission logs, authentication, and the private admin dashboard.
+- **GitHub:** source control, repository data, Actions, and Dependabot.
 
-- **Vercel:** Next.js 16, global CDN, optimized images, security headers, automatic DDoS protection, Firewall baseline, preview deployments, and Speed Insights.
-- **Supabase:** PostgreSQL 17, Auth, RLS, AES-256-GCM encrypted tool records, analytics aggregation, and four Edge Functions.
-- **Cloudflare Turnstile:** human verification before GPT and compiler requests.
-- **Piston:** isolated execution for the 15-language code lab. Self-host it before high-volume production use.
-- **GitHub Actions:** quality gates, CodeQL, dependency review, and gated Vercel production deployment.
+ThanosGPT is a deterministic, portfolio-only guide. It does not call a general-purpose model. The Code Lab executes untrusted source inside a fresh, network-disabled Vercel Sandbox created from a prebuilt toolchain snapshot.
 
-No service-role key, OpenAI key, Turnstile secret, encryption key, database credential, Vercel token, or administrator password is shipped to the browser or committed to Git.
+## Local setup
 
-## Local development
+Requirements: Node.js 22+, npm, a Supabase project, a Vercel account, and the Vercel CLI.
 
-```powershell
+```bash
 npm install
-Copy-Item .env.example .env.local
+npx vercel link
+npx vercel env pull .env.local
 npm run dev
 ```
 
-Open `http://127.0.0.1:3000`.
+Never commit `.env.local`. Browser-visible values are limited to the Supabase URL, Supabase publishable key, and analytics feature flag. Supabase secret keys, encryption material, and Vercel configuration remain server-side.
 
-## Vercel variables
+After the first install, commit the refreshed `package-lock.json`; later clean installs can use `npm ci`.
 
-Set these for Production and Preview in Vercel Project Settings:
+## Required Vercel variables
 
-| Variable | Value |
+| Variable | Purpose |
 |---|---|
-| `NEXT_PUBLIC_SUPABASE_URL` | Your Supabase project URL |
-| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Supabase publishable key; safe for browser use because RLS is enabled |
-| `NEXT_PUBLIC_ANALYTICS_ENABLED` | `true` after Supabase secrets are configured |
-| `NEXT_PUBLIC_TURNSTILE_SITE_KEY` | Cloudflare Turnstile public site key |
-| `GITHUB_TOKEN` | Optional server-only token used during page generation for higher GitHub API limits |
-
-## Supabase Edge Function secrets
-
-Set these under Supabase → Project Settings → Edge Functions → Secrets:
-
-| Secret | Purpose |
-|---|---|
-| `OPENAI_API_KEY` | Enables the hosted GPT response; a factual local fallback remains available |
-| `THANOSGPT_MODEL` | `gpt-5.4` unless intentionally changed |
-| `TURNSTILE_SECRET_KEY` | Server-side Turnstile verification |
-| `PISTON_API_URL` | Prefer a private Piston deployment; public development fallback is `https://emkc.org/api/v2/piston` |
-| `ANALYTICS_HASH_SALT` | At least 32 random characters for one-way visitor HMACs |
+| `NEXT_PUBLIC_SUPABASE_URL` | Supabase project URL |
+| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Browser-safe Supabase publishable key |
+| `NEXT_PUBLIC_ANALYTICS_ENABLED` | Set to `true` in production |
+| `SUPABASE_SECRET_KEY` | Server-only Supabase secret/service-role key |
+| `ANALYTICS_HASH_SALT` | Random value of at least 32 characters |
 | `ANALYTICS_ENCRYPTION_KEY` | Base64-encoded 32-byte AES key |
-| `ANALYTICS_RETENTION_DAYS` | Recommended `730` |
-| `SENSITIVE_LOG_RETENTION_DAYS` | Recommended `30` |
-| `ALLOWED_ORIGINS` | `https://tasis.info,https://www.tasis.info,http://localhost:3000,http://127.0.0.1:3000` |
-| `ALLOWED_ORIGIN_SUFFIXES` | `.vercel.app` for preview deployments |
+| `ANALYTICS_RETENTION_DAYS` | Analytics history retention, recommended `730` |
+| `SENSITIVE_LOG_RETENTION_DAYS` | GPT/compiler log retention, recommended `30` |
+| `VERCEL_SANDBOX_SNAPSHOT_ID` | Snapshot produced by `npm run sandbox:provision` |
+| `GITHUB_TOKEN` | Optional GitHub token for higher repository API limits |
 
-Generate the two random analytics secrets locally:
+Generate safe values in PowerShell:
 
 ```powershell
-node -e "const c=require('node:crypto'); console.log('ANALYTICS_HASH_SALT='+c.randomBytes(32).toString('base64url')); console.log('ANALYTICS_ENCRYPTION_KEY='+c.randomBytes(32).toString('base64'))"
+$saltBytes = New-Object byte[] 48
+[Security.Cryptography.RandomNumberGenerator]::Fill($saltBytes)
+[Convert]::ToBase64String($saltBytes)
+
+$keyBytes = New-Object byte[] 32
+[Security.Cryptography.RandomNumberGenerator]::Fill($keyBytes)
+[Convert]::ToBase64String($keyBytes)
 ```
 
-## Administrator account
+Use the first output for `ANALYTICS_HASH_SALT` and the second for `ANALYTICS_ENCRYPTION_KEY`.
 
-1. In Supabase Auth → Users, create a confirmed email/password user with a unique password.
-2. In the Supabase SQL editor, authorize only that user:
+## Supabase setup
 
-   ```sql
-   insert into public.admin_users (user_id)
-   select id from auth.users where email = 'YOUR_ADMIN_EMAIL'
-   on conflict (user_id) do nothing;
-   ```
+1. Create a Supabase project.
+2. Open **SQL Editor** and apply, in order:
+   - `supabase/migrations/202606190001_portfolio_platform.sql`
+   - `supabase/migrations/202606190002_advisor_hardening.sql`
+3. In **Authentication → URL Configuration**, set the production site URL and add Vercel preview URLs if previews need admin login.
+4. Create your administrator in **Authentication → Users**.
+5. Copy that user UUID and run:
 
-3. Set Auth → URL Configuration → Site URL to `https://tasis.info` and add the required Vercel preview redirect URLs.
-4. Sign in at `/admin`. The browser stores the Supabase session; RLS and the authenticated Edge Function enforce access.
+```sql
+insert into public.admin_users (user_id) values ('YOUR_AUTH_USER_UUID');
+```
 
-## Vercel and GitHub deployment
+6. Confirm Row Level Security is enabled and run Supabase Security Advisor.
+7. Deploy `admin-dashboard` and `analytics-ingest` if you want the retained Supabase function utilities. Deploy local `chat` and `execute` as authenticated 410 tombstones so old public endpoints cannot be used.
 
-1. Import this repository into Vercel and select Next.js with Node.js 22.
-2. Add the Vercel variables above and attach `tasis.info` plus `www.tasis.info`.
-3. Add these GitHub Actions secrets:
-   - `VERCEL_TOKEN`
-   - `VERCEL_ORG_ID`
-   - `VERCEL_PROJECT_ID`
-4. Push to `main`. The `quality` workflow must pass before `deploy-vercel-production` builds and deploys the exact verified commit.
-5. The deployment workflow enables Vercel Firewall, Bot Protection, AI-bot denial, scanner blocking, scraper challenges, and a per-IP request ceiling.
+The live browser uses same-origin Vercel routes for chat, compiler, and analytics. The Supabase secret key must never appear in any `NEXT_PUBLIC_` variable.
 
-Vercel native Git integration may still be enabled for PR preview deployments. Production is gated through GitHub Actions.
+## Compiler snapshot
+
+The compiler uses a disposable sandbox with outbound networking disabled. Provision the toolchain once:
+
+```bash
+npx vercel env pull .env.local --yes
+npm run sandbox:provision
+```
+
+Copy the printed `VERCEL_SANDBOX_SNAPSHOT_ID` into Vercel for Production, Preview, and Development. The provisioning sandbox temporarily downloads language toolchains; visitor sandboxes restore from the snapshot with `networkPolicy: "deny-all"`.
+
+## GitHub Actions secrets
+
+In **GitHub → repository → Settings → Secrets and variables → Actions**, add:
+
+| Secret | Where to obtain it |
+|---|---|
+| `VERCEL_TOKEN` | Vercel account settings → Tokens |
+| `VERCEL_ORG_ID` | `.vercel/project.json` after `npx vercel link` |
+| `VERCEL_PROJECT_ID` | `.vercel/project.json` after `npx vercel link` |
+
+The `quality` workflow runs the service-boundary check, lint, type checking, production build, and Playwright tests. After it succeeds on `main`, `deploy-vercel-production` deploys the exact prebuilt artifact and applies the Vercel Firewall baseline.
+
+## Production deployment
+
+1. Push the repository to GitHub.
+2. Import the GitHub repository in Vercel and leave Framework Preset as **Next.js**.
+3. Add every required Vercel variable above to **Production**. Add separate Supabase test-project values to Preview if previews must not touch production data.
+4. Provision and add the sandbox snapshot ID.
+5. Add the three GitHub Actions secrets.
+6. Push to `main` and watch **GitHub → Actions → quality**.
+7. When quality passes, watch **deploy-vercel-production**. It builds, deploys, inspects, then configures Vercel Firewall.
+8. In Vercel, enable Web Analytics and Speed Insights. In **Firewall**, verify Bot Protection, AI-bot blocking, the scanner rule, scraper challenge, and per-IP ceiling are active.
+9. Attach the production domain, then update the Supabase Auth site URL to that exact HTTPS origin.
+10. Sign in at `/admin`, verify current visitors and historical ranges, run one compiler sample, ask one portfolio question, and confirm both encrypted records appear in the dashboard.
+
+Manual production deployment remains available:
+
+```bash
+npx vercel pull --yes --environment=production
+npx vercel build --prod
+npx vercel deploy --prebuilt --prod
+```
 
 ## Verification
 
-```powershell
+```bash
+npm run check:services
 npm run lint
 npm run typecheck
 npm run build
 npm run test:e2e
-npm audit --omit=dev
 ```
 
-The Playwright suite verifies desktop and mobile layouts, repository interaction, GPT guardrails, compiler behavior, privacy opt-out, admin login protection, console health, horizontal overflow, and the three-second performance budget.
+The boundary check fails CI if application code or deployment documentation introduces a hosted dependency outside Vercel, Supabase, or GitHub.

@@ -1,40 +1,30 @@
-# Security and abuse resistance
+# Security model
 
-No public site can promise immunity from DDoS attacks or determined scraping. This project uses independent controls at the Vercel edge, Supabase API layer, database, browser, and execution sandbox.
+## Platform boundary
 
-## Implemented controls
+Production traffic and data use only Vercel, Supabase, and GitHub. CI enforces that boundary with `npm run check:services`.
 
-- Vercel automatic Layer 3/4 and Layer 7 DDoS mitigation.
-- A deployment-time Vercel Firewall baseline: Bot Protection challenges, known AI crawler denial, exploit-scanner blocking, obvious scraper challenges, and a global per-IP ceiling.
-- CSP, HSTS, frame denial, MIME-sniffing prevention, strict referrer policy, cross-origin isolation controls, and restrictive browser permissions.
-- Supabase RLS on every private table. Browser clients receive only the publishable key; the service role remains inside Edge Functions.
-- Supabase Auth and an `admin_users` allowlist protect analytics and decrypted interaction records.
-- Persistent PostgreSQL rate limits protect Supabase Edge Functions across instances and regions.
-- Turnstile is verified server-side before GPT or compiler execution.
-- Raw IP addresses are never stored. IP plus user-agent is transformed using a keyed HMAC.
-- GPT questions and compiler source are redacted for common secret formats and encrypted using AES-256-GCM before storage.
-- ThanosGPT validates length, blocks unrelated and injection-oriented requests before model invocation, and is grounded in a fixed public record.
-- Compiler requests use a language allowlist, 20 KB source limit, bounded output, execution timeouts, and an external Piston sandbox.
-- GitHub README content is rendered as plain text, never untrusted HTML.
-- CodeQL, dependency review, Dependabot, npm audit, linting, type checking, production builds, and Playwright run before production deployment.
+## Controls
 
-## Platform configuration still required
+- Vercel provides managed DDoS mitigation, Firewall rules, bot challenges, scraper blocking, TLS, and security headers.
+- Vercel API routes validate size and type, enforce short execution limits, and use persistent Supabase-backed quotas.
+- Each compiler request starts a fresh Vercel Sandbox from a controlled snapshot. It has one vCPU, a short lifetime, bounded output, and no outbound network access.
+- ThanosGPT is a deterministic portfolio lookup with topic allowlisting and unrelated-intent rejection.
+- Supabase tables use Row Level Security. Public clients receive only the publishable key; privileged database access exists only in server functions.
+- Questions and submitted source are redacted for common secret patterns, encrypted with AES-256-GCM, and retained for a configured period.
+- The private dashboard requires Supabase Authentication plus membership in `admin_users`.
+- Security headers deny framing, plugins, unneeded browser capabilities, and connections outside the three-platform boundary.
 
-1. Create a Cloudflare Turnstile Managed widget restricted to `tasis.info`, `www.tasis.info`, and the chosen Vercel preview hostname.
-2. Enable Vercel Attack Challenge Mode manually only during an active attack. It intentionally challenges all visitors and is not a normal always-on setting.
-3. Review Vercel Firewall events after launch. Start with the generated rules, then tune false positives using observed traffic.
-4. Enable Vercel deployment protection for preview environments if previews may contain sensitive test data.
-5. Enable leaked-password protection, MFA for the administrator, and email-confirmation controls in Supabase Auth.
-6. Self-host Piston in an isolated environment before promoting the compiler for sustained public use. Disable container networking and enforce CPU, memory, process, and wall-clock limits.
-7. Rotate `OPENAI_API_KEY`, `TURNSTILE_SECRET_KEY`, `ANALYTICS_HASH_SALT`, and `ANALYTICS_ENCRYPTION_KEY` after suspected compromise. Retain the previous encryption key offline if historical records must remain decryptable.
+## Operator checklist
 
-## Data boundaries
+1. Keep all server secrets in Vercel encrypted environment variables.
+2. Use a separate Supabase project for untrusted preview deployments.
+3. Enable Vercel Bot Protection and apply `scripts/configure-vercel-firewall.mjs` after project creation.
+4. Rotate `SUPABASE_SECRET_KEY`, `ANALYTICS_HASH_SALT`, and `ANALYTICS_ENCRYPTION_KEY` after suspected compromise. Retain an old encryption key offline only when historical records must remain decryptable.
+5. Review Vercel Firewall events, function logs, Supabase Security Advisor, admin sign-ins, and encrypted submission metadata regularly.
+6. Rebuild the compiler snapshot after toolchain security updates.
+7. Keep GitHub branch protection, secret scanning, Dependabot, dependency review, and CodeQL enabled.
 
-- **Browser-visible:** Supabase URL, Supabase publishable key, Turnstile site key, analytics enable flag.
-- **Vercel encrypted settings:** optional build-time `GITHUB_TOKEN` and public build configuration.
-- **Supabase Edge Function secrets:** OpenAI, Turnstile secret, Piston endpoint, HMAC salt, encryption key, retention, and allowed origins.
-- **GitHub Actions secrets:** Vercel token, organization ID, and project ID.
+## Reporting
 
-The public portfolio remains indexable for recruiters and search engines. Expensive interactions receive the strongest controls; public text can still be copied by a determined human and should be treated as public information.
-
-Report vulnerabilities privately to `athanasios@tasis.info`. Do not include live secrets or perform destructive load testing.
+Report vulnerabilities privately through GitHub Security Advisories. Do not include production secrets or personal visitor data in an issue.

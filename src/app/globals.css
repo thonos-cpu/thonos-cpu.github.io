@@ -162,7 +162,6 @@ button, a, input, textarea, select { -webkit-tap-highlight-color: transparent; }
 .suggestion { transition: transform 140ms var(--ease-out), color 160ms ease, border-color 160ms ease; }
 .suggestion:active { transform: scale(.97); }
 .guardrail-note { display: inline-flex; align-items: center; gap: .65rem; color: var(--muted); font-family: var(--font-geist-mono); font-size: .7rem; }
-.turnstile-slot { min-height: 1px; }
 .submission-notice { margin: 0; padding: .7rem 1rem; border-bottom: 1px solid var(--line); color: var(--muted); font-size: .7rem; line-height: 1.5; }
 .submission-notice.light { color: oklch(0.36 0.01 28); border-color: var(--line-dark); }
 .submission-notice a { color: var(--signal); text-decoration: underline; text-underline-offset: 3px; }

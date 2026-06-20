@@ -15,10 +15,13 @@
     "preview": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "check:services": "node scripts/check-service-boundary.mjs",
+    "sandbox:provision": "node scripts/provision-compiler-snapshot.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.108.2",
+    "@vercel/sandbox": "2.2.1",
     "@vercel/speed-insights": "^2.0.0",
     "geist": "^1.5.1",
     "lucide-react": "^0.468.0",

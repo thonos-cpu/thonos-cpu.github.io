@@ -90,23 +90,7 @@ export async function consumeRateLimit(request: Request, scope: string, limit: n
   return data === true;
 }
 
-export async function verifyTurnstile(request: Request, token: unknown): Promise<boolean> {
-  const secret = Deno.env.get("TURNSTILE_SECRET_KEY");
-  if (!secret || typeof token !== "string" || token.length < 10 || token.length > 2048) return false;
-  const remoteip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "";
-  const body = new URLSearchParams({ secret, response: token, remoteip });
-  const response = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
-    method: "POST",
-    body,
-    signal: AbortSignal.timeout(5000),
-  });
-  if (!response.ok) return false;
-  const result = await response.json() as { success?: boolean };
-  return result.success === true;
-}
-
 const secretPatterns: Array<[RegExp, string]> = [
-  [/sk-[A-Za-z0-9_-]{20,}/g, "[REDACTED_OPENAI_KEY]"],
   [/(?:ghp|github_pat)_[A-Za-z0-9_]{20,}/g, "[REDACTED_GITHUB_TOKEN]"],
   [/AKIA[0-9A-Z]{16}/g, "[REDACTED_AWS_KEY]"],
   [/Bearer\s+[A-Za-z0-9._~+/-]{16,}/gi, "Bearer [REDACTED]"],

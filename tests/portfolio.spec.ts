@@ -71,7 +71,7 @@ test("repository explorer changes the in-site detail", async ({ page }) => {
 });
 
 test("ThanosGPT answers scoped questions and refuses unrelated coding", async ({ page }) => {
-  await page.route("**/functions/v1/chat", async (route) => {
+  await page.route("**/api/chat", async (route) => {
     const request = route.request().postDataJSON() as { message?: string };
     const answer = /write me code/i.test(request.message || "")
       ? "I’m scoped to Athanasios—his experience, education, skills, and repositories."
@@ -91,7 +91,7 @@ test("ThanosGPT answers scoped questions and refuses unrelated coding", async ({
 });
 
 test("compiler accepts a supported language and returns a bounded response", async ({ page }) => {
-  await page.route("**/functions/v1/execute", async (route) => {
+  await page.route("**/api/execute", async (route) => {
     await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ output: "qa-ok\n", exitCode: 0 }) });
   });
   await page.goto("/#lab");

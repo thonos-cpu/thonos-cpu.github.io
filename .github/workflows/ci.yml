@@ -22,7 +22,9 @@ jobs:
         with:
           node-version: 22
           cache: npm
-      - run: npm ci
+      # npm install also validates and refreshes the lock when the Vercel Sandbox SDK changes.
+      - run: npm install --no-audit --no-fund
+      - run: npm run check:services
       - run: npm run lint
       - run: npm run typecheck
       - run: npm run build

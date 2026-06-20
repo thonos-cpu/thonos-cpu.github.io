@@ -1,11 +1,9 @@
 "use client";
 
 import { Play } from "lucide-react";
-import { useCallback, useState } from "react";
+import { useState } from "react";
 
-import { Turnstile } from "@/components/turnstile";
 import { analyticsSessionId } from "@/lib/analytics-client";
-import { invokeEdgeFunction } from "@/lib/supabase-browser";
 
 const languages = [
   ["python", "Python", "print(\"Hello from Athanasios's Code Lab\")\n\nvalues = [3, 8, 13, 21]\nprint(\"sum:\", sum(values))"],
@@ -31,9 +29,6 @@ export function CodeLab() {
   const [output, setOutput] = useState("Ready. Choose a language, edit the source, then run it.");
   const [status, setStatus] = useState("Ready");
   const [running, setRunning] = useState(false);
-  const [token, setToken] = useState("");
-
-  const onToken = useCallback((value: string) => setToken(value), []);
 
   function changeLanguage(value: string) {
     const next = languages.find(([id]) => id === value) || languages[0];
@@ -48,12 +43,17 @@ export function CodeLab() {
     setOutput("Compiling and running in an isolated sandbox…");
     const started = performance.now();
     try {
-      const data = await invokeEdgeFunction<{ output?: string }>("execute", {
+      const response = await fetch("/api/execute", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
         language,
         code,
-        turnstileToken: token,
         sessionId: analyticsSessionId(),
+        }),
       });
+      const data = await response.json() as { output?: string; error?: string };
+      if (!response.ok) throw new Error(data.error || "Execution failed.");
       setOutput(data.output || "Program completed without output.");
       setStatus(`Done · ${Math.round(performance.now() - started)} ms`);
     } catch (error) {
@@ -68,7 +68,7 @@ export function CodeLab() {
     <section className="shell lab" id="lab" aria-labelledby="lab-title">
       <div className="lab-head">
         <h2 id="lab-title">Code Lab</h2>
-        <p>Run real code in 15 languages. Source is sent only when you press Run, then executed by an isolated Piston worker.</p>
+        <p>Run real code in 15 languages. Source is sent only when you press Run, then executed inside an isolated Vercel Sandbox.</p>
       </div>
       <div className="tool-frame">
         <div className="tool-bar">
@@ -80,10 +80,9 @@ export function CodeLab() {
                 {languages.map(([id, label]) => <option key={id} value={id}>{label}</option>)}
               </select>
             </label>
-            <button className="button button-primary" type="button" onClick={run} disabled={running || (Boolean(process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY) && !token)}><Play size={15} fill="currentColor" /> {running ? "Running" : "Run"}</button>
+            <button className="button button-primary" type="button" onClick={run} disabled={running}><Play size={15} fill="currentColor" /> {running ? "Running" : "Run"}</button>
           </div>
         </div>
-        <Turnstile onToken={onToken} />
         <p className="submission-notice">Submitted source is redacted for common secrets, encrypted in Supabase, and retained for abuse review. Do not paste private or proprietary code. <a href="/privacy">Privacy details</a>.</p>
         <div className="editor-grid">
           <textarea className="code-editor" value={code} onChange={(event) => setCode(event.target.value)} spellCheck={false} aria-label="Source code" />
