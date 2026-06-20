@@ -1,0 +1,288 @@
+---
+import { getGitHubData } from '../lib/github';
+import { FEATURED, CATEGORY_META, categoryFor, type Category } from '../data/featured';
+
+const data = await getGitHubData();
+
+const featured = data.repos
+  .filter((r) => FEATURED[r.name]?.featured)
+  .sort((a, b) => (FEATURED[b.name]?.weight ?? 0) - (FEATURED[a.name]?.weight ?? 0));
+
+const featuredNames = new Set(featured.map((r) => r.name));
+const others = data.repos
+  .filter((r) => !featuredNames.has(r.name))
+  .sort((a, b) => new Date(b.pushedAt).getTime() - new Date(a.pushedAt).getTime());
+
+const num = (i: number) => String(i + 1).padStart(2, '0');
+const catHue: Record<Category, string> = {
+  'data-ml': 'var(--cat-data-ml)',
+  systems: 'var(--cat-systems)',
+  web: 'var(--cat-web)',
+  algorithms: 'var(--cat-algorithms)',
+  research: 'var(--cat-research)',
+};
+---
+
+<section id="work" class="section work" data-section="work">
+  <div class="container">
+    <div class="section-head">
+      <span class="section-index">02</span>
+      <h2 class="section-title">Selected work</h2>
+      <p class="section-note">
+        Curated, data &amp; ML first. Every project is pulled live from GitHub — open any one to
+        read its full, rendered README.
+      </p>
+    </div>
+
+    <ol class="work__list">
+      {
+        featured.map((repo, i) => {
+          const meta = FEATURED[repo.name]!;
+          return (
+            <li class="work__row" data-reveal style={`--hue:${catHue[meta.category]}`}>
+              <a
+                class="work__link"
+                href={`/projects/${repo.slug}`}
+                aria-label={`Open ${repo.name}`}
+              >
+                <span class="work__num mono">{num(i)}</span>
+
+                <div class="work__main">
+                  <span class="work__cat mono">
+                    <span class="work__cat-dot" aria-hidden="true" />
+                    {CATEGORY_META[meta.category].short}
+                  </span>
+                  <h3 class="work__title">{repo.name.replace(/[_-]/g, ' ')}</h3>
+                  <p class="work__tagline">{meta.tagline}</p>
+                  <div class="work__stack">
+                    {meta.stack.map((s) => (
+                      <span class="work__chip mono">{s}</span>
+                    ))}
+                  </div>
+                </div>
+
+                {meta.metrics && (
+                  <dl class="work__metrics">
+                    {meta.metrics.map((m) => (
+                      <div class="work__metric">
+                        <dt class="work__metric-v mono">{m.value}</dt>
+                        <dd class="work__metric-l mono dim">{m.label}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                )}
+
+                <span class="work__arrow" aria-hidden="true">
+                  ↗
+                </span>
+              </a>
+            </li>
+          );
+        })
+      }
+    </ol>
+
+    <details class="work__more">
+      <summary>
+        <span class="mono">More repositories</span>
+        <span class="mono dim">{others.length} more on GitHub</span>
+      </summary>
+      <ul class="work__grid">
+        {
+          others.map((repo) => (
+            <li>
+              <a
+                href={repo.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="work__small"
+                style={`--hue:${catHue[categoryFor(repo.name, repo.language)]}`}
+              >
+                <span class="work__small-dot" aria-hidden="true" />
+                <span class="work__small-name">{repo.name.replace(/[_-]/g, ' ')}</span>
+                <span class="work__small-lang mono dim">{repo.language ?? '—'}</span>
+                <span class="work__small-arrow" aria-hidden="true">
+                  ↗
+                </span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </details>
+  </div>
+</section>
+
+<style>
+  .work__list {
+    list-style: none;
+    padding: 0;
+    border-top: 1px solid var(--line);
+  }
+  .work__link {
+    display: grid;
+    grid-template-columns: auto 1fr auto auto;
+    align-items: center;
+    gap: clamp(1rem, 4vw, 3.5rem);
+    padding: clamp(1.6rem, 4vw, 2.8rem) 0;
+    border-bottom: 1px solid var(--line);
+    transition: transform 0.5s var(--ease);
+  }
+  .work__link:hover {
+    transform: translateX(clamp(0.5rem, 2vw, 1.5rem));
+  }
+  @media (max-width: 760px) {
+    .work__link {
+      grid-template-columns: auto 1fr;
+      gap: 0.4rem 1.2rem;
+    }
+  }
+  .work__num {
+    font-size: 0.8rem;
+    color: var(--text-faint);
+    align-self: start;
+    padding-top: 0.4rem;
+  }
+  .work__cat {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--text-dim);
+  }
+  .work__cat-dot,
+  .work__small-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: hsl(var(--hue));
+    box-shadow: 0 0 8px hsl(var(--hue) / 0.6);
+  }
+  .work__title {
+    font-family: var(--font-display);
+    font-size: clamp(1.7rem, 1.2rem + 2.4vw, 3rem);
+    line-height: 1;
+    margin: 0.5rem 0 0.4rem;
+    text-transform: capitalize;
+    transition: color 0.4s var(--ease);
+  }
+  .work__link:hover .work__title {
+    color: var(--accent);
+  }
+  .work__tagline {
+    color: var(--text-dim);
+    max-width: 44ch;
+    font-size: var(--step--1);
+  }
+  .work__stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 0.9rem;
+  }
+  .work__chip {
+    font-size: 0.68rem;
+    color: var(--text-faint);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 0.2rem 0.55rem;
+  }
+  .work__metrics {
+    display: flex;
+    gap: 1.6rem;
+    margin: 0;
+  }
+  @media (max-width: 980px) {
+    .work__metrics {
+      display: none;
+    }
+  }
+  .work__metric-v {
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: var(--text);
+  }
+  .work__metric-l {
+    font-size: 0.66rem;
+    letter-spacing: 0.04em;
+    max-width: 12ch;
+  }
+  .work__arrow {
+    font-size: 1.4rem;
+    color: var(--text-faint);
+    transition:
+      transform 0.4s var(--ease),
+      color 0.4s var(--ease);
+  }
+  @media (max-width: 760px) {
+    .work__arrow {
+      display: none;
+    }
+  }
+  .work__link:hover .work__arrow {
+    transform: translate(4px, -4px);
+    color: var(--accent);
+  }
+
+  .work__more {
+    margin-top: 3.5rem;
+  }
+  .work__more summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    padding: 1.1rem 0;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    list-style: none;
+    font-size: var(--step--1);
+  }
+  .work__more summary::-webkit-details-marker {
+    display: none;
+  }
+  .work__more summary::after {
+    content: '+';
+    font-family: var(--font-mono);
+    color: var(--text-dim);
+  }
+  .work__more[open] summary::after {
+    content: '–';
+  }
+  .work__grid {
+    list-style: none;
+    padding: 1.5rem 0 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 0.5rem;
+  }
+  .work__small {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.9rem 1rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    transition:
+      border-color 0.3s var(--ease),
+      background 0.3s var(--ease);
+  }
+  .work__small:hover {
+    border-color: var(--line-strong);
+    background: var(--surface);
+  }
+  .work__small-name {
+    text-transform: capitalize;
+    font-size: var(--step--1);
+  }
+  .work__small-lang {
+    margin-left: auto;
+    font-size: 0.7rem;
+  }
+  .work__small-arrow {
+    color: var(--text-faint);
+    font-size: 0.85rem;
+  }
+</style>

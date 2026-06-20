@@ -1,0 +1,220 @@
+---
+import { person } from '../data/profile';
+
+const links = [
+  { href: '#work', label: 'Work' },
+  { href: '#about', label: 'About' },
+  { href: '#path', label: 'Path' },
+  { href: '#contact', label: 'Contact' },
+];
+---
+
+<header class="nav" data-nav>
+  <div class="nav__inner container">
+    <a href="#top" class="nav__brand" aria-label={`${person.name} — home`}>
+      <span class="nav__mark mono">AT</span>
+      <span class="nav__domain mono dim">tasis.info</span>
+    </a>
+
+    <nav class="nav__links" aria-label="Primary">
+      {links.map((l) => <a href={l.href}>{l.label}</a>)}
+    </nav>
+
+    <div class="nav__right">
+      <span class="nav__status mono" title="Open to opportunities">
+        <span class="nav__pulse" aria-hidden="true"></span>available
+      </span>
+      <button id="theme-toggle" class="nav__theme" type="button" aria-label="Toggle colour theme">
+        <svg
+          class="icon-sun"
+          viewBox="0 0 24 24"
+          width="17"
+          height="17"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.6"
+          aria-hidden="true"
+        >
+          <circle cx="12" cy="12" r="4"></circle>
+          <path
+            d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"
+          ></path>
+        </svg>
+        <svg
+          class="icon-moon"
+          viewBox="0 0 24 24"
+          width="17"
+          height="17"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.6"
+          aria-hidden="true"
+        >
+          <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<style>
+  .nav {
+    position: fixed;
+    inset: 0 0 auto 0;
+    z-index: 100;
+    transition:
+      background 0.5s var(--ease),
+      border-color 0.5s var(--ease);
+    border-bottom: 1px solid transparent;
+  }
+  .nav[data-scrolled] {
+    background: color-mix(in oklab, var(--bg) 78%, transparent);
+    backdrop-filter: blur(14px) saturate(140%);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    border-bottom-color: var(--line);
+  }
+  .nav__inner {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    height: 68px;
+  }
+  .nav__brand {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.6rem;
+  }
+  .nav__mark {
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    border: 1px solid var(--line-strong);
+    padding: 0.2rem 0.45rem;
+    border-radius: 6px;
+    font-size: 0.82rem;
+  }
+  .nav__domain {
+    font-size: 0.78rem;
+  }
+  @media (max-width: 560px) {
+    .nav__domain {
+      display: none;
+    }
+  }
+  .nav__links {
+    display: flex;
+    gap: 1.6rem;
+    margin-left: auto;
+    font-size: var(--step--1);
+  }
+  .nav__links a {
+    color: var(--text-dim);
+    transition: color 0.3s var(--ease);
+    position: relative;
+  }
+  .nav__links a::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -5px;
+    height: 1px;
+    width: 100%;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s var(--ease);
+  }
+  .nav__links a:hover {
+    color: var(--text);
+  }
+  .nav__links a:hover::after {
+    transform: scaleX(1);
+  }
+  @media (max-width: 720px) {
+    .nav__links {
+      display: none;
+    }
+  }
+  .nav__right {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-left: 0;
+  }
+  @media (max-width: 720px) {
+    .nav__right {
+      margin-left: auto;
+    }
+  }
+  .nav__status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: 0.74rem;
+    color: var(--text-dim);
+    letter-spacing: 0.04em;
+  }
+  @media (max-width: 440px) {
+    .nav__status {
+      display: none;
+    }
+  }
+  .nav__pulse {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #4ad07f;
+    box-shadow: 0 0 0 0 rgba(74, 208, 127, 0.6);
+    animation: pulse 2.4s infinite;
+  }
+  @keyframes pulse {
+    0% {
+      box-shadow: 0 0 0 0 rgba(74, 208, 127, 0.5);
+    }
+    70% {
+      box-shadow: 0 0 0 7px rgba(74, 208, 127, 0);
+    }
+    100% {
+      box-shadow: 0 0 0 0 rgba(74, 208, 127, 0);
+    }
+  }
+  .nav__theme {
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    border: 1px solid var(--line-strong);
+    border-radius: 50%;
+    color: var(--text-dim);
+    transition:
+      color 0.3s,
+      border-color 0.3s,
+      transform 0.3s var(--ease);
+  }
+  .nav__theme:hover {
+    color: var(--text);
+    border-color: var(--text);
+    transform: rotate(15deg);
+  }
+  .icon-moon {
+    display: none;
+  }
+  :global(:root[data-theme='light']) .icon-sun {
+    display: none;
+  }
+  :global(:root[data-theme='light']) .icon-moon {
+    display: block;
+  }
+</style>
+
+<script is:inline>
+  (() => {
+    const nav = document.querySelector('[data-nav]');
+    if (!nav) return;
+    const onScroll = () => {
+      if (window.scrollY > 12) nav.setAttribute('data-scrolled', '');
+      else nav.removeAttribute('data-scrolled');
+    };
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+  })();
+</script>

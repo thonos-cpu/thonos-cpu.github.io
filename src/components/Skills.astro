@@ -1,0 +1,189 @@
+---
+import { skills } from '../data/profile';
+import { getGitHubData } from '../lib/github';
+
+const data = await getGitHubData();
+const top = data.stats.languages.slice(0, 6);
+const restPct = data.stats.languages.slice(6).reduce((a, l) => a + l.pct, 0);
+
+// Stable, palette-aligned hues per language band.
+const HUES = [188, 215, 32, 270, 150, 0];
+const fmtPct = (p: number) => (p < 1 ? '<1' : Math.round(p)) + '%';
+---
+
+<section id="stack" class="section skills" data-section="stack">
+  <div class="container">
+    <div class="section-head">
+      <span class="section-index">04</span>
+      <h2 class="section-title">Stack &amp; signals</h2>
+      <p class="section-note">
+        Self-reported skills, plus the real language mix measured live across every repo.
+      </p>
+    </div>
+
+    <div class="skills__live" data-reveal>
+      <div class="skills__live-head">
+        <span class="eyebrow">Language distribution · live from GitHub</span>
+        <span class="mono dim">{data.stats.totalRepos} repositories</span>
+      </div>
+      <div
+        class="skills__bar"
+        role="img"
+        aria-label="Distribution of programming languages across all repositories"
+      >
+        {
+          top.map((l, i) => (
+            <span
+              class="skills__seg"
+              style={`width:${l.pct}%;--h:${HUES[i % HUES.length]}`}
+              title={`${l.name} · ${fmtPct(l.pct)}`}
+            />
+          ))
+        }
+        {restPct > 0 && <span class="skills__seg skills__seg--rest" style={`width:${restPct}%`} />}
+      </div>
+      <ul class="skills__legend">
+        {
+          top.map((l, i) => (
+            <li class="mono">
+              <span
+                class="skills__swatch"
+                style={`--h:${HUES[i % HUES.length]}`}
+                aria-hidden="true"
+              />
+              {l.name}
+              <span class="dim">{fmtPct(l.pct)}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+
+    <div class="skills__groups">
+      {
+        skills.map((g) => (
+          <div class="skills__group" data-reveal>
+            <h3 class="skills__group-title eyebrow">{g.label}</h3>
+            <ul class="skills__items">
+              {g.items.map((item) => (
+                <li class="skills__item">{item}</li>
+              ))}
+            </ul>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .skills__live {
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: clamp(1.4rem, 3vw, 2rem);
+    background: var(--surface);
+    margin-bottom: clamp(2.5rem, 6vw, 4rem);
+  }
+  .skills__live-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+  }
+  .skills__bar {
+    display: flex;
+    height: 12px;
+    border-radius: 999px;
+    overflow: hidden;
+    background: var(--bg-soft);
+    gap: 2px;
+  }
+  .skills__seg {
+    height: 100%;
+    background: hsl(var(--h) 60% 60%);
+    border-radius: 2px;
+    transition:
+      filter 0.3s var(--ease),
+      transform 0.3s var(--ease);
+    transform-origin: bottom;
+  }
+  .skills__seg:hover {
+    filter: brightness(1.2);
+    transform: scaleY(1.25);
+  }
+  .skills__seg--rest {
+    background: var(--text-faint);
+  }
+  .skills__legend {
+    list-style: none;
+    padding: 0;
+    margin-top: 1.1rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem 1.4rem;
+    font-size: 0.74rem;
+  }
+  .skills__legend li {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+  }
+  .skills__legend .dim {
+    margin-left: 0.15rem;
+  }
+  .skills__swatch {
+    width: 9px;
+    height: 9px;
+    border-radius: 2px;
+    background: hsl(var(--h) 60% 60%);
+  }
+  .skills__groups {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .skills__group {
+    background: var(--bg);
+    padding: clamp(1.3rem, 3vw, 1.9rem);
+  }
+  .skills__group-title {
+    margin-bottom: 1.1rem;
+  }
+  .skills__items {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+  }
+  .skills__item {
+    font-size: var(--step--1);
+    color: var(--text-dim);
+    position: relative;
+    padding-left: 1rem;
+    transition: color 0.3s var(--ease);
+  }
+  .skills__item::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.62em;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--line-strong);
+    transition: background 0.3s var(--ease);
+  }
+  .skills__group:hover .skills__item {
+    color: var(--text);
+  }
+  .skills__group:hover .skills__item::before {
+    background: var(--accent);
+  }
+</style>

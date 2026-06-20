@@ -1,0 +1,67 @@
+---
+import Base from '../layouts/Base.astro';
+import Hero from '../components/Hero.astro';
+import Constellation from '../components/Constellation.astro';
+import About from '../components/About.astro';
+import Work from '../components/Work.astro';
+import Path from '../components/Path.astro';
+import Skills from '../components/Skills.astro';
+import { getGitHubData } from '../lib/github';
+import { categoryFor, weightFor } from '../data/featured';
+import type { ConstellationNode, ConstellationLink } from '../components/Constellation.astro';
+
+const data = await getGitHubData();
+const HUB = 'hub';
+
+const nodes: ConstellationNode[] = [
+  {
+    id: HUB,
+    label: 'Athanasios Tasis',
+    slug: null,
+    url: data.profile.htmlUrl,
+    category: 'systems',
+    weight: 10,
+    stars: 0,
+    language: null,
+  },
+  ...data.repos.map((r) => ({
+    id: r.name,
+    label: r.name,
+    slug: r.slug,
+    url: r.url,
+    category: categoryFor(r.name, r.language),
+    weight: weightFor(r.name, r.stars),
+    stars: r.stars,
+    language: r.language,
+  })),
+];
+
+// Links: every repo to the hub (data/ML pulled in tighter), plus repo↔repo by shared language.
+const links: ConstellationLink[] = [];
+for (const r of data.repos) {
+  links.push({
+    source: HUB,
+    target: r.name,
+    strength: categoryFor(r.name, r.language) === 'data-ml' ? 2.4 : 1.4,
+  });
+}
+for (let i = 0; i < data.repos.length; i++) {
+  for (let j = i + 1; j < data.repos.length; j++) {
+    const a = data.repos[i];
+    const b = data.repos[j];
+    if (a.language && a.language === b.language) {
+      links.push({ source: a.name, target: b.name, strength: 1 });
+    }
+  }
+}
+---
+
+<Base>
+  <Hero>
+    <Constellation nodes={nodes} links={links} hub={HUB} />
+  </Hero>
+  <About />
+  <Work />
+  <Path />
+  <Skills />
+</Base>

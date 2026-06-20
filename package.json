@@ -1,0 +1,42 @@
+{
+  "name": "tasis-portfolio",
+  "version": "1.0.0",
+  "type": "module",
+  "private": true,
+  "description": "Personal portfolio for Athanasios Tasis — static, build-time GitHub data, deployed to GitHub Pages.",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "eslint . --max-warnings 0"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "^3.7.3",
+    "astro": "^6.4.8",
+    "lenis": "^1",
+    "lightningcss": "^1.32.0",
+    "sanitize-html": "^2"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9",
+    "@eslint/js": "^9",
+    "@fontsource-variable/geist": "^5",
+    "@fontsource-variable/geist-mono": "^5",
+    "@fontsource/instrument-serif": "^5",
+    "@types/sanitize-html": "^2",
+    "eslint": "^9",
+    "eslint-plugin-astro": "^1",
+    "github-markdown-css": "^5",
+    "prettier": "^3",
+    "prettier-plugin-astro": "^0.14",
+    "typescript": "^5",
+    "typescript-eslint": "^8"
+  }
+}

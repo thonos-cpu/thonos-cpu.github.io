@@ -1,0 +1,206 @@
+---
+import { person } from '../data/profile';
+import { getGitHubData } from '../lib/github';
+
+const data = await getGitHubData();
+const langCount = data.stats.languages.length;
+const facts = [
+  { value: String(data.stats.totalRepos), label: 'public projects' },
+  { value: String(data.stats.totalStars), label: 'stars earned' },
+  { value: String(langCount), label: 'languages' },
+];
+---
+
+<section id="top" class="hero" data-section="hero">
+  <div class="hero__grid container">
+    <div class="hero__intro">
+      <p class="eyebrow" data-reveal>{person.role} · CERN data pipelines</p>
+
+      <h1 class="display hero__title" data-reveal>
+        Athanasios<br /><span class="hero__title-2">Tasis</span>
+      </h1>
+
+      <p class="hero__lede" data-reveal>
+        I build <em>CERN-scale</em> data pipelines — turning detector-sized datasets into signal with
+        Python, C/C++ and a lot of distributed systems.
+      </p>
+
+      <div class="hero__actions" data-reveal>
+        <a class="btn btn--primary" href="#work"
+          >See the work <span class="arrow" aria-hidden="true">↗</span></a
+        >
+        <a class="btn" href="#contact">Get in touch</a>
+      </div>
+
+      <dl class="hero__facts" data-reveal>
+        {
+          facts.map((f) => (
+            <div class="hero__fact">
+              <dt class="mono hero__fact-v">{f.value}</dt>
+              <dd class="mono dim hero__fact-l">{f.label}</dd>
+            </div>
+          ))
+        }
+        <div class="hero__fact hero__fact--live">
+          <dt class="mono hero__fact-v">
+            <span class="hero__live-dot" aria-hidden="true"></span>live
+          </dt>
+          <dd class="mono dim hero__fact-l">synced from GitHub</dd>
+        </div>
+      </dl>
+    </div>
+
+    <div class="hero__visual" data-reveal>
+      <slot />
+    </div>
+  </div>
+
+  <a href="#work" class="hero__scroll mono" aria-label="Scroll to work">
+    <span>scroll</span>
+    <span class="hero__scroll-line" aria-hidden="true"></span>
+  </a>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    min-height: 100svh;
+    display: flex;
+    align-items: center;
+    padding-top: 68px;
+    overflow: hidden;
+  }
+  .hero__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+    align-items: center;
+    gap: clamp(2rem, 5vw, 5rem);
+    width: 100%;
+  }
+  @media (max-width: 900px) {
+    .hero__grid {
+      grid-template-columns: 1fr;
+    }
+    .hero {
+      min-height: auto;
+      padding-top: 120px;
+      padding-bottom: 4rem;
+    }
+  }
+  .hero__intro {
+    max-width: 36rem;
+  }
+  .hero__title {
+    font-size: var(--step-5);
+    margin: 0.6rem 0 1.4rem;
+    letter-spacing: -0.03em;
+  }
+  .hero__title-2 {
+    color: var(--text-dim);
+  }
+  .hero__lede {
+    font-size: var(--step-1);
+    color: var(--text-dim);
+    max-width: 30ch;
+    line-height: 1.45;
+  }
+  .hero__lede em {
+    color: var(--text);
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 1.08em;
+  }
+  .hero__actions {
+    display: flex;
+    gap: 0.8rem;
+    margin-top: 2rem;
+    flex-wrap: wrap;
+  }
+  .hero__facts {
+    display: flex;
+    gap: clamp(1.2rem, 3vw, 2.4rem);
+    margin-top: 3rem;
+    flex-wrap: wrap;
+  }
+  .hero__fact-v {
+    font-size: var(--step-2);
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .hero__fact-l {
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+  }
+  .hero__fact--live .hero__fact-v {
+    color: var(--accent);
+  }
+  .hero__live-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 10px var(--accent);
+    animation: blink 2s ease-in-out infinite;
+  }
+  @keyframes blink {
+    50% {
+      opacity: 0.3;
+    }
+  }
+  .hero__visual {
+    position: relative;
+    height: clamp(360px, 56vh, 620px);
+  }
+  @media (max-width: 900px) {
+    .hero__visual {
+      height: 60vh;
+      margin-top: 1rem;
+    }
+  }
+  .hero__scroll {
+    position: absolute;
+    left: 50%;
+    bottom: 1.6rem;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 0.66rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+  }
+  @media (max-width: 900px) {
+    .hero__scroll {
+      display: none;
+    }
+  }
+  .hero__scroll-line {
+    width: 1px;
+    height: 42px;
+    background: linear-gradient(var(--text-faint), transparent);
+    overflow: hidden;
+    position: relative;
+  }
+  .hero__scroll-line::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--accent);
+    transform: translateY(-100%);
+    animation: scroll-tick 2.4s var(--ease) infinite;
+  }
+  @keyframes scroll-tick {
+    0% {
+      transform: translateY(-100%);
+    }
+    60%,
+    100% {
+      transform: translateY(100%);
+    }
+  }
+</style>

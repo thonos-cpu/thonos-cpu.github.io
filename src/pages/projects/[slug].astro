@@ -1,0 +1,263 @@
+---
+import 'github-markdown-css/github-markdown.css';
+import Base from '../../layouts/Base.astro';
+import { getGitHubData, type Repo } from '../../lib/github';
+import { FEATURED, CATEGORY_META, categoryFor, type FeaturedMeta } from '../../data/featured';
+
+export async function getStaticPaths() {
+  const data = await getGitHubData();
+  return data.repos.map((repo) => ({
+    params: { slug: repo.slug },
+    props: { repo },
+  }));
+}
+
+interface Props {
+  repo: Repo;
+}
+const { repo } = Astro.props as Props;
+const meta: FeaturedMeta | undefined = FEATURED[repo.name];
+const category = meta?.category ?? categoryFor(repo.name, repo.language);
+const title = repo.name.replace(/[_-]/g, ' ');
+
+function fmt(d: string) {
+  return new Date(d).toLocaleDateString('en-GB', { month: 'short', year: 'numeric' });
+}
+---
+
+<Base
+  title={`${title} — Athanasios Tasis`}
+  description={meta?.tagline ?? repo.description ?? title}
+>
+  <article class="project section">
+    <div class="container project__head">
+      <a href="/#work" class="project__back mono">← back to work</a>
+
+      <span class="eyebrow project__cat">{CATEGORY_META[category].label}</span>
+      <h1 class="display project__title">{title}</h1>
+      {meta?.tagline && <p class="project__tagline">{meta.tagline}</p>}
+      {!meta && repo.description && <p class="project__tagline">{repo.description}</p>}
+
+      <div class="project__bar">
+        <div class="project__tags">
+          {
+            (meta?.stack ?? [repo.language].filter(Boolean)).map((s) => (
+              <span class="tag mono">{s}</span>
+            ))
+          }
+        </div>
+        <div class="project__links">
+          <a class="btn" href={repo.url} target="_blank" rel="noopener noreferrer">
+            View source <span class="arrow" aria-hidden="true">↗</span>
+          </a>
+          {
+            repo.homepage && (
+              <a
+                class="btn btn--primary"
+                href={repo.homepage}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Live{' '}
+                <span class="arrow" aria-hidden="true">
+                  ↗
+                </span>
+              </a>
+            )
+          }
+        </div>
+      </div>
+
+      <dl class="project__stats mono">
+        {
+          meta?.metrics?.map((m) => (
+            <div>
+              <dt class="project__stat-v">{m.value}</dt>
+              <dd class="project__stat-l dim">{m.label}</dd>
+            </div>
+          ))
+        }
+        <div>
+          <dt class="project__stat-v">★ {repo.stars}</dt>
+          <dd class="project__stat-l dim">stars</dd>
+        </div>
+        <div>
+          <dt class="project__stat-v">{fmt(repo.pushedAt)}</dt>
+          <dd class="project__stat-l dim">last push</dd>
+        </div>
+      </dl>
+    </div>
+
+    {
+      meta?.blurb && (
+        <div class="container">
+          <p class="project__blurb">{meta.blurb}</p>
+        </div>
+      )
+    }
+
+    {
+      meta?.gallery && meta.gallery.length > 0 && (
+        <div class="container project__gallery">
+          <span class="eyebrow project__gallery-label">Output artefacts · real results</span>
+          <div class="project__gallery-grid">
+            {meta.gallery.map((g) => (
+              <figure class="project__shot">
+                <img src={g.src} alt={g.alt} loading="lazy" />
+                <figcaption class="mono dim">{g.caption}</figcaption>
+              </figure>
+            ))}
+          </div>
+        </div>
+      )
+    }
+
+    <div class="container project__readme-wrap">
+      <span class="eyebrow project__readme-label">README · rendered</span>
+      {
+        repo.readmeHtml ? (
+          <div class="project__readme markdown-body" set:html={repo.readmeHtml} />
+        ) : (
+          <p class="dim">
+            This repository has no README yet —
+            <a href={repo.url} target="_blank" rel="noopener noreferrer">
+              {' '}
+              view it on GitHub ↗
+            </a>
+            .
+          </p>
+        )
+      }
+    </div>
+  </article>
+</Base>
+
+<style>
+  .project {
+    padding-top: clamp(7rem, 14vh, 10rem);
+  }
+  .project__back {
+    display: inline-block;
+    color: var(--text-dim);
+    font-size: var(--step--1);
+    margin-bottom: 2.5rem;
+    transition: color 0.3s var(--ease);
+  }
+  .project__back:hover {
+    color: var(--accent);
+  }
+  .project__cat {
+    display: block;
+    color: var(--accent);
+    margin-bottom: 1rem;
+  }
+  .project__title {
+    font-size: var(--step-4);
+    text-transform: capitalize;
+    line-height: 0.98;
+  }
+  .project__tagline {
+    font-size: var(--step-1);
+    color: var(--text-dim);
+    margin-top: 1rem;
+    max-width: 48ch;
+  }
+  .project__bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    margin-top: 2.2rem;
+    padding-bottom: 2.2rem;
+    border-bottom: 1px solid var(--line);
+  }
+  .project__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .project__links {
+    display: flex;
+    gap: 0.7rem;
+  }
+  .project__stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: clamp(1.5rem, 4vw, 3rem);
+    margin-top: 2.2rem;
+  }
+  .project__stat-v {
+    font-size: var(--step-2);
+    font-weight: 500;
+    letter-spacing: -0.02em;
+  }
+  .project__stat-l {
+    font-size: 0.7rem;
+    letter-spacing: 0.04em;
+    margin-top: 0.2rem;
+  }
+  .project__blurb {
+    max-width: var(--maxw-text);
+    font-size: var(--step-1);
+    line-height: 1.5;
+    color: var(--text);
+    margin-top: clamp(2.5rem, 6vw, 4rem);
+  }
+  .project__gallery {
+    margin-top: clamp(2.5rem, 6vw, 4rem);
+  }
+  .project__gallery-label {
+    display: block;
+    margin-bottom: 1.2rem;
+  }
+  .project__gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1rem;
+  }
+  .project__shot {
+    margin: 0;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: #fff;
+  }
+  .project__shot img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  .project__shot figcaption {
+    padding: 0.7rem 0.9rem;
+    font-size: 0.72rem;
+    background: var(--bg-soft);
+    border-top: 1px solid var(--line);
+  }
+  .project__readme-wrap {
+    margin-top: clamp(3rem, 7vw, 5rem);
+  }
+  .project__readme-label {
+    display: block;
+    margin-bottom: 1.2rem;
+  }
+  /* Compiled README — GitHub structure, themed to the site, never raw markdown. */
+  .project__readme.markdown-body {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: clamp(1.5rem, 4vw, 3rem);
+    max-width: 980px;
+    font-family: var(--font-sans);
+  }
+  .project__readme.markdown-body :global(pre) {
+    border: 1px solid var(--line);
+  }
+  .project__readme.markdown-body :global(img) {
+    border-radius: 8px;
+  }
+  .project__readme.markdown-body :global(a) {
+    color: var(--accent);
+  }
+</style>

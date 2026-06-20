@@ -1,0 +1,148 @@
+---
+import type { Category } from '../data/featured';
+
+export interface ConstellationNode {
+  id: string;
+  label: string;
+  slug: string | null;
+  url: string;
+  category: Category;
+  weight: number;
+  stars: number;
+  language: string | null;
+}
+export interface ConstellationLink {
+  source: string;
+  target: string;
+  strength: number;
+}
+
+interface Props {
+  nodes: ConstellationNode[];
+  links: ConstellationLink[];
+  hub: string;
+}
+
+const { nodes, links, hub } = Astro.props;
+const payload = JSON.stringify({ nodes, links, hub });
+---
+
+<figure
+  class="constellation"
+  data-constellation
+  aria-label="Interactive map of repositories, linked by shared language."
+>
+  <canvas data-constellation-canvas></canvas>
+  <div class="constellation__hint mono" aria-hidden="true">drag · hover · click a node</div>
+  <div class="constellation__tip" data-constellation-tip hidden>
+    <span class="constellation__tip-cat mono"></span>
+    <strong class="constellation__tip-name"></strong>
+    <span class="constellation__tip-meta mono dim"></span>
+  </div>
+
+  <!-- Accessible, no-JS fallback: the same repositories as a plain list -->
+  <ul class="constellation__fallback">
+    {
+      nodes
+        .filter((n) => n.id !== hub)
+        .map((n) => (
+          <li>
+            <a href={n.url} target="_blank" rel="noopener noreferrer">
+              {n.label}
+            </a>
+          </li>
+        ))
+    }
+  </ul>
+</figure>
+
+<script type="application/json" data-constellation-payload is:inline set:html={payload} />
+
+<style>
+  .constellation {
+    position: relative;
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    min-height: 420px;
+    touch-action: pan-y;
+  }
+  .constellation canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+    cursor: grab;
+  }
+  .constellation canvas:active {
+    cursor: grabbing;
+  }
+  .constellation__hint {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    font-size: 0.68rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    opacity: 0.7;
+    pointer-events: none;
+  }
+  .constellation__tip {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 5;
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    padding: 0.6rem 0.8rem;
+    background: color-mix(in oklab, var(--bg-elevated) 88%, transparent);
+    border: 1px solid var(--line-strong);
+    border-radius: 10px;
+    backdrop-filter: blur(8px);
+    box-shadow: var(--shadow);
+    pointer-events: none;
+    transform: translate(-50%, calc(-100% - 14px));
+    transition: opacity 0.18s ease;
+    max-width: 240px;
+  }
+  .constellation__tip[hidden] {
+    display: none;
+  }
+  .constellation__tip-cat {
+    font-size: 0.64rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  .constellation__tip-name {
+    font-size: 0.95rem;
+    font-weight: 500;
+  }
+  .constellation__tip-meta {
+    font-size: 0.72rem;
+  }
+  .constellation__fallback {
+    display: none;
+    list-style: none;
+    padding: 0;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+  :global(.no-js) .constellation canvas,
+  :global(.no-js) .constellation__hint {
+    display: none;
+  }
+  :global(.no-js) .constellation__fallback {
+    display: flex;
+  }
+  :global(.no-js) .constellation__fallback a {
+    color: var(--text-dim);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 0.3rem 0.7rem;
+    font-size: 0.8rem;
+  }
+</style>
+
+<script src="../scripts/constellation.ts"></script>

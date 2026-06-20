@@ -1,0 +1,223 @@
+---
+import { experience, education, achievements } from '../data/profile';
+
+function fmt(d: string): string {
+  if (/^\d{4}$/.test(d)) return d;
+  const [y, m] = d.split('-');
+  const month = new Date(Number(y), Number(m) - 1, 1).toLocaleString('en-GB', { month: 'short' });
+  return `${month} ${y}`;
+}
+const range = (s: string, e: string) => `${fmt(s)} — ${fmt(e)}`;
+---
+
+<section id="path" class="section path" data-section="path">
+  <div class="container">
+    <div class="section-head">
+      <span class="section-index">03</span>
+      <h2 class="section-title">The path</h2>
+      <p class="section-note">Experience, education and a few things I'm proud of.</p>
+    </div>
+
+    <div class="path__grid">
+      <ol class="path__timeline">
+        {
+          experience.map((job) => (
+            <li class="path__item" data-reveal>
+              <div class="path__when mono">{range(job.start, job.end)}</div>
+              <div class="path__content">
+                <h3 class="path__role">{job.role}</h3>
+                <p class="path__org">
+                  {job.org}
+                  {job.context && <span class="path__context"> · {job.context}</span>}
+                  {job.country && <span class="path__country mono dim"> · {job.country}</span>}
+                </p>
+                <ul class="path__highlights">
+                  {job.highlights.map((h) => (
+                    <li>{h}</li>
+                  ))}
+                </ul>
+                <div class="path__tags">
+                  {job.tags.map((t) => (
+                    <span class="path__tag mono">{t}</span>
+                  ))}
+                </div>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+
+      <aside class="path__aside">
+        <div class="path__card" data-reveal>
+          <span class="eyebrow">Education</span>
+          {
+            education.map((ed) => (
+              <div class="path__edu">
+                <h4>{ed.degree}</h4>
+                <p class="path__org">{ed.org}</p>
+                <p class="mono dim path__when">{range(ed.start, ed.end)}</p>
+                {ed.note && <p class="path__note dim">{ed.note}</p>}
+                <div class="path__tags">
+                  {ed.coursework.map((c) => (
+                    <span class="path__tag mono">{c}</span>
+                  ))}
+                </div>
+              </div>
+            ))
+          }
+        </div>
+
+        <div class="path__card" data-reveal>
+          <span class="eyebrow">Recognition</span>
+          <ul class="path__awards">
+            {
+              achievements.map((a) => (
+                <li>
+                  <strong>{a.title}</strong>
+                  <span class="dim">{a.detail}</span>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<style>
+  .path__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 0.9fr);
+    gap: clamp(2rem, 5vw, 4.5rem);
+    align-items: start;
+  }
+  @media (max-width: 880px) {
+    .path__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  .path__timeline {
+    list-style: none;
+    padding: 0;
+  }
+  .path__item {
+    display: grid;
+    grid-template-columns: 9.5rem 1fr;
+    gap: 1.5rem;
+    padding: 2rem 0;
+    border-top: 1px solid var(--line);
+  }
+  .path__item:first-child {
+    border-top: none;
+    padding-top: 0;
+  }
+  @media (max-width: 560px) {
+    .path__item {
+      grid-template-columns: 1fr;
+      gap: 0.6rem;
+    }
+  }
+  .path__when {
+    font-size: 0.74rem;
+    color: var(--text-faint);
+    padding-top: 0.4rem;
+    letter-spacing: 0.02em;
+  }
+  .path__role {
+    font-size: var(--step-1);
+    font-weight: 500;
+    line-height: 1.2;
+  }
+  .path__org {
+    color: var(--text-dim);
+    font-size: var(--step--1);
+    margin-top: 0.3rem;
+  }
+  .path__context {
+    color: var(--text-dim);
+  }
+  .path__highlights {
+    margin: 1rem 0 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+  }
+  .path__highlights li {
+    position: relative;
+    padding-left: 1.2rem;
+    color: var(--text-dim);
+    font-size: var(--step--1);
+    line-height: 1.55;
+  }
+  .path__highlights li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.6em;
+    width: 6px;
+    height: 1px;
+    background: var(--accent);
+  }
+  .path__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 1.1rem;
+  }
+  .path__tag {
+    font-size: 0.66rem;
+    color: var(--text-faint);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 0.2rem 0.55rem;
+  }
+  .path__aside {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    position: sticky;
+    top: 100px;
+  }
+  @media (max-width: 880px) {
+    .path__aside {
+      position: static;
+    }
+  }
+  .path__card {
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 1.6rem;
+    background: var(--surface);
+  }
+  .path__card .eyebrow {
+    display: block;
+    margin-bottom: 1.2rem;
+  }
+  .path__edu h4 {
+    font-size: var(--step-0);
+    font-weight: 500;
+  }
+  .path__note {
+    font-size: var(--step--1);
+    margin-top: 0.5rem;
+  }
+  .path__awards {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+  }
+  .path__awards li {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    font-size: var(--step--1);
+  }
+  .path__awards strong {
+    font-weight: 500;
+  }
+</style>

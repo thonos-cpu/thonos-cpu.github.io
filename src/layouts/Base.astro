@@ -1,0 +1,103 @@
+---
+import '@fontsource-variable/geist';
+import '@fontsource-variable/geist-mono';
+import '@fontsource/instrument-serif';
+import '../styles/global.css';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import { person } from '../data/profile';
+
+interface Props {
+  title?: string;
+  description?: string;
+  /** GoatCounter site code → https://<code>.goatcounter.com. Change to your own. */
+}
+
+const { title = `${person.name} — ${person.role}`, description = person.summary } =
+  Astro.props as Props;
+
+const GOATCOUNTER_CODE = 'thonos';
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const ogImage = new URL('/portraits/thanos-2.jpg', Astro.site).href;
+---
+
+<!doctype html>
+<html lang="en" data-theme="dark" class="no-js">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta name="author" content={person.name} />
+    <meta name="theme-color" content="#0a0b0d" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#f3f1ea" media="(prefers-color-scheme: light)" />
+
+    <!-- Open Graph / Twitter -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:site_name" content={person.name} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <!-- No-flash theme: runs before paint -->
+    <script is:inline>
+      (() => {
+        const root = document.documentElement;
+        root.classList.remove('no-js');
+        root.classList.add('js');
+        try {
+          const saved = localStorage.getItem('theme');
+          const prefersLight = matchMedia('(prefers-color-scheme: light)').matches;
+          root.dataset.theme = saved || (prefersLight ? 'light' : 'dark');
+        } catch {
+          root.dataset.theme = 'dark';
+        }
+      })();
+    </script>
+
+    <!-- JSON-LD: structured Person data for search engines -->
+    <script
+      type="application/ld+json"
+      is:inline
+      set:html={JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'Person',
+        name: person.name,
+        jobTitle: person.role,
+        url: person.links.site,
+        email: `mailto:${person.email}`,
+        sameAs: [person.links.github, person.links.linkedin],
+      })}
+    />
+
+    <!-- Analytics: GoatCounter (the single external service). Privacy-first, no cookies. -->
+    <script
+      is:inline
+      defer
+      data-goatcounter={`https://${GOATCOUNTER_CODE}.goatcounter.com/count`}
+      src="//gc.zgo.at/count.js"></script>
+  </head>
+
+  <body>
+    <a href="#main" class="skip-link">Skip to content</a>
+    <Nav />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+
+    <!-- Site behaviour: smooth scroll, scroll-reveal, theme toggle, section analytics -->
+    <script src="../scripts/site.ts"></script>
+  </body>
+</html>

@@ -1,0 +1,169 @@
+---
+import { Image } from 'astro:assets';
+import portrait from '../assets/portrait-thanos.jpg';
+import { person, education } from '../data/profile';
+
+const facts = [
+  { k: 'Focus', v: 'Data engineering · ML · Distributed systems' },
+  { k: 'Currently', v: 'ALICE Experiment · GSI / CERN' },
+  { k: 'Education', v: `${education[0].degree.split(',')[0]}, University of Patras` },
+  { k: 'Spoken', v: 'Greek · English · French' },
+];
+---
+
+<section id="about" class="section about" data-section="about">
+  <div class="container about__grid">
+    <div class="about__media" data-reveal>
+      <div class="about__portrait">
+        <Image
+          src={portrait}
+          alt="Portrait of Athanasios Tasis"
+          widths={[400, 700, 1000]}
+          sizes="(max-width: 820px) 360px, 38vw"
+          loading="lazy"
+        />
+        <span class="about__portrait-grade" aria-hidden="true"></span>
+      </div>
+      <p class="about__caption mono dim">Athanasios Tasis — {person.role}</p>
+    </div>
+
+    <div class="about__body">
+      <div class="section-head about__head">
+        <span class="section-index">01</span>
+        <h2 class="section-title">About</h2>
+      </div>
+
+      <p class="about__lead display" data-reveal>
+        I work where data gets <em>big, fast and messy</em> — and make it behave.
+      </p>
+
+      <div class="about__prose" data-reveal>
+        <p>
+          I'm a software engineer in the final year of an integrated MEng at the University of
+          Patras. Most recently I've been inside the <strong>ALICE experiment at CERN</strong>,
+          building ROOT/C++ pipelines that turn raw detector output into real-time quality-control
+          signal on an HPC cluster.
+        </p>
+        <p>
+          My work runs the full length of the data lifecycle: distributed hash tables that stay
+          correct under node failure, information-retrieval engines, and machine-learning models on
+          real sensor and booking data. I care about correctness, performance, and writing code
+          other people can trust.
+        </p>
+      </div>
+
+      <dl class="about__facts" data-reveal>
+        {
+          facts.map((f) => (
+            <div class="about__fact">
+              <dt class="eyebrow">{f.k}</dt>
+              <dd>{f.v}</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </div>
+  </div>
+</section>
+
+<style>
+  .about__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+    gap: clamp(2rem, 6vw, 5.5rem);
+    align-items: start;
+  }
+  @media (max-width: 820px) {
+    .about__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  .about__media {
+    position: sticky;
+    top: 100px;
+  }
+  @media (max-width: 820px) {
+    .about__media {
+      position: static;
+      max-width: 360px;
+    }
+  }
+  .about__portrait {
+    position: relative;
+    border-radius: var(--radius);
+    overflow: hidden;
+    border: 1px solid var(--line);
+    background: var(--bg-soft);
+  }
+  .about__portrait img {
+    width: 100%;
+    height: auto;
+    /* Duotone grade so the white-studio shot lives inside the palette. */
+    filter: grayscale(1) contrast(1.05) brightness(0.95);
+    mix-blend-mode: luminosity;
+    transition:
+      filter 0.6s var(--ease),
+      transform 0.8s var(--ease);
+  }
+  .about__portrait-grade {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(180deg, transparent 40%, var(--bg) 100%),
+      radial-gradient(120% 100% at 70% 10%, var(--accent-glow), transparent 55%);
+    mix-blend-mode: screen;
+    pointer-events: none;
+  }
+  .about__portrait:hover img {
+    filter: grayscale(0.55) contrast(1.02) brightness(1);
+    transform: scale(1.02);
+  }
+  .about__caption {
+    margin-top: 0.9rem;
+    font-size: 0.74rem;
+    letter-spacing: 0.04em;
+  }
+  .about__head {
+    margin-bottom: 2rem;
+  }
+  .about__lead {
+    font-size: var(--step-3);
+    line-height: 1.05;
+    max-width: 18ch;
+    margin-bottom: 2rem;
+  }
+  .about__lead em {
+    color: var(--accent);
+  }
+  .about__prose {
+    max-width: 56ch;
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+    color: var(--text-dim);
+    font-size: var(--step-0);
+  }
+  .about__prose strong {
+    color: var(--text);
+  }
+  .about__facts {
+    margin-top: 2.6rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem 2rem;
+    border-top: 1px solid var(--line);
+    padding-top: 2rem;
+  }
+  @media (max-width: 480px) {
+    .about__facts {
+      grid-template-columns: 1fr;
+    }
+  }
+  .about__fact dt {
+    margin-bottom: 0.4rem;
+  }
+  .about__fact dd {
+    font-size: var(--step--1);
+    color: var(--text);
+  }
+</style>

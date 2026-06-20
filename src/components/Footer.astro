@@ -1,0 +1,102 @@
+---
+import { person } from '../data/profile';
+import { getGitHubData } from '../lib/github';
+
+const data = await getGitHubData();
+const synced = new Date(data.fetchedAt).toLocaleDateString('en-GB', {
+  day: '2-digit',
+  month: 'short',
+  year: 'numeric',
+});
+const year = new Date().getFullYear();
+---
+
+<footer class="footer">
+  <div class="container footer__inner">
+    <div class="footer__lead">
+      <p class="display footer__cta">
+        Let's build something<br /><em>measurable.</em>
+      </p>
+      <a class="btn btn--primary" href={`mailto:${person.email}`}>
+        Start a conversation <span class="arrow" aria-hidden="true">↗</span>
+      </a>
+    </div>
+
+    <div class="footer__meta">
+      <div class="footer__col">
+        <span class="eyebrow">Elsewhere</span>
+        <a href={person.links.github} target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+        <a href={person.links.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn ↗</a>
+        <a href={`mailto:${person.email}`}>Email ↗</a>
+      </div>
+      <div class="footer__col">
+        <span class="eyebrow">Colophon</span>
+        <span class="dim">Astro · static · GitHub Pages</span>
+        <span class="dim">Repo data via GitHub API at build</span>
+        <span class="dim mono">synced {synced}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="container footer__base">
+    <span class="mono dim">© {year} {person.name}</span>
+    <span class="mono dim">Built by hand · {person.links.site.replace('https://', '')}</span>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    border-top: 1px solid var(--line);
+    padding-block: clamp(4rem, 9vh, 7rem) 2rem;
+    background: radial-gradient(120% 80% at 50% 0%, var(--accent-glow), transparent 60%), var(--bg);
+  }
+  .footer__inner {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: clamp(2.5rem, 6vw, 6rem);
+    align-items: end;
+  }
+  @media (max-width: 760px) {
+    .footer__inner {
+      grid-template-columns: 1fr;
+      gap: 3rem;
+    }
+  }
+  .footer__cta {
+    font-size: clamp(2.4rem, 1.6rem + 4vw, 5rem);
+    line-height: 0.98;
+    margin-bottom: 1.8rem;
+  }
+  .footer__meta {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+  .footer__col {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+    font-size: var(--step--1);
+  }
+  .footer__col .eyebrow {
+    margin-bottom: 0.4rem;
+  }
+  .footer__col a {
+    color: var(--text-dim);
+    transition: color 0.3s var(--ease);
+    width: fit-content;
+  }
+  .footer__col a:hover {
+    color: var(--accent);
+  }
+  .footer__base {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: clamp(3rem, 8vh, 6rem);
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--line);
+    font-size: 0.74rem;
+  }
+</style>

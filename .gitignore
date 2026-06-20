@@ -1,0 +1,26 @@
+# Build output
+dist/
+.astro/
+
+# Dependencies
+node_modules/
+
+# Build-time data cache (regenerated on every build)
+.cache/
+
+# Environment / secrets — never commit
+.env
+.env.*
+!.env.example
+
+# Local agent tooling (not part of the site)
+.claude*
+.agents*
+.impeccable
+skills-lock.json
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+*.log
+npm-debug.log*
