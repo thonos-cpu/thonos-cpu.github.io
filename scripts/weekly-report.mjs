@@ -8,13 +8,13 @@
  * "unavailable" and the report still posts.
  *
  * Env:
- *   GOATCOUNTER_CODE        e.g. "thonos"  (https://thonos.goatcounter.com)
+ *   GOATCOUNTER_CODE        e.g. "thanos"  (https://thanos.goatcounter.com)
  *   GOATCOUNTER_API_TOKEN   API token from GoatCounter → Settings → API
  *   GITHUB_TOKEN            provided automatically by Actions
  *   GITHUB_REPOSITORY       "owner/repo", provided automatically by Actions
  */
 
-const GC_CODE = process.env.GOATCOUNTER_CODE || 'thonos';
+const GC_CODE = process.env.GOATCOUNTER_CODE || 'thanos';
 const GC_TOKEN = process.env.GOATCOUNTER_API_TOKEN || '';
 const GH_TOKEN = process.env.GITHUB_TOKEN || '';
 const REPO = process.env.GITHUB_REPOSITORY || '';

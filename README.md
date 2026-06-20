@@ -74,7 +74,7 @@ unauthenticated API limit while developing. Build data is cached in `.cache/` fo
 
 1. **Pages source** → repo **Settings → Pages → Build and deployment → Source: GitHub Actions**.
 2. **Analytics** → create a free site at [goatcounter.com](https://www.goatcounter.com)
-   with code `thonos` (or change `GOATCOUNTER_CODE` in `src/layouts/Base.astro`).
+   with code `thanos` (or change `GOATCOUNTER_CODE` in `src/layouts/Base.astro`).
 3. **Weekly report** (optional) → in repo settings add:
    - **Variable** `GOATCOUNTER_CODE` = your GoatCounter code
    - **Secret** `GOATCOUNTER_API_TOKEN` = a token from GoatCounter → Settings → API
