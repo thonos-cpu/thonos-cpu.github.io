@@ -5,7 +5,7 @@
   "private": true,
   "description": "Personal portfolio for Athanasios Tasis — static, build-time GitHub data, deployed to GitHub Pages.",
   "engines": {
-    "node": ">=20"
+    "node": ">=22.12.0"
   },
   "scripts": {
     "dev": "astro dev",
