@@ -26,7 +26,7 @@ const runtimes: Record<string, Runtime> = {
   go: { file: "main.go", commands: [["go", ["run", "main.go"]]] },
   csharp: { file: "Program.cs", commands: [["dotnet", ["new", "console", "--force", "--output", "app"]], ["cp", ["Program.cs", "app/Program.cs"]], ["dotnet", ["run", "--project", "app", "--no-restore"]]] },
   kotlin: { file: "Main.kt", commands: [["kotlinc", ["Main.kt", "-include-runtime", "-d", "main.jar"]], ["java", ["-jar", "main.jar"]]] },
-  swift: { file: "main.swift", commands: [["swift", ["main.swift"]]] },
+  perl: { file: "main.pl", commands: [["perl", ["main.pl"]]] },
   php: { file: "main.php", commands: [["php", ["main.php"]]] },
   ruby: { file: "main.rb", commands: [["ruby", ["main.rb"]]] },
   bash: { file: "main.sh", commands: [["bash", ["main.sh"]]] },

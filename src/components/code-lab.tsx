@@ -16,7 +16,7 @@ const languages = [
   ["go", "Go", "package main\nimport \"fmt\"\nfunc main() { fmt.Println(\"Hello from Go\") }"],
   ["csharp", "C#", "using System;\nclass Program { static void Main() { Console.WriteLine(\"Hello from C#\"); } }"],
   ["kotlin", "Kotlin", "fun main() { println(\"Hello from Kotlin\") }"],
-  ["swift", "Swift", "print(\"Hello from Swift\")"],
+  ["perl", "Perl", "my @values = (3, 8, 13, 21);\nmy $sum = 0;\n$sum += $_ for @values;\nprint \"sum: $sum\\n\";"],
   ["php", "PHP", "<?php\necho \"Hello from PHP\\n\";"],
   ["ruby", "Ruby", "puts 'Hello from Ruby'"],
   ["bash", "Bash", "values=(3 8 13 21)\nsum=0\nfor n in \"${values[@]}\"; do ((sum+=n)); done\necho \"sum: $sum\""],
