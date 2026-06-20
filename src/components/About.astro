@@ -39,16 +39,34 @@ const facts = [
 
       <div class="about__prose" data-reveal>
         <p>
-          I'm a software engineer in the final year of an integrated MEng at the University of
-          Patras. Most recently I've been inside the <strong>ALICE experiment at CERN</strong>,
-          building ROOT/C++ pipelines that turn raw detector output into real-time quality-control
-          signal on an HPC cluster.
+          I'm a Computer Engineering &amp; Informatics student at the University of Patras, where
+          I've built a solid foundation in software engineering, data systems, and machine learning
+          over the past few years.
         </p>
         <p>
-          My work runs the full length of the data lifecycle: distributed hash tables that stay
-          correct under node failure, information-retrieval engines, and machine-learning models on
-          real sensor and booking data. I care about correctness, performance, and writing code
-          other people can trust.
+          I have collaborated with the <strong>ALICE Collaboration</strong> at the GSI Helmholtz Centre
+          for Heavy-Ion Research, working hands-on with high-volume scientific datasets and HPC environments
+          — an incredible learning experience.
+        </p>
+        <p>
+          On the project side, I've built things end-to-end: a large-scale distributed hash-table
+          simulation across hundreds of nodes and multi-gigabyte datasets, a custom TF-IDF search
+          engine for scientific document retrieval with full evaluation pipelines, and various other
+          systems touching spatial indexing, databases, and network simulations. I tend to care a
+          lot about the details — architecture, performance, scalability — and I like understanding
+          <em>why</em> a system behaves the way it does, not just making it work.
+        </p>
+        <p>
+          My main tools are Python and C++, and I work regularly with PyTorch, TensorFlow,
+          scikit-learn, and scientific-computing libraries like NumPy, Pandas, and ROOT. I'm also
+          comfortable in parallel and HPC environments and building clean, reproducible data
+          pipelines.
+        </p>
+        <p>
+          I'm looking for roles in backend engineering, distributed systems, data engineering, or
+          AI/ML — ideally somewhere with hard technical problems and data at real-world scale. If
+          that sounds like your team, feel free to
+          <a class="about__link" href={`mailto:${person.email}`}>reach out</a>.
         </p>
       </div>
 
@@ -145,6 +163,20 @@ const facts = [
   }
   .about__prose strong {
     color: var(--text);
+  }
+  .about__prose em {
+    color: var(--text);
+    font-style: italic;
+  }
+  .about__link {
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-thickness: 1px;
+    transition: opacity 0.3s var(--ease);
+  }
+  .about__link:hover {
+    opacity: 0.75;
   }
   .about__facts {
     margin-top: 2.6rem;

@@ -13,7 +13,7 @@ export const person = {
   headline: 'I build CERN-scale data pipelines.',
   // Longer positioning statement, used in the hero / meta description.
   summary:
-    'Software engineer working on scientific data pipelines at CERN scale. I write Python and C/C++ against the ROOT framework for parallel computing and real-time quality-control automation on HPC clusters — with a strong footing in algorithms, information retrieval and distributed systems.',
+    'Computer Engineering student building scalable data and AI systems — from machine-learning pipelines and time-series analytics to HPC data processing at CERN’s ALICE experiment, in Python, C/C++ and distributed systems.',
   // Contact — email is public (also the domain of this site). No phone, no address.
   email: 'athanasios@tasis.info',
   links: {
@@ -134,7 +134,7 @@ export const skills: SkillGroup[] = [
   },
   {
     label: 'Data & ML',
-    items: ['NumPy', 'Pandas', 'scikit-learn', 'Feature engineering', 'Time-series', 'EDA'],
+    items: ['PyTorch', 'TensorFlow', 'scikit-learn', 'NumPy', 'Pandas', 'Time-series', 'ROOT'],
   },
   {
     label: 'Systems',
