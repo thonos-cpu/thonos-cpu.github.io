@@ -24,18 +24,16 @@ const links = [
       <span class="nav__status mono" title="Open to opportunities">
         <span class="nav__pulse" aria-hidden="true"></span>available
       </span>
-      <a
+      <button
+        type="button"
         class="btn btn--primary nav__book"
-        href={person.links.cal}
-        target="_blank"
-        rel="noopener noreferrer"
         data-cal-namespace="book"
         data-cal-link="athanasiostasis/book"
         data-cal-origin="https://app.cal.eu"
         data-cal-config='{"layout":"month_view","theme":"auto"}'
       >
         Book a call
-      </a>
+      </button>
       <button id="theme-toggle" class="nav__theme" type="button" aria-label="Toggle colour theme">
         <svg
           class="icon-sun"

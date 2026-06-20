@@ -18,18 +18,16 @@ const year = new Date().getFullYear();
         Let's build something<br /><em>measurable.</em>
       </p>
       <div class="footer__actions">
-        <a
+        <button
+          type="button"
           class="btn btn--primary"
-          href={person.links.cal}
-          target="_blank"
-          rel="noopener noreferrer"
           data-cal-namespace="book"
           data-cal-link="athanasiostasis/book"
           data-cal-origin="https://app.cal.eu"
           data-cal-config='{"layout":"month_view","theme":"auto"}'
         >
           Book a call <span class="arrow" aria-hidden="true">↗</span>
-        </a>
+        </button>
         <a class="btn" href={`mailto:${person.email}`}> Send an email </a>
       </div>
     </div>
@@ -39,15 +37,6 @@ const year = new Date().getFullYear();
         <span class="eyebrow">Elsewhere</span>
         <a href={person.links.github} target="_blank" rel="noopener noreferrer">GitHub ↗</a>
         <a href={person.links.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn ↗</a>
-        <a
-          href={person.links.cal}
-          target="_blank"
-          rel="noopener noreferrer"
-          data-cal-namespace="book"
-          data-cal-link="athanasiostasis/book"
-          data-cal-origin="https://app.cal.eu"
-          data-cal-config='{"layout":"month_view","theme":"auto"}'>Book a call ↗</a
-        >
         <a href={`mailto:${person.email}`}>Email ↗</a>
       </div>
       <div class="footer__col">
