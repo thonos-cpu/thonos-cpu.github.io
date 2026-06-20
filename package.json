@@ -24,7 +24,7 @@
     "@vercel/sandbox": "2.2.1",
     "@vercel/speed-insights": "^2.0.0",
     "geist": "^1.5.1",
-    "lucide-react": "^0.468.0",
+    "lucide-react": "^1.21.0",
     "next": "^16.2.9",
     "react": "^19.2.7",
     "react-dom": "^19.2.7"
