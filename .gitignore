@@ -11,7 +11,9 @@ node_modules/
 # Environment / secrets — never commit
 .env
 .env.*
-!.env.example
+.env.example
+*.env
+*.example
 
 # Local agent tooling (not part of the site)
 .claude*
