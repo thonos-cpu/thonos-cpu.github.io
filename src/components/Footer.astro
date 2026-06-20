@@ -11,15 +11,27 @@ const synced = new Date(data.fetchedAt).toLocaleDateString('en-GB', {
 const year = new Date().getFullYear();
 ---
 
-<footer class="footer">
+<footer id="contact" class="footer" data-section="contact">
   <div class="container footer__inner">
     <div class="footer__lead">
       <p class="display footer__cta">
         Let's build something<br /><em>measurable.</em>
       </p>
-      <a class="btn btn--primary" href={`mailto:${person.email}`}>
-        Start a conversation <span class="arrow" aria-hidden="true">↗</span>
-      </a>
+      <div class="footer__actions">
+        <a
+          class="btn btn--primary"
+          href={person.links.cal}
+          target="_blank"
+          rel="noopener noreferrer"
+          data-cal-namespace="book"
+          data-cal-link="athanasiostasis/book"
+          data-cal-origin="https://app.cal.eu"
+          data-cal-config='{"layout":"month_view","theme":"auto"}'
+        >
+          Book a call <span class="arrow" aria-hidden="true">↗</span>
+        </a>
+        <a class="btn" href={`mailto:${person.email}`}> Send an email </a>
+      </div>
     </div>
 
     <div class="footer__meta">
@@ -27,6 +39,15 @@ const year = new Date().getFullYear();
         <span class="eyebrow">Elsewhere</span>
         <a href={person.links.github} target="_blank" rel="noopener noreferrer">GitHub ↗</a>
         <a href={person.links.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn ↗</a>
+        <a
+          href={person.links.cal}
+          target="_blank"
+          rel="noopener noreferrer"
+          data-cal-namespace="book"
+          data-cal-link="athanasiostasis/book"
+          data-cal-origin="https://app.cal.eu"
+          data-cal-config='{"layout":"month_view","theme":"auto"}'>Book a call ↗</a
+        >
         <a href={`mailto:${person.email}`}>Email ↗</a>
       </div>
       <div class="footer__col">
@@ -66,6 +87,11 @@ const year = new Date().getFullYear();
     font-size: clamp(2.4rem, 1.6rem + 4vw, 5rem);
     line-height: 0.98;
     margin-bottom: 1.8rem;
+  }
+  .footer__actions {
+    display: flex;
+    gap: 0.8rem;
+    flex-wrap: wrap;
   }
   .footer__meta {
     display: grid;

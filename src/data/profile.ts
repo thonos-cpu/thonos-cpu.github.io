@@ -20,6 +20,7 @@ export const person = {
     github: 'https://github.com/thonos-cpu',
     linkedin: 'https://www.linkedin.com/in/thanostasis',
     site: 'https://tasis.info',
+    cal: 'https://app.cal.eu/athanasiostasis/book',
   },
   // Neutral region only — never a precise location.
   availability: 'Europe · open to research & data-engineering roles',

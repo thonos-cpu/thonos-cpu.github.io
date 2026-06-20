@@ -99,5 +99,47 @@ const ogImage = new URL('/portraits/thanos-2.jpg', Astro.site).href;
 
     <!-- Site behaviour: smooth scroll, scroll-reveal, theme toggle, section analytics -->
     <script src="../scripts/site.ts"></script>
+
+    <!-- Cal.com floating button + popup. Also binds any [data-cal-link] element. -->
+    <script is:inline>
+      /* eslint-disable */
+      (function (C, A, L) {
+        let p = function (a, ar) {
+          a.q.push(ar);
+        };
+        let d = C.document;
+        C.Cal =
+          C.Cal ||
+          function () {
+            let cal = C.Cal;
+            let ar = arguments;
+            if (!cal.loaded) {
+              cal.ns = {};
+              cal.q = cal.q || [];
+              d.head.appendChild(d.createElement('script')).src = A;
+              cal.loaded = true;
+            }
+            if (ar[0] === L) {
+              const api = function () {
+                p(api, arguments);
+              };
+              const namespace = ar[1];
+              api.q = api.q || [];
+              if (typeof namespace === 'string') {
+                cal.ns[namespace] = cal.ns[namespace] || api;
+                p(cal.ns[namespace], ar);
+                p(cal, ['initNamespace', namespace]);
+              } else p(cal, ar);
+              return;
+            }
+            p(cal, ar);
+          };
+      })(window, 'https://app.cal.eu/embed/embed.js', 'init');
+      Cal('init', 'book', { origin: 'https://app.cal.eu' });
+      Cal.config = Cal.config || {};
+      Cal.config.forwardQueryParams = true;
+      // Element-click only — any [data-cal-link] element opens the popup.
+      Cal.ns.book('ui', { hideEventTypeDetails: false, layout: 'month_view' });
+    </script>
   </body>
 </html>
