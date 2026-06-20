@@ -5,6 +5,7 @@ import '@fontsource/instrument-serif';
 import '../styles/global.css';
 import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
+import ThanosGPT from '../components/ThanosGPT.astro';
 import { person } from '../data/profile';
 
 interface Props {
@@ -96,6 +97,7 @@ const ogImage = new URL('/portraits/thanos-2.jpg', Astro.site).href;
       <slot />
     </main>
     <Footer />
+    <ThanosGPT />
 
     <!-- Site behaviour: smooth scroll, scroll-reveal, theme toggle, section analytics -->
     <script src="../scripts/site.ts"></script>

@@ -1,0 +1,504 @@
+---
+// ThanosGPT — a minimal in-browser assistant. No backend, no model download,
+// no third parties: it matches the question to a curated knowledge base and
+// replies with the written answer. Opened by the nav "Ask" button (#thanosgpt-open).
+---
+
+<div class="tg" data-tg hidden>
+  <div class="tg__backdrop" data-tg-close aria-hidden="true"></div>
+
+  <div class="tg__panel" role="dialog" aria-modal="true" aria-labelledby="tg-title">
+    <header class="tg__head">
+      <span class="tg__avatar" aria-hidden="true">✦</span>
+      <div class="tg__id">
+        <strong id="tg-title">ThanosGPT</strong>
+        <span class="tg__sub mono">ask about Athanasios</span>
+      </div>
+      <button class="tg__close" type="button" data-tg-close aria-label="Close assistant">
+        <svg
+          viewBox="0 0 24 24"
+          width="16"
+          height="16"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          aria-hidden="true"
+        >
+          <path d="M6 6l12 12M18 6L6 18"></path>
+        </svg>
+      </button>
+    </header>
+
+    <div class="tg__log" data-tg-log aria-live="polite"></div>
+
+    <div class="tg__chips" data-tg-chips></div>
+
+    <form class="tg__form" data-tg-form>
+      <input
+        class="tg__input"
+        data-tg-input
+        type="text"
+        autocomplete="off"
+        placeholder="Ask me anything about Athanasios…"
+        aria-label="Your question"
+      />
+      <button class="tg__send" type="submit" aria-label="Send">
+        <svg
+          viewBox="0 0 24 24"
+          width="16"
+          height="16"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          aria-hidden="true"
+        >
+          <path d="M5 12h14M13 6l6 6-6 6"></path>
+        </svg>
+      </button>
+    </form>
+
+    <p class="tg__note mono">Runs entirely in your browser · nothing leaves this page</p>
+  </div>
+</div>
+
+<style is:global>
+  /* Global (not scoped): the chat bubbles and chips are created in JS at runtime,
+     so they wouldn't receive Astro's scoped styles. All classes are uniquely .tg*. */
+  .tg {
+    position: fixed;
+    inset: 0;
+    z-index: 300;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+    padding: clamp(0.75rem, 2vw, 1.5rem);
+  }
+  .tg[hidden] {
+    display: none;
+  }
+  .tg__backdrop {
+    position: absolute;
+    inset: 0;
+    background: color-mix(in oklab, var(--bg) 55%, transparent);
+    backdrop-filter: blur(2px);
+    opacity: 0;
+    animation: tg-fade 0.3s var(--ease) forwards;
+  }
+  .tg__panel {
+    position: relative;
+    width: min(390px, 100%);
+    height: min(560px, 82vh);
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-elevated);
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    transform: translateY(12px) scale(0.99);
+    opacity: 0;
+    animation: tg-pop 0.32s var(--ease-out) forwards;
+  }
+  @keyframes tg-fade {
+    to {
+      opacity: 1;
+    }
+  }
+  @keyframes tg-pop {
+    to {
+      transform: none;
+      opacity: 1;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .tg__backdrop,
+    .tg__panel {
+      animation: none;
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  .tg__head {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.85rem 1rem;
+    border-bottom: 1px solid var(--line);
+  }
+  .tg__avatar {
+    display: grid;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: var(--accent-ink);
+    font-size: 0.85rem;
+  }
+  .tg__id {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.15;
+  }
+  .tg__id strong {
+    font-size: 0.92rem;
+    font-weight: 600;
+  }
+  .tg__sub {
+    font-size: 0.66rem;
+    color: var(--text-faint);
+    letter-spacing: 0.04em;
+  }
+  .tg__close {
+    margin-left: auto;
+    display: grid;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    color: var(--text-dim);
+    transition:
+      color 0.3s var(--ease),
+      background 0.3s var(--ease);
+  }
+  .tg__close:hover {
+    color: var(--text);
+    background: var(--surface-hover);
+  }
+
+  .tg__log {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+    scrollbar-width: thin;
+  }
+  .tg__msg {
+    max-width: 85%;
+    padding: 0.6rem 0.8rem;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    animation: tg-msg 0.3s var(--ease-out);
+  }
+  @keyframes tg-msg {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+  }
+  .tg__msg--bot {
+    align-self: flex-start;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    color: var(--text);
+    border-bottom-left-radius: 4px;
+  }
+  .tg__msg--user {
+    align-self: flex-end;
+    background: var(--accent);
+    color: var(--accent-ink);
+    border-bottom-right-radius: 4px;
+  }
+  .tg__msg em {
+    font-style: italic;
+  }
+
+  .tg__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    padding: 0 1rem 0.6rem;
+  }
+  .tg__chip {
+    font-size: 0.72rem;
+    color: var(--text-dim);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 0.32rem 0.66rem;
+    transition:
+      color 0.25s var(--ease),
+      border-color 0.25s var(--ease);
+  }
+  .tg__chip:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .tg__form {
+    display: flex;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    border-top: 1px solid var(--line);
+  }
+  .tg__input {
+    flex: 1;
+    background: var(--bg-soft);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 0.6rem 0.75rem;
+    color: var(--text);
+    font: inherit;
+    font-size: 0.85rem;
+    outline: none;
+    transition: border-color 0.25s var(--ease);
+  }
+  .tg__input:focus {
+    border-color: var(--accent);
+  }
+  .tg__send {
+    display: grid;
+    place-items: center;
+    width: 38px;
+    border-radius: 10px;
+    background: var(--accent);
+    color: var(--accent-ink);
+    flex-shrink: 0;
+    transition: opacity 0.25s var(--ease);
+  }
+  .tg__send:hover {
+    opacity: 0.88;
+  }
+  .tg__note {
+    text-align: center;
+    font-size: 0.62rem;
+    color: var(--text-faint);
+    letter-spacing: 0.03em;
+    padding: 0 0.75rem 0.7rem;
+  }
+
+  @media (max-width: 480px) {
+    .tg {
+      padding: 0;
+    }
+    .tg__panel {
+      width: 100%;
+      height: 88vh;
+      border-radius: var(--radius) var(--radius) 0 0;
+    }
+  }
+</style>
+
+<script>
+  import { KB, BOT_INTRO, FALLBACK, SUGGESTIONS } from '../data/knowledge';
+
+  const root = document.querySelector<HTMLElement>('[data-tg]');
+  const openBtn = document.getElementById('thanosgpt-open');
+  if (root && openBtn) {
+    const panel = root.querySelector<HTMLElement>('.tg__panel')!;
+    const log = root.querySelector<HTMLElement>('[data-tg-log]')!;
+    const chips = root.querySelector<HTMLElement>('[data-tg-chips]')!;
+    const form = root.querySelector<HTMLFormElement>('[data-tg-form]')!;
+    const input = root.querySelector<HTMLInputElement>('[data-tg-input]')!;
+    const closers = root.querySelectorAll('[data-tg-close]');
+
+    // ---- tiny NLP: normalise + synonym expansion --------------------------
+    const STOP = new Set([
+      'the',
+      'a',
+      'an',
+      'is',
+      'are',
+      'was',
+      'were',
+      'do',
+      'does',
+      'did',
+      'of',
+      'to',
+      'for',
+      'in',
+      'on',
+      'at',
+      'and',
+      'or',
+      'his',
+      'he',
+      'him',
+      'you',
+      'your',
+      'me',
+      'my',
+      'i',
+      'can',
+      'could',
+      'would',
+      'what',
+      'whats',
+      'tell',
+      'about',
+      'please',
+      'with',
+      'how',
+      'has',
+      'have',
+      'it',
+      'this',
+      'that',
+      'any',
+      'some',
+      'give',
+      'show',
+    ]);
+    const SYN: Record<string, string> = {
+      job: 'experience',
+      jobs: 'experience',
+      work: 'experience',
+      worked: 'experience',
+      career: 'experience',
+      employment: 'experience',
+      employer: 'experience',
+      studied: 'education',
+      studies: 'education',
+      study: 'education',
+      degree: 'education',
+      university: 'education',
+      college: 'education',
+      uni: 'education',
+      school: 'education',
+      project: 'projects',
+      portfolio: 'projects',
+      built: 'projects',
+      build: 'projects',
+      made: 'projects',
+      repo: 'projects',
+      repos: 'projects',
+      repository: 'projects',
+      tech: 'skills',
+      technologies: 'skills',
+      stack: 'skills',
+      tools: 'skills',
+      skill: 'skills',
+      ai: 'ml',
+      'machine-learning': 'ml',
+      learning: 'ml',
+      model: 'ml',
+      models: 'ml',
+      reach: 'contact',
+      connect: 'contact',
+      hire: 'contact',
+      email: 'email',
+      dht: 'chord',
+      distributed: 'distributed',
+      cv: 'resume',
+      where: 'location',
+      live: 'location',
+      lives: 'location',
+      based: 'location',
+      phone: 'private',
+      mobile: 'private',
+      number: 'private',
+    };
+    function tokens(s: string): string[] {
+      return s
+        .toLowerCase()
+        .replace(/[^a-z0-9+\s-]/g, ' ')
+        .split(/\s+/)
+        .map((t) => SYN[t] || t)
+        .filter((t) => t.length > 1 && !STOP.has(t));
+    }
+
+    // Pre-tokenise the KB once.
+    const index = KB.map((e) => {
+      const bag = new Map<string, number>();
+      for (const phrase of e.q) for (const t of tokens(phrase)) bag.set(t, 3);
+      for (const t of tokens(e.a)) bag.set(t, (bag.get(t) || 0) + 1);
+      return { entry: e, bag };
+    });
+
+    const summaryAnswer = KB.find((e) => e.id === 'summary')?.a ?? FALLBACK;
+
+    function answer(query: string): string {
+      // greetings / thanks shortcuts
+      const raw = query.toLowerCase();
+      if (/^(hi|hey|hello|yo|sup|hiya)\b/.test(raw)) return BOT_INTRO;
+      if (/(thank|thanks|cheers|thx)/.test(raw))
+        return "You're welcome! Anything else about Athanasios?";
+
+      const qt = tokens(query);
+      // All function-words (e.g. "what does he do?", "who is he?") → the summary.
+      if (!qt.length) return summaryAnswer;
+
+      let best = { score: 0, a: '' };
+      for (const { entry, bag } of index) {
+        let score = 0;
+        for (const t of qt) score += bag.get(t) || 0;
+        score = score / Math.sqrt(qt.length); // normalise by query length
+        if (score > best.score) best = { score, a: entry.a };
+      }
+      return best.score >= 1.6 ? best.a : FALLBACK;
+    }
+
+    // ---- rendering --------------------------------------------------------
+    function bubble(text: string, who: 'bot' | 'user') {
+      const el = document.createElement('div');
+      el.className = `tg__msg tg__msg--${who}`;
+      // allow only <em> emphasis from the KB; everything else is plain text
+      el.innerHTML = text
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/\*([^*]+)\*/g, '<em>$1</em>');
+      log.appendChild(el);
+      log.scrollTop = log.scrollHeight;
+    }
+
+    function ask(query: string) {
+      bubble(query, 'user');
+      chips.innerHTML = '';
+      window.setTimeout(() => bubble(answer(query), 'bot'), 200);
+      const gc = (window as unknown as { goatcounter?: { count: (o: object) => void } })
+        .goatcounter;
+      gc?.count({ path: 'thanosgpt-query', title: 'ThanosGPT query', event: true });
+    }
+
+    function renderChips() {
+      chips.innerHTML = '';
+      for (const s of SUGGESTIONS) {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'tg__chip';
+        b.textContent = s;
+        b.addEventListener('click', () => ask(s));
+        chips.appendChild(b);
+      }
+    }
+
+    // ---- open / close -----------------------------------------------------
+    let lastFocus: HTMLElement | null = null;
+    function open() {
+      lastFocus = document.activeElement as HTMLElement;
+      root!.hidden = false;
+      if (!log.childElementCount) {
+        bubble(BOT_INTRO, 'bot');
+        renderChips();
+      }
+      window.setTimeout(() => input.focus(), 50);
+      const gc = (window as unknown as { goatcounter?: { count: (o: object) => void } })
+        .goatcounter;
+      gc?.count({ path: 'thanosgpt-open', title: 'ThanosGPT opened', event: true });
+    }
+    function close() {
+      root!.hidden = true;
+      lastFocus?.focus();
+    }
+
+    openBtn.addEventListener('click', open);
+    closers.forEach((c) => c.addEventListener('click', close));
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !root!.hidden) close();
+    });
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const q = input.value.trim();
+      if (!q) return;
+      input.value = '';
+      ask(q);
+    });
+    // keep clicks inside the panel from closing via backdrop
+    panel.addEventListener('click', (e) => e.stopPropagation());
+  }
+</script>

@@ -25,6 +25,15 @@ const links = [
         <span class="nav__pulse" aria-hidden="true"></span>available
       </span>
       <button
+        id="thanosgpt-open"
+        class="nav__ask"
+        type="button"
+        aria-label="Ask ThanosGPT about Athanasios"
+      >
+        <span class="nav__ask-mark" aria-hidden="true">✦</span>
+        <span class="nav__ask-label">Ask</span>
+      </button>
+      <button
         type="button"
         class="btn btn--primary nav__book"
         data-cal-namespace="book"
@@ -185,6 +194,32 @@ const links = [
     }
     100% {
       box-shadow: 0 0 0 0 rgba(74, 208, 127, 0);
+    }
+  }
+  .nav__ask {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.4rem 0.8rem;
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    transition:
+      color 0.3s var(--ease),
+      border-color 0.3s var(--ease);
+  }
+  .nav__ask:hover {
+    color: var(--text);
+    border-color: var(--text);
+  }
+  .nav__ask-mark {
+    color: var(--accent);
+    font-size: 0.7rem;
+  }
+  @media (max-width: 440px) {
+    .nav__ask-label {
+      display: none;
     }
   }
   .nav__book {
