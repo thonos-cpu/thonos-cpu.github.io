@@ -22,7 +22,9 @@
     "astro": "^6.4.8",
     "lenis": "^1",
     "lightningcss": "^1.32.0",
-    "sanitize-html": "^2"
+    "sanitize-html": "^2",
+    "sql.js": "^1.14.1",
+    "wasmoon": "^1.16.0"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9",
@@ -31,6 +33,7 @@
     "@fontsource-variable/geist-mono": "^5",
     "@fontsource/instrument-serif": "^5",
     "@types/sanitize-html": "^2",
+    "@types/sql.js": "^1.4.11",
     "eslint": "^9",
     "eslint-plugin-astro": "^1",
     "github-markdown-css": "^5",

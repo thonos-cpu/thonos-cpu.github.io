@@ -1,0 +1,267 @@
+---
+// In-browser code playground. Runs JavaScript, Lua and SQLite entirely on the
+// visitor's device (Web Worker), no API or server. Runtimes load lazily on Run.
+---
+
+<section id="playground" class="section playground" data-section="playground">
+  <div class="container">
+    <div class="section-head">
+      <h2 class="section-title">Playground</h2>
+      <p class="section-note">Write and run code right here — JavaScript, Lua or SQLite.</p>
+    </div>
+
+    <div class="pg" data-pg>
+      <div class="pg__bar">
+        <label class="pg__lang">
+          <span class="visually-hidden">Language</span>
+          <select data-pg-lang>
+            <option value="javascript">JavaScript</option>
+            <option value="lua">Lua</option>
+            <option value="sql">SQL · SQLite</option>
+          </select>
+        </label>
+        <div class="pg__bar-actions">
+          <button class="pg__btn" type="button" data-pg-clear>Clear</button>
+          <button class="pg__btn pg__btn--run" type="button" data-pg-run>
+            Run <span aria-hidden="true">▶</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="pg__grid">
+        <textarea
+          class="pg__editor mono"
+          data-pg-code
+          spellcheck="false"
+          autocomplete="off"
+          autocapitalize="off"
+          aria-label="Code editor"></textarea>
+        <pre
+          class="pg__out mono"
+          data-pg-out
+          aria-live="polite"><span class="dim">// output appears here — pick a language and hit Run</span></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Standalone page: clear the fixed nav. */
+  .playground {
+    padding-top: clamp(7rem, 14vh, 10rem);
+    min-height: 70vh;
+  }
+  .pg {
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: var(--bg-soft);
+  }
+  .pg__bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.7rem 0.9rem;
+    border-bottom: 1px solid var(--line);
+    flex-wrap: wrap;
+  }
+  .pg__lang select {
+    font: inherit;
+    font-size: var(--step--1);
+    color: var(--text);
+    background: var(--bg-elevated);
+    border: 1px solid var(--line-strong);
+    border-radius: 8px;
+    padding: 0.4rem 0.7rem;
+    cursor: pointer;
+  }
+  .pg__bar-actions {
+    display: flex;
+    gap: 0.5rem;
+  }
+  .pg__btn {
+    font-size: var(--step--1);
+    padding: 0.42rem 0.9rem;
+    border-radius: 8px;
+    border: 1px solid var(--line-strong);
+    color: var(--text-dim);
+    transition:
+      color 0.25s var(--ease),
+      border-color 0.25s var(--ease),
+      background 0.25s var(--ease);
+  }
+  .pg__btn:hover {
+    color: var(--text);
+    border-color: var(--text);
+  }
+  .pg__btn--run {
+    background: var(--accent);
+    color: var(--accent-ink);
+    border-color: var(--accent);
+  }
+  .pg__btn--run:hover {
+    background: var(--accent-strong);
+    border-color: var(--accent-strong);
+    color: var(--accent-ink);
+  }
+  .pg__btn[disabled] {
+    opacity: 0.55;
+    pointer-events: none;
+  }
+  .pg__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: 320px;
+  }
+  @media (max-width: 720px) {
+    .pg__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  .pg__editor {
+    border: none;
+    outline: none;
+    resize: vertical;
+    min-height: 320px;
+    padding: 1rem;
+    background: transparent;
+    color: var(--text);
+    font-size: 0.82rem;
+    line-height: 1.6;
+    tab-size: 2;
+    border-right: 1px solid var(--line);
+  }
+  @media (max-width: 720px) {
+    .pg__editor {
+      border-right: none;
+      border-bottom: 1px solid var(--line);
+    }
+  }
+  .pg__out {
+    margin: 0;
+    padding: 1rem;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 0.82rem;
+    line-height: 1.6;
+    overflow: auto;
+    white-space: pre-wrap;
+    word-break: break-word;
+    max-height: 480px;
+  }
+  .pg__out--error {
+    color: #f0857d;
+  }
+</style>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-pg]');
+  if (root) {
+    const langSel = root.querySelector<HTMLSelectElement>('[data-pg-lang]')!;
+    const editor = root.querySelector<HTMLTextAreaElement>('[data-pg-code]')!;
+    const out = root.querySelector<HTMLElement>('[data-pg-out]')!;
+    const runBtn = root.querySelector<HTMLButtonElement>('[data-pg-run]')!;
+    const clearBtn = root.querySelector<HTMLButtonElement>('[data-pg-clear]')!;
+
+    const SNIPPETS: Record<string, string> = {
+      javascript: `// JavaScript — runs in a sandboxed worker
+const squares = [1, 2, 3, 4, 5].map((n) => n * n);
+console.log("squares:", squares);
+console.log("sum:", squares.reduce((a, b) => a + b, 0));`,
+      lua: `-- Lua (via wasmoon)
+local function fib(n)
+  if n < 2 then return n end
+  return fib(n - 1) + fib(n - 2)
+end
+for i = 0, 9 do
+  print("fib(" .. i .. ") = " .. fib(i))
+end`,
+      sql: `-- SQLite (via sql.js)
+CREATE TABLE repos(name TEXT, lang TEXT, stars INT);
+INSERT INTO repos VALUES
+  ('Distributed_Systems', 'Python', 2),
+  ('TFIDF-Search-Engine', 'Jupyter', 1),
+  ('Temp_Hum_Prediction_Model', 'Jupyter', 1);
+SELECT lang, COUNT(*) AS repos, SUM(stars) AS stars
+FROM repos GROUP BY lang ORDER BY stars DESC;`,
+    };
+
+    editor.value = SNIPPETS.javascript;
+
+    langSel.addEventListener('change', () => {
+      const snip = SNIPPETS[langSel.value];
+      // Only replace if the editor still holds an untouched snippet.
+      if (Object.values(SNIPPETS).includes(editor.value.trim()) || !editor.value.trim()) {
+        editor.value = snip;
+      }
+    });
+
+    // Tab inserts two spaces instead of moving focus.
+    editor.addEventListener('keydown', (e) => {
+      if (e.key === 'Tab') {
+        e.preventDefault();
+        const s = editor.selectionStart;
+        const en = editor.selectionEnd;
+        editor.value = editor.value.slice(0, s) + '  ' + editor.value.slice(en);
+        editor.selectionStart = editor.selectionEnd = s + 2;
+      }
+    });
+
+    let worker: Worker | null = null;
+    let timer: number | undefined;
+
+    function makeWorker() {
+      worker = new Worker(new URL('../scripts/playground.worker.ts', import.meta.url), {
+        type: 'module',
+      });
+      worker.onmessage = (e: MessageEvent<{ output: string; error?: string }>) => {
+        clearTimeout(timer);
+        const { output, error } = e.data;
+        out.classList.toggle('pg__out--error', Boolean(error));
+        out.textContent =
+          (output || '') + (error ? (output ? '\n' : '') + '✖ ' + error : '') || '(no output)';
+        setRunning(false);
+      };
+    }
+
+    function setRunning(on: boolean) {
+      runBtn.disabled = on;
+      runBtn.innerHTML = on ? 'Running…' : 'Run <span aria-hidden="true">▶</span>';
+    }
+
+    function run() {
+      if (!worker) makeWorker();
+      setRunning(true);
+      out.classList.remove('pg__out--error');
+      out.textContent = 'Running…';
+      worker!.postMessage({ lang: langSel.value, code: editor.value });
+      // Hard timeout: kill runaway code (infinite loops) and recover.
+      clearTimeout(timer);
+      timer = window.setTimeout(() => {
+        worker?.terminate();
+        worker = null;
+        out.classList.add('pg__out--error');
+        out.textContent = '✖ Timed out (8s). Possible infinite loop — execution was stopped.';
+        setRunning(false);
+      }, 8000);
+
+      const gc = (window as unknown as { goatcounter?: { count: (o: object) => void } })
+        .goatcounter;
+      gc?.count({ path: 'playground-run-' + langSel.value, title: 'Playground run', event: true });
+    }
+
+    runBtn.addEventListener('click', run);
+    clearBtn.addEventListener('click', () => {
+      out.textContent = '';
+      out.classList.remove('pg__out--error');
+    });
+    // Ctrl/Cmd + Enter to run.
+    editor.addEventListener('keydown', (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+        e.preventDefault();
+        run();
+      }
+    });
+  }
+</script>

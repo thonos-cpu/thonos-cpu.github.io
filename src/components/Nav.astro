@@ -2,16 +2,17 @@
 import { person } from '../data/profile';
 
 const links = [
-  { href: '#work', label: 'Work' },
-  { href: '#about', label: 'About' },
-  { href: '#path', label: 'Path' },
-  { href: '#contact', label: 'Contact' },
+  { href: '/#work', label: 'Work' },
+  { href: '/#about', label: 'About' },
+  { href: '/#path', label: 'Path' },
+  { href: '/playground', label: 'Playground' },
+  { href: '/#contact', label: 'Contact' },
 ];
 ---
 
 <header class="nav" data-nav>
   <div class="nav__inner container">
-    <a href="#top" class="nav__brand" aria-label={`${person.name} — home`}>
+    <a href="/#top" class="nav__brand" aria-label={`${person.name} — home`}>
       <span class="nav__mark mono">AT</span>
       <span class="nav__domain mono dim">tasis.info</span>
     </a>
@@ -21,9 +22,6 @@ const links = [
     </nav>
 
     <div class="nav__right">
-      <span class="nav__status mono" title="Open to opportunities">
-        <span class="nav__pulse" aria-hidden="true"></span>available
-      </span>
       <button
         id="thanosgpt-open"
         class="nav__ask"
@@ -162,38 +160,6 @@ const links = [
   @media (max-width: 720px) {
     .nav__right {
       margin-left: auto;
-    }
-  }
-  .nav__status {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.45rem;
-    font-size: 0.74rem;
-    color: var(--text-dim);
-    letter-spacing: 0.04em;
-  }
-  @media (max-width: 440px) {
-    .nav__status {
-      display: none;
-    }
-  }
-  .nav__pulse {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: #4ad07f;
-    box-shadow: 0 0 0 0 rgba(74, 208, 127, 0.6);
-    animation: pulse 2.4s infinite;
-  }
-  @keyframes pulse {
-    0% {
-      box-shadow: 0 0 0 0 rgba(74, 208, 127, 0.5);
-    }
-    70% {
-      box-shadow: 0 0 0 7px rgba(74, 208, 127, 0);
-    }
-    100% {
-      box-shadow: 0 0 0 0 rgba(74, 208, 127, 0);
     }
   }
   .nav__ask {

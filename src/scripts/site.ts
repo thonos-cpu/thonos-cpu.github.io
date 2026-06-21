@@ -18,16 +18,17 @@ if (!reduceMotion) {
   };
   requestAnimationFrame(raf);
 
-  // In-page anchor links route through Lenis for a controlled glide.
-  document.querySelectorAll<HTMLAnchorElement>('a[href^="#"]').forEach((a) => {
+  // Same-page hash links glide via Lenis; cross-page links (e.g. /#work from a
+  // sub-page) fall through to normal navigation.
+  document.querySelectorAll<HTMLAnchorElement>('a[href*="#"]').forEach((a) => {
+    const url = new URL(a.href, location.href);
+    if (!url.hash || url.origin !== location.origin || url.pathname !== location.pathname) return;
     a.addEventListener('click', (e) => {
-      const id = a.getAttribute('href');
-      if (!id || id === '#') return;
-      const target = document.querySelector(id);
+      const target = document.querySelector(url.hash);
       if (!target) return;
       e.preventDefault();
       lenis?.scrollTo(target as HTMLElement, { offset: -80 });
-      history.replaceState(null, '', id);
+      history.replaceState(null, '', url.hash);
     });
   });
 }

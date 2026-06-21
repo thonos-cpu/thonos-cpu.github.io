@@ -1,3 +1,13 @@
+# Secrets / environment — NEVER commit (covers .env and .env.example)
+.env
+.env.*
+*.env
+secrets.*
+*.pem
+*.key
+*.p12
+*.pfx
+
 # Build output
 dist/
 .astro/
@@ -8,20 +18,15 @@ node_modules/
 # Build-time data cache (regenerated on every build)
 .cache/
 
-# Environment / secrets — never commit
-.env
-.env.*
-.env.example
-*.env
-*.example
-
-# Local agent tooling (not part of the site)
+# Local agent / tooling (not part of the site)
 .claude*
 .agents*
 .impeccable
 skills-lock.json
 
-# OS / editor noise
+# Editor / OS noise
+.vscode/
+.idea/
 .DS_Store
 Thumbs.db
 *.log

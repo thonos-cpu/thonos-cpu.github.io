@@ -19,6 +19,11 @@ export default defineConfig({
     format: 'directory',
   },
   vite: {
+    // ES-module workers so the playground worker can use dynamic import()
+    // (code-splitting) to load Lua/SQLite runtimes lazily.
+    worker: {
+      format: 'es',
+    },
     build: {
       cssMinify: 'lightningcss',
     },
