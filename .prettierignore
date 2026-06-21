@@ -5,4 +5,7 @@ dist
 node_modules
 package-lock.json
 public/portraits
+public/playground/pyodide/pyodide-lock.json
+public/playground/pyodide/pyodide.asm.mjs
+public/playground/pyodide/pyodide.mjs
 LICENSE
