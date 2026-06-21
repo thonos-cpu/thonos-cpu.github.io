@@ -4,8 +4,8 @@ import portrait from '../assets/portrait-thanos.jpg';
 import { person, education } from '../data/profile';
 
 const facts = [
-  { k: 'Focus', v: 'Data engineering · ML · Distributed systems' },
-  { k: 'Currently', v: 'ALICE Experiment · GSI / CERN' },
+  { k: 'Interests', v: 'Data, ML & backend' },
+  { k: 'Recently', v: 'Intern · ALICE / GSI / CERN' },
   { k: 'Education', v: `${education[0].degree.split(',')[0]}, University of Patras` },
   { k: 'Spoken', v: 'Greek · English · French' },
 ];
@@ -34,28 +34,27 @@ const facts = [
       </div>
 
       <p class="about__lead display" data-reveal>
-        I work where data gets <em>big, fast and messy</em> — and make it behave.
+        I'm a student who learns by <em>building things</em> — and figuring out why they break.
       </p>
 
       <div class="about__prose" data-reveal>
         <p>
-          I'm a Computer Engineering &amp; Informatics student at the University of Patras, focused
-          on software engineering, data systems and machine learning. Recently I collaborated with
-          the
-          <strong>ALICE Collaboration</strong> at GSI Helmholtz, working hands-on with high-volume scientific
-          datasets and HPC environments.
+          I'm a final-year Computer Engineering &amp; Informatics student at the University of
+          Patras, interested in data, machine learning and backend development. Recently I did a
+          data-engineering internship with the <strong>ALICE experiment</strong> at GSI / CERN, where
+          I got to work hands-on with large scientific datasets and an HPC cluster.
         </p>
         <p>
-          I build things end-to-end — a distributed hash-table simulation across hundreds of nodes,
-          a TF-IDF search engine with full evaluation pipelines, and systems spanning spatial
-          indexing, databases and networks. I care about the details: architecture, performance, and
-          understanding <em>why</em> a system behaves the way it does. My main tools are Python and C++,
-          with PyTorch, TensorFlow, scikit-learn, NumPy, Pandas and ROOT.
+          Most of what I know comes from building projects: a distributed hash-table simulation, a
+          TF-IDF search engine with an evaluation pipeline, and smaller things around spatial
+          indexing, databases and networks. I like understanding <em>why</em> a system behaves the way
+          it does, not just making it work. I mostly write Python and C/C++, and I've used scikit-learn,
+          NumPy and Pandas for the data-heavy ones.
         </p>
         <p>
-          I'm looking for roles in backend engineering, distributed systems, data engineering or
-          AI/ML — ideally with hard problems and data at real-world scale. If that sounds like your
-          team, feel free to <a class="about__link" href={`mailto:${person.email}`}>reach out</a>.
+          I'm looking for a graduate or junior role in backend, data or ML — somewhere I can learn
+          from strong engineers and work on real problems. If that sounds like your team, feel free
+          to <a class="about__link" href={`mailto:${person.email}`}>reach out</a>.
         </p>
       </div>
 

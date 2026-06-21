@@ -1,5 +1,4 @@
 ---
-import { skills } from '../data/profile';
 import { getGitHubData } from '../lib/github';
 
 const data = await getGitHubData();
@@ -17,7 +16,7 @@ const fmtPct = (p: number) => (p < 1 ? '<1' : Math.round(p)) + '%';
       <span class="section-index">04</span>
       <h2 class="section-title">Stack &amp; signals</h2>
       <p class="section-note">
-        Self-reported skills, plus the real language mix measured live across every repo.
+        The real language mix, measured live across every public repository.
       </p>
     </div>
 
@@ -58,21 +57,6 @@ const fmtPct = (p: number) => (p < 1 ? '<1' : Math.round(p)) + '%';
         }
       </ul>
     </div>
-
-    <div class="skills__groups">
-      {
-        skills.map((g) => (
-          <div class="skills__group" data-reveal>
-            <h3 class="skills__group-title eyebrow">{g.label}</h3>
-            <ul class="skills__items">
-              {g.items.map((item) => (
-                <li class="skills__item">{item}</li>
-              ))}
-            </ul>
-          </div>
-        ))
-      }
-    </div>
   </div>
 </section>
 
@@ -82,7 +66,6 @@ const fmtPct = (p: number) => (p < 1 ? '<1' : Math.round(p)) + '%';
     border-radius: var(--radius);
     padding: clamp(1.4rem, 3vw, 2rem);
     background: var(--surface);
-    margin-bottom: clamp(2.5rem, 6vw, 4rem);
   }
   .skills__live-head {
     display: flex;
@@ -138,52 +121,5 @@ const fmtPct = (p: number) => (p < 1 ? '<1' : Math.round(p)) + '%';
     height: 9px;
     border-radius: 2px;
     background: hsl(var(--h) 60% 60%);
-  }
-  .skills__groups {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1px;
-    background: var(--line);
-    border: 1px solid var(--line);
-    border-radius: var(--radius);
-    overflow: hidden;
-  }
-  .skills__group {
-    background: var(--bg);
-    padding: clamp(1.3rem, 3vw, 1.9rem);
-  }
-  .skills__group-title {
-    margin-bottom: 1.1rem;
-  }
-  .skills__items {
-    list-style: none;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0.55rem;
-  }
-  .skills__item {
-    font-size: var(--step--1);
-    color: var(--text-dim);
-    position: relative;
-    padding-left: 1rem;
-    transition: color 0.3s var(--ease);
-  }
-  .skills__item::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0.62em;
-    width: 5px;
-    height: 5px;
-    border-radius: 50%;
-    background: var(--line-strong);
-    transition: background 0.3s var(--ease);
-  }
-  .skills__group:hover .skills__item {
-    color: var(--text);
-  }
-  .skills__group:hover .skills__item::before {
-    background: var(--accent);
   }
 </style>

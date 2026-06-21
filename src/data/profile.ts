@@ -8,12 +8,12 @@
 
 export const person = {
   name: 'Athanasios Tasis',
-  role: 'Software Engineer',
+  role: 'Computer Engineering Student',
   // A single line that earns the scroll.
-  headline: 'I build CERN-scale data pipelines.',
+  headline: 'A final-year Computer Engineering student who likes building things with data.',
   // Longer positioning statement, used in the hero / meta description.
   summary:
-    'Computer Engineering student building scalable data and AI systems — from machine-learning pipelines and time-series analytics to HPC data processing at CERN’s ALICE experiment, in Python, C/C++ and distributed systems.',
+    'Final-year Computer Engineering student building data and ML projects in Python and C/C++, including an internship on CERN’s ALICE experiment.',
   // Contact — email is public (also the domain of this site). No phone, no address.
   email: 'athanasios@tasis.info',
   links: {
@@ -23,7 +23,7 @@ export const person = {
     cal: 'https://app.cal.eu/athanasiostasis/book',
   },
   // Neutral region only — never a precise location.
-  availability: 'Europe · open to research & data-engineering roles',
+  availability: 'Europe · open to graduate & junior roles',
 } as const;
 
 export interface ExperienceItem {
@@ -120,37 +120,5 @@ export const achievements: Achievement[] = [
   {
     title: 'Hellenic University Hackathon',
     detail: '12th place — 5-person team, 5-hour competition.',
-  },
-];
-
-export interface SkillGroup {
-  label: string;
-  items: string[];
-}
-
-export const skills: SkillGroup[] = [
-  {
-    label: 'Languages',
-    items: ['Python', 'C / C++', 'Java', 'PHP', 'SQL (MySQL)', 'JavaScript', 'Prolog'],
-  },
-  {
-    label: 'Data & ML',
-    items: ['PyTorch', 'TensorFlow', 'scikit-learn', 'NumPy', 'Pandas', 'Time-series', 'ROOT'],
-  },
-  {
-    label: 'Systems',
-    items: ['Linux', 'Distributed systems', 'Parallel computing', 'HPC clusters', 'Concurrency'],
-  },
-  {
-    label: 'Networking',
-    items: ['TCP/IP', 'OSPF', 'BGP', 'MPLS', 'VLANs', 'Firewalls'],
-  },
-  {
-    label: 'Tools',
-    items: ['ROOT (CERN)', 'Git', 'Jupyter', 'GNS3', 'Cisco IOS', 'MikroTik RouterOS'],
-  },
-  {
-    label: 'Spoken',
-    items: ['Greek (native)', 'English (fluent)', 'French (basic)'],
   },
 ];

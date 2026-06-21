@@ -16,6 +16,7 @@
           <span class="visually-hidden">Language</span>
           <select data-pg-lang>
             <option value="javascript">JavaScript</option>
+            <option value="python">Python</option>
             <option value="lua">Lua</option>
             <option value="sql">SQL · SQLite</option>
           </select>
@@ -169,6 +170,14 @@
 const squares = [1, 2, 3, 4, 5].map((n) => n * n);
 console.log("squares:", squares);
 console.log("sum:", squares.reduce((a, b) => a + b, 0));`,
+      python: `# Python — CPython via Pyodide (first run downloads the runtime)
+def fib(n):
+    a, b = 0, 1
+    for _ in range(n):
+        a, b = b, a + b
+    return a
+
+print([fib(i) for i in range(10)])`,
       lua: `-- Lua (via wasmoon)
 local function fib(n)
   if n < 2 then return n end
@@ -232,9 +241,12 @@ FROM repos GROUP BY lang ORDER BY stars DESC;`,
 
     function run() {
       if (!worker) makeWorker();
+      // Heavy runtimes download a WASM toolchain on first run — allow more time.
+      const heavy = langSel.value === 'python';
+      const limit = heavy ? 60000 : 8000;
       setRunning(true);
       out.classList.remove('pg__out--error');
-      out.textContent = 'Running…';
+      out.textContent = heavy ? 'Running… (first run downloads the runtime)' : 'Running…';
       worker!.postMessage({ lang: langSel.value, code: editor.value });
       // Hard timeout: kill runaway code (infinite loops) and recover.
       clearTimeout(timer);
@@ -242,9 +254,9 @@ FROM repos GROUP BY lang ORDER BY stars DESC;`,
         worker?.terminate();
         worker = null;
         out.classList.add('pg__out--error');
-        out.textContent = '✖ Timed out (8s). Possible infinite loop — execution was stopped.';
+        out.textContent = `✖ Timed out (${limit / 1000}s). Execution was stopped.`;
         setRunning(false);
-      }, 8000);
+      }, limit);
 
       const gc = (window as unknown as { goatcounter?: { count: (o: object) => void } })
         .goatcounter;

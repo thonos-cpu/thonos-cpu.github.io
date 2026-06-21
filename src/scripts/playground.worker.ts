@@ -8,12 +8,14 @@
  * /playground/ (no third-party CDN).
  */
 interface Msg {
-  lang: 'javascript' | 'lua' | 'sql';
+  lang: 'javascript' | 'python' | 'lua' | 'sql';
   code: string;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+/* eslint-disable @typescript-eslint/no-explicit-any */
 let sqlPromise: Promise<any> | null = null;
+let pyodidePromise: Promise<any> | null = null;
+/* eslint-enable @typescript-eslint/no-explicit-any */
 
 function fmt(v: unknown): string {
   if (typeof v === 'string') return v;
@@ -32,6 +34,20 @@ async function runJS(code: string, emit: (...a: unknown[]) => void) {
   const fn = new Function('console', `"use strict"; return (async () => {\n${code}\n})();`);
   const result = await fn(consoleShim);
   if (result !== undefined) emit(result);
+}
+
+async function runPython(code: string, emit: (...a: unknown[]) => void) {
+  if (!pyodidePromise) {
+    // Variable specifier so the bundler leaves this as a real runtime import
+    // of the self-hosted Pyodide ESM.
+    const url = '/playground/pyodide/pyodide.mjs';
+    const mod = await import(/* @vite-ignore */ url);
+    pyodidePromise = mod.loadPyodide({ indexURL: '/playground/pyodide/' });
+  }
+  const py = await pyodidePromise;
+  py.setStdout({ batched: (s: string) => emit(s) });
+  py.setStderr({ batched: (s: string) => emit(s) });
+  await py.runPythonAsync(code);
 }
 
 async function runLua(code: string, emit: (...a: unknown[]) => void) {
@@ -80,8 +96,10 @@ self.onmessage = async (e: MessageEvent<Msg>) => {
   const emit = (...a: unknown[]) => out.push(a.map(fmt).join(' '));
   try {
     if (lang === 'javascript') await runJS(code, emit);
+    else if (lang === 'python') await runPython(code, emit);
     else if (lang === 'lua') await runLua(code, emit);
     else if (lang === 'sql') await runSQL(code, emit);
+    else throw new Error(`Unsupported language: ${lang}`);
     self.postMessage({ output: out.join('\n') });
   } catch (err) {
     self.postMessage({
