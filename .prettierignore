@@ -4,9 +4,6 @@ dist
 .impeccable
 node_modules
 package-lock.json
-# Generated data (minified, not hand-edited)
-src/data/facts.json
-src/data/kb.json
 public/portraits
 public/playground/pyodide/pyodide-lock.json
 public/playground/pyodide/pyodide.asm.mjs

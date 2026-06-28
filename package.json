@@ -12,7 +12,7 @@
     "start": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "check": "cross-env NODE_OPTIONS=--max-old-space-size=4096 astro check",
+    "check": "astro check",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lint": "eslint . --max-warnings 0"
@@ -35,7 +35,6 @@
     "@fontsource/instrument-serif": "^5",
     "@types/sanitize-html": "^2",
     "@types/sql.js": "^1.4.11",
-    "cross-env": "^10.1.0",
     "eslint": "^9",
     "eslint-plugin-astro": "^1",
     "github-markdown-css": "^5",

@@ -3,12 +3,11 @@
   "compilerOptions": {
     "strictNullChecks": true,
     "allowJs": true,
-    "resolveJsonModule": false,
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"]
     }
   },
   "include": [".astro/types.d.ts", "**/*"],
-  "exclude": ["dist", "node_modules", ".cache", "public", "scripts"]
+  "exclude": ["dist", "node_modules", ".cache"]
 }

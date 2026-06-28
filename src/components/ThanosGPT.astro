@@ -274,7 +274,7 @@
 </style>
 
 <script>
-  type Engine = typeof import('../data/knowledge');
+  import { KB, BOT_INTRO, FALLBACK, SUGGESTIONS } from '../data/knowledge';
 
   const root = document.querySelector<HTMLElement>('[data-tg]');
   const openBtn = document.getElementById('thanosgpt-open');
@@ -286,21 +286,141 @@
     const input = root.querySelector<HTMLInputElement>('[data-tg-input]')!;
     const closers = root.querySelectorAll('[data-tg-close]');
 
-    // The fact base + engine are heavy, so load them only when the chat is first
-    // opened — keeps every page's initial bundle small.
-    let K: Engine | null = null;
-    const loadEngine = async (): Promise<Engine> => {
-      if (!K) K = await import('../data/knowledge');
-      return K;
+    // ---- tiny NLP: normalise + synonym expansion --------------------------
+    const STOP = new Set([
+      'the',
+      'a',
+      'an',
+      'is',
+      'are',
+      'was',
+      'were',
+      'do',
+      'does',
+      'did',
+      'of',
+      'to',
+      'for',
+      'in',
+      'on',
+      'at',
+      'and',
+      'or',
+      'his',
+      'he',
+      'him',
+      'you',
+      'your',
+      'me',
+      'my',
+      'i',
+      'can',
+      'could',
+      'would',
+      'what',
+      'whats',
+      'tell',
+      'about',
+      'please',
+      'with',
+      'how',
+      'has',
+      'have',
+      'it',
+      'this',
+      'that',
+      'any',
+      'some',
+      'give',
+      'show',
+    ]);
+    const SYN: Record<string, string> = {
+      job: 'experience',
+      jobs: 'experience',
+      work: 'experience',
+      worked: 'experience',
+      career: 'experience',
+      employment: 'experience',
+      employer: 'experience',
+      studied: 'education',
+      studies: 'education',
+      study: 'education',
+      degree: 'education',
+      university: 'education',
+      college: 'education',
+      uni: 'education',
+      school: 'education',
+      project: 'projects',
+      portfolio: 'projects',
+      built: 'projects',
+      build: 'projects',
+      made: 'projects',
+      repo: 'projects',
+      repos: 'projects',
+      repository: 'projects',
+      tech: 'skills',
+      technologies: 'skills',
+      stack: 'skills',
+      tools: 'skills',
+      skill: 'skills',
+      ai: 'ml',
+      'machine-learning': 'ml',
+      learning: 'ml',
+      model: 'ml',
+      models: 'ml',
+      reach: 'contact',
+      connect: 'contact',
+      hire: 'contact',
+      email: 'email',
+      dht: 'chord',
+      distributed: 'distributed',
+      cv: 'resume',
+      where: 'location',
+      live: 'location',
+      lives: 'location',
+      based: 'location',
+      phone: 'private',
+      mobile: 'private',
+      number: 'private',
     };
+    function tokens(s: string): string[] {
+      return s
+        .toLowerCase()
+        .replace(/[^a-z0-9+\s-]/g, ' ')
+        .split(/\s+/)
+        .map((t) => SYN[t] || t)
+        .filter((t) => t.length > 1 && !STOP.has(t));
+    }
 
-    // Greeting / thanks shortcuts on top of the engine's composed answer.
-    function answer(k: Engine, query: string): string {
-      const raw = query.toLowerCase().trim();
-      if (/^(hi|hey|hello|yo|sup|hiya)\b/.test(raw)) return k.BOT_INTRO;
-      if (/^(thanks|thank you|thx|cheers|ty)\b/.test(raw))
+    // Pre-tokenise the KB once.
+    const index = KB.map((e) => {
+      const bag = new Map<string, number>();
+      for (const phrase of e.q) for (const t of tokens(phrase)) bag.set(t, 3);
+      for (const t of tokens(e.a)) bag.set(t, (bag.get(t) || 0) + 1);
+      return { entry: e, bag };
+    });
+
+    const summaryAnswer = KB.find((e) => e.id === 'summary')?.a ?? FALLBACK;
+
+    function answer(query: string): string {
+      // greetings / thanks shortcuts
+      const raw = query.toLowerCase();
+      if (/^(hi|hey|hello|yo|sup|hiya)\b/.test(raw)) return BOT_INTRO;
+      if (/(thank|thanks|cheers|thx)/.test(raw))
         return "You're welcome! Anything else about Athanasios?";
-      return k.answerSmart(query, { maxFacts: 3, maxCharacters: 700 });
+
+      const qt = tokens(query);
+      // All function-words (e.g. "what does he do?", "who is he?") → the summary.
+      if (!qt.length) return summaryAnswer;
+
+      let best = { score: 0, a: '' };
+      for (const { entry, bag } of index) {
+        let score = 0;
+        for (const t of qt) score += bag.get(t) || 0;
+        score = score / Math.sqrt(qt.length); // normalise by query length
+        if (score > best.score) best = { score, a: entry.a };
+      }
+      return best.score >= 1.6 ? best.a : FALLBACK;
     }
 
     // ---- rendering --------------------------------------------------------
@@ -317,52 +437,47 @@
       log.scrollTop = log.scrollHeight;
     }
 
-    function chip(label: string, query: string) {
-      const b = document.createElement('button');
-      b.type = 'button';
-      b.className = 'tg__chip';
-      b.textContent = label;
-      b.addEventListener('click', () => void ask(query));
-      chips.appendChild(b);
-    }
-
-    async function ask(query: string) {
+    function ask(query: string) {
       bubble(query, 'user');
       chips.innerHTML = '';
+      window.setTimeout(() => bubble(answer(query), 'bot'), 200);
       const gc = (window as unknown as { goatcounter?: { count: (o: object) => void } })
         .goatcounter;
       gc?.count({ path: 'thanosgpt-query', title: 'ThanosGPT query', event: true });
-      const k = await loadEngine();
-      window.setTimeout(() => {
-        bubble(answer(k, query), 'bot');
-        // Offer related follow-up questions from the engine.
-        chips.innerHTML = '';
-        for (const r of k.getRelatedQuestions(query, 4)) chip(r.label, r.query);
-      }, 200);
+    }
+
+    function renderChips() {
+      chips.innerHTML = '';
+      for (const s of SUGGESTIONS) {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'tg__chip';
+        b.textContent = s;
+        b.addEventListener('click', () => ask(s));
+        chips.appendChild(b);
+      }
     }
 
     // ---- open / close -----------------------------------------------------
     let lastFocus: HTMLElement | null = null;
-    async function open() {
+    function open() {
       lastFocus = document.activeElement as HTMLElement;
       root!.hidden = false;
+      if (!log.childElementCount) {
+        bubble(BOT_INTRO, 'bot');
+        renderChips();
+      }
       window.setTimeout(() => input.focus(), 50);
       const gc = (window as unknown as { goatcounter?: { count: (o: object) => void } })
         .goatcounter;
       gc?.count({ path: 'thanosgpt-open', title: 'ThanosGPT opened', event: true });
-      if (!log.childElementCount) {
-        const k = await loadEngine();
-        bubble(k.BOT_INTRO, 'bot');
-        chips.innerHTML = '';
-        for (const s of k.SUGGESTIONS) chip(s, s);
-      }
     }
     function close() {
       root!.hidden = true;
       lastFocus?.focus();
     }
 
-    openBtn.addEventListener('click', () => void open());
+    openBtn.addEventListener('click', open);
     closers.forEach((c) => c.addEventListener('click', close));
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && !root!.hidden) close();
@@ -372,7 +487,7 @@
       const q = input.value.trim();
       if (!q) return;
       input.value = '';
-      void ask(q);
+      ask(q);
     });
     // keep clicks inside the panel from closing via backdrop
     panel.addEventListener('click', (e) => e.stopPropagation());
