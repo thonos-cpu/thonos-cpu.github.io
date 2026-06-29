@@ -35,7 +35,7 @@
     "@fontsource/instrument-serif": "^5",
     "@types/sanitize-html": "^2",
     "@types/sql.js": "^1.4.11",
-    "eslint": "^9",
+    "eslint": "^10",
     "eslint-plugin-astro": "^1",
     "github-markdown-css": "^5",
     "prettier": "^3",
