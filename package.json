@@ -36,7 +36,7 @@
     "@types/sanitize-html": "^2",
     "@types/sql.js": "^1.4.11",
     "eslint": "^9",
-    "eslint-plugin-astro": "^1",
+    "eslint-plugin-astro": "^2",
     "github-markdown-css": "^5",
     "prettier": "^3",
     "prettier-plugin-astro": "^0.14",
