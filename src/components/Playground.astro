@@ -7,7 +7,7 @@
   <div class="container">
     <div class="section-head">
       <h2 class="section-title">Playground</h2>
-      <p class="section-note">Write and run code right here — JavaScript, Lua or SQLite.</p>
+      <p class="section-note">Write and run code right here: JavaScript, Lua or SQLite.</p>
     </div>
 
     <div class="pg" data-pg>
@@ -40,7 +40,7 @@
         <pre
           class="pg__out mono"
           data-pg-out
-          aria-live="polite"><span class="dim">// output appears here — pick a language and hit Run</span></pre>
+          aria-live="polite"><span class="dim">// output appears here. pick a language and hit Run</span></pre>
       </div>
     </div>
   </div>
@@ -166,11 +166,11 @@
     const clearBtn = root.querySelector<HTMLButtonElement>('[data-pg-clear]')!;
 
     const SNIPPETS: Record<string, string> = {
-      javascript: `// JavaScript — runs in a sandboxed worker
+      javascript: `// JavaScript runs in a sandboxed worker
 const squares = [1, 2, 3, 4, 5].map((n) => n * n);
 console.log("squares:", squares);
 console.log("sum:", squares.reduce((a, b) => a + b, 0));`,
-      python: `# Python — CPython via Pyodide (first run downloads the runtime)
+      python: `# Python via CPython/Pyodide (first run downloads the runtime)
 def fib(n):
     a, b = 0, 1
     for _ in range(n):

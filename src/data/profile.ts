@@ -41,7 +41,7 @@ export interface ExperienceItem {
 
 export const experience: ExperienceItem[] = [
   {
-    role: 'Data Engineering Intern — ALICE Experiment',
+    role: 'Data Engineering Intern, ALICE Experiment',
     org: 'GSI Helmholtz Centre for Heavy Ion Research',
     context: 'CERN ALICE · Time Projection Chamber',
     country: 'Germany',
@@ -56,7 +56,7 @@ export const experience: ExperienceItem[] = [
     tags: ['ROOT / C++', 'HPC', 'Parallel computing', 'Data pipelines'],
   },
   {
-    role: 'Laboratory Teaching Assistant — Analog & Digital Signals',
+    role: 'Laboratory Teaching Assistant, Analog & Digital Signals',
     org: 'University of Patras',
     start: '2024-10',
     end: '2026-01',
@@ -119,6 +119,6 @@ export const achievements: Achievement[] = [
   },
   {
     title: 'Hellenic University Hackathon',
-    detail: '12th place — 5-person team, 5-hour competition.',
+    detail: '12th place, 5-person team, 5-hour competition.',
   },
 ];

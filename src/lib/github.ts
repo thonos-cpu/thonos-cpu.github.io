@@ -97,7 +97,7 @@ async function gh<T>(path: string): Promise<T> {
     const remaining = res.headers.get('x-ratelimit-remaining');
     throw new Error(
       `GitHub API ${res.status} for ${path}` +
-        (remaining === '0' ? ' — rate limit exhausted (set GITHUB_TOKEN).' : ''),
+        (remaining === '0' ? ': rate limit exhausted (set GITHUB_TOKEN).' : ''),
     );
   }
   return (await res.json()) as T;

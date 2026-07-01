@@ -7,7 +7,7 @@ function fmt(d: string): string {
   const month = new Date(Number(y), Number(m) - 1, 1).toLocaleString('en-GB', { month: 'short' });
   return `${month} ${y}`;
 }
-const range = (s: string, e: string) => `${fmt(s)} — ${fmt(e)}`;
+const range = (s: string, e: string) => `${fmt(s)} to ${fmt(e)}`;
 ---
 
 <section id="path" class="section path" data-section="path">

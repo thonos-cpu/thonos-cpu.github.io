@@ -50,7 +50,7 @@ export const FEATURED: Record<string, FeaturedMeta> = {
     featured: true,
     tagline: 'Time-series forecasting on wireless-sensor-network data',
     blurb:
-      'An end-to-end forecasting pipeline over a wireless-sensor-network dataset — predicting temperature, humidity and light from correlated environmental signals with SARIMAX and ML baselines, validated across rolling folds.',
+      'An end-to-end forecasting pipeline over a wireless-sensor-network dataset, predicting temperature, humidity and light from correlated environmental signals with SARIMAX and ML baselines, validated across rolling folds.',
     stack: ['Python', 'pandas', 'scikit-learn', 'SARIMAX', 'Jupyter'],
     metrics: [
       { value: '3', label: 'sensor targets' },
@@ -66,7 +66,7 @@ export const FEATURED: Record<string, FeaturedMeta> = {
       {
         src: '/projects/temp-hum/corr_heatmap.webp',
         alt: 'Pearson correlation heatmap between sensors',
-        caption: 'Cross-sensor Pearson correlation — the basis for feature selection.',
+        caption: 'Cross-sensor Pearson correlation: the basis for feature selection.',
       },
       {
         src: '/projects/temp-hum/temp_summary.webp',
@@ -86,7 +86,7 @@ export const FEATURED: Record<string, FeaturedMeta> = {
     featured: true,
     tagline: 'Information retrieval & clustering over a medical corpus',
     blurb:
-      'A complete vector-space search engine: inverted index, stemming and cosine ranking with Raw / Logarithmic / Augmented TF-IDF schemes — then KMeans & agglomerative clustering with TF-IDF and sentence-transformer embeddings.',
+      'A complete vector-space search engine: inverted index, stemming and cosine ranking with Raw / Logarithmic / Augmented TF-IDF schemes, then KMeans & agglomerative clustering with TF-IDF and sentence-transformer embeddings.',
     stack: ['Python', 'scikit-learn', 'NumPy', 'Sentence-Transformers'],
     metrics: [
       { value: '1,239', label: 'articles indexed' },
@@ -113,7 +113,7 @@ export const FEATURED: Record<string, FeaturedMeta> = {
     featured: true,
     tagline: 'Chord & Pastry distributed hash-table engine',
     blurb:
-      'A from-scratch DHT engine implementing the Chord and Pastry protocols with parallel data ingestion — simulated at scale and validated for correctness under heavy node churn.',
+      'A from-scratch DHT engine implementing the Chord and Pastry protocols with parallel data ingestion, simulated at scale and validated for correctness under heavy node churn.',
     stack: ['Python', 'Distributed systems', 'Concurrency'],
     metrics: [
       { value: '946K', label: 'records ingested' },

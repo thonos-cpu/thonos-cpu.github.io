@@ -328,7 +328,7 @@ if (root && canvas && payloadEl) {
     tip.querySelector('.constellation__tip-name')!.textContent = n.label.replace(/[_-]/g, ' ');
     tip.querySelector('.constellation__tip-meta')!.textContent = n.isHub
       ? 'github.com/thonos-cpu'
-      : `${n.language ?? '—'}${n.stars ? ` · ★ ${n.stars}` : ''}`;
+      : `${n.language ?? '·'}${n.stars ? ` · ★ ${n.stars}` : ''}`;
     tip.hidden = false;
   }
 

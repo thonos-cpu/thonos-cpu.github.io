@@ -56,7 +56,7 @@ export interface AnswerOptions {
 export const BOT_NAME = 'ThanosGPT';
 
 export const BOT_INTRO =
-  "Hi — I'm ThanosGPT. Ask me about Athanasios Tasis: his work, projects, technical background, career direction, or how to contact him.";
+  "Hi, I'm ThanosGPT. Ask me about Athanasios Tasis: his work, projects, technical background, career direction, or how to contact him.";
 
 export const FALLBACK =
   'I can answer questions about Athanasios Tasis: his education, CERN/ALICE work, projects, skills, research interests, work style, career goals and professional contact details. I do not answer unrelated questions or share private personal information.';

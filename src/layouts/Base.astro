@@ -14,7 +14,7 @@ interface Props {
   /** GoatCounter site code → https://<code>.goatcounter.com. Change to your own. */
 }
 
-const { title = `${person.name} — ${person.role}`, description = person.summary } =
+const { title = `${person.name} · ${person.role}`, description = person.summary } =
   Astro.props as Props;
 
 const GOATCOUNTER_CODE = 'thanos';
@@ -140,7 +140,7 @@ const ogImage = new URL('/portraits/thanos-2.jpg', Astro.site).href;
       Cal('init', 'book', { origin: 'https://app.cal.eu' });
       Cal.config = Cal.config || {};
       Cal.config.forwardQueryParams = true;
-      // Element-click only — any [data-cal-link] element opens the popup.
+      // Element-click only: any [data-cal-link] element opens the popup.
       Cal.ns.book('ui', { hideEventTypeDetails: false, layout: 'month_view' });
     </script>
   </body>

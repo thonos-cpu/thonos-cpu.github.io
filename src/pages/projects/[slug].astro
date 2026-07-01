@@ -26,7 +26,7 @@ function fmt(d: string) {
 ---
 
 <Base
-  title={`${title} — Athanasios Tasis`}
+  title={`${title} · Athanasios Tasis`}
   description={meta?.tagline ?? repo.description ?? title}
 >
   <article class="project section">
@@ -119,10 +119,10 @@ function fmt(d: string) {
           <div class="project__readme markdown-body" set:html={repo.readmeHtml} />
         ) : (
           <p class="dim">
-            This repository has no README yet —
+            This repository has no README yet.
             <a href={repo.url} target="_blank" rel="noopener noreferrer">
               {' '}
-              view it on GitHub ↗
+              View it on GitHub ↗
             </a>
             .
           </p>
