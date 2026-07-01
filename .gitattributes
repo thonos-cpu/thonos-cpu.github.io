@@ -1,0 +1,16 @@
+# Normalize all text files to LF in the repo so Prettier (which expects LF)
+# passes identically on Windows and on CI. Prevents the recurring
+# "LF will be replaced by CRLF" warnings.
+* text=auto eol=lf
+
+# Binary assets: never touch line endings.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.gif binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.wasm binary
+*.pdf binary
