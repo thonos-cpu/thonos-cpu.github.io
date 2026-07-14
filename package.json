@@ -22,7 +22,7 @@
     "astro": "^6.4.8",
     "lenis": "^1",
     "lightningcss": "^1.32.0",
-    "pyodide": "^314.0.0",
+    "pyodide": "^314.0.2",
     "sanitize-html": "^2",
     "sql.js": "^1.14.1",
     "wasmoon": "^1.16.0"
