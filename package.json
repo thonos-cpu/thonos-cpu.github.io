@@ -21,10 +21,10 @@
     "@astrojs/sitemap": "^3.7.3",
     "astro": "^6.4.8",
     "lenis": "^1",
-    "lightningcss": "^1.32.0",
-    "pyodide": "^314.0.2",
+    "lightningcss": "^1.33.0",
+    "pyodide": "^314.0.5",
     "sanitize-html": "^2",
-    "sql.js": "^1.14.1",
+    "sql.js": "^1.14.2",
     "wasmoon": "^1.16.0"
   },
   "devDependencies": {
