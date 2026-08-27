@@ -1,5 +1,5 @@
 ---
-// ThanosGPT — a minimal in-browser assistant. No backend, no model download,
+// Profile assistant: no backend, no model download,
 // no third parties: it matches the question to a curated knowledge base and
 // replies with the written answer. Opened by the nav "Ask" button (#thanosgpt-open).
 ---
@@ -9,10 +9,10 @@
 
   <div class="tg__panel" role="dialog" aria-modal="true" aria-labelledby="tg-title">
     <header class="tg__head">
-      <span class="tg__avatar" aria-hidden="true">✦</span>
+      <span class="tg__avatar mono" aria-hidden="true">AT</span>
       <div class="tg__id">
-        <strong id="tg-title">ThanosGPT</strong>
-        <span class="tg__sub mono">ask about Athanasios</span>
+        <strong id="tg-title">Profile assistant</strong>
+        <span class="tg__sub mono">about Athanasios</span>
       </div>
       <button class="tg__close" type="button" data-tg-close aria-label="Close assistant">
         <svg
@@ -39,7 +39,7 @@
         data-tg-input
         type="text"
         autocomplete="off"
-        placeholder="Ask me anything about Athanasios…"
+        placeholder="Ask about Athanasios"
         aria-label="Your question"
       />
       <button class="tg__send" type="submit" aria-label="Send">
@@ -132,7 +132,8 @@
     border-radius: 50%;
     background: var(--accent);
     color: var(--accent-ink);
-    font-size: 0.85rem;
+    font-size: 0.72rem;
+    font-weight: 700;
   }
   .tg__id {
     display: flex;

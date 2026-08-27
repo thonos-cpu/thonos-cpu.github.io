@@ -12,7 +12,7 @@ const links = [
 
 <header class="nav" data-nav>
   <div class="nav__inner container">
-    <a href="/#top" class="nav__brand" aria-label={`${person.name} · home`}>
+    <a href="/#top" class="nav__brand" aria-label={`${person.name}, home`}>
       <span class="nav__mark mono">AT</span>
       <span class="nav__domain mono dim">tasis.info</span>
     </a>
@@ -22,13 +22,8 @@ const links = [
     </nav>
 
     <div class="nav__right">
-      <button
-        id="thanosgpt-open"
-        class="nav__ask"
-        type="button"
-        aria-label="Ask ThanosGPT about Athanasios"
-      >
-        <span class="nav__ask-mark" aria-hidden="true">✦</span>
+      <button id="thanosgpt-open" class="nav__ask" type="button" aria-label="Ask about Athanasios">
+        <span class="nav__ask-mark mono" aria-hidden="true">?</span>
         <span class="nav__ask-label">Ask</span>
       </button>
       <button
@@ -181,7 +176,8 @@ const links = [
   }
   .nav__ask-mark {
     color: var(--accent);
-    font-size: 0.7rem;
+    font-size: 0.72rem;
+    font-weight: 700;
   }
   @media (max-width: 440px) {
     .nav__ask-label {

@@ -2,7 +2,7 @@
  * Editorial layer over the live GitHub repositories.
  *
  * The repo list itself comes live from the GitHub API at build time; this file
- * adds human curation on top — taglines, the metrics worth bragging about,
+ * adds human curation on top: taglines, useful metrics,
  * categories (which drive colour + size in the constellation) and a hand-picked
  * gallery of *real* output artefacts. Data / ML work is weighted highest, per
  * the site's focus.
@@ -31,7 +31,7 @@ export interface GalleryItem {
 
 export interface FeaturedMeta {
   category: Category;
-  /** Constellation node weight (1–10); higher = larger + more central. */
+  /** Constellation node weight, 1 to 10; higher = larger + more central. */
   weight: number;
   /** Shown in the curated work grid (vs. only in the full repo list). */
   featured: boolean;

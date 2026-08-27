@@ -25,10 +25,7 @@ function fmt(d: string) {
 }
 ---
 
-<Base
-  title={`${title} · Athanasios Tasis`}
-  description={meta?.tagline ?? repo.description ?? title}
->
+<Base title={`${title}, Athanasios Tasis`} description={meta?.tagline ?? repo.description ?? title}>
   <article class="project section">
     <div class="container project__head">
       <a href="/#work" class="project__back mono">← back to work</a>
@@ -99,7 +96,7 @@ function fmt(d: string) {
     {
       meta?.gallery && meta.gallery.length > 0 && (
         <div class="container project__gallery">
-          <span class="eyebrow project__gallery-label">Output artefacts · real results</span>
+          <span class="eyebrow project__gallery-label">Output artifacts</span>
           <div class="project__gallery-grid">
             {meta.gallery.map((g) => (
               <figure class="project__shot">
@@ -113,7 +110,7 @@ function fmt(d: string) {
     }
 
     <div class="container project__readme-wrap">
-      <span class="eyebrow project__readme-label">README · rendered</span>
+      <span class="eyebrow project__readme-label">Rendered README</span>
       {
         repo.readmeHtml ? (
           <div class="project__readme markdown-body" set:html={repo.readmeHtml} />
@@ -153,7 +150,6 @@ function fmt(d: string) {
   }
   .project__title {
     font-size: var(--step-4);
-    text-transform: capitalize;
     line-height: 0.98;
   }
   .project__tagline {
@@ -190,7 +186,7 @@ function fmt(d: string) {
   .project__stat-v {
     font-size: var(--step-2);
     font-weight: 500;
-    letter-spacing: -0.02em;
+    letter-spacing: 0;
   }
   .project__stat-l {
     font-size: 0.7rem;
@@ -241,7 +237,7 @@ function fmt(d: string) {
     display: block;
     margin-bottom: 1.2rem;
   }
-  /* Compiled README — GitHub structure, themed to the site, never raw markdown. */
+  /* Compiled README with GitHub structure, themed to the site. */
   .project__readme.markdown-body {
     background: transparent;
     color: var(--text);

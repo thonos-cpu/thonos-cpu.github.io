@@ -1,6 +1,6 @@
 /* =============================================================================
-   Athanasios Tasis — portfolio design system
-   Two themes (observatory / paper) on one token set. One accent: signal blue.
+   Athanasios Tasis portfolio system
+   Minimal technical theme. One accent: signal blue.
    ========================================================================== */
 
 :root {
@@ -9,7 +9,7 @@
   /* Type */
   --font-sans: 'Geist Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-mono: 'Geist Mono Variable', ui-monospace, 'SF Mono', 'Cascadia Code', monospace;
-  --font-display: 'Instrument Serif', Georgia, 'Times New Roman', serif;
+  --font-display: var(--font-sans);
 
   /* Fluid type scale */
   --step--1: clamp(0.78rem, 0.74rem + 0.18vw, 0.88rem);
@@ -26,7 +26,7 @@
   --maxw: 1240px;
   --maxw-text: 68ch;
 
-  --radius: 14px;
+  --radius: 8px;
   --radius-sm: 8px;
 
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
@@ -40,49 +40,49 @@
   --cat-research: 0 0% 62%;
 }
 
-/* ---- Observatory (dark, default) ---- */
+/* ---- Dark, default ---- */
 :root,
 :root[data-theme='dark'] {
   color-scheme: dark;
-  --bg: #0a0b0d;
-  --bg-soft: #0f1216;
-  --bg-elevated: #14181d;
-  --surface: rgba(255, 255, 255, 0.022);
-  --surface-hover: rgba(255, 255, 255, 0.05);
-  --text: #e9e7e1;
-  --text-dim: #9b9d99;
-  --text-faint: #62656a;
-  --line: rgba(255, 255, 255, 0.09);
-  --line-strong: rgba(255, 255, 255, 0.18);
-  --accent: #79c6e4;
-  --accent-strong: #9bd7ef;
-  --accent-ink: #06222e;
-  --accent-glow: rgba(121, 198, 228, 0.16);
-  --shadow: 0 1px 0 rgba(255, 255, 255, 0.04), 0 18px 50px -20px rgba(0, 0, 0, 0.8);
-  --grade-duo-a: #0a0b0d;
-  --grade-duo-b: #aee0f2;
+  --bg: #101112;
+  --bg-soft: #151719;
+  --bg-elevated: #191b1e;
+  --surface: rgba(255, 255, 255, 0.032);
+  --surface-hover: rgba(255, 255, 255, 0.065);
+  --text: #f1f1ec;
+  --text-dim: #a7a8a4;
+  --text-faint: #727570;
+  --line: rgba(255, 255, 255, 0.1);
+  --line-strong: rgba(255, 255, 255, 0.22);
+  --accent: #6bc8f0;
+  --accent-strong: #9adbff;
+  --accent-ink: #07191f;
+  --accent-glow: rgba(107, 200, 240, 0.1);
+  --shadow: 0 18px 38px -28px rgba(0, 0, 0, 0.9);
+  --grade-duo-a: #101112;
+  --grade-duo-b: #6bc8f0;
 }
 
-/* ---- Paper (light) ---- */
+/* ---- Light ---- */
 :root[data-theme='light'] {
   color-scheme: light;
-  --bg: #f3f1ea;
-  --bg-soft: #efece3;
-  --bg-elevated: #fbfaf6;
-  --surface: rgba(20, 20, 24, 0.025);
-  --surface-hover: rgba(20, 20, 24, 0.05);
-  --text: #14151a;
-  --text-dim: #54565d;
-  --text-faint: #8a8c90;
-  --line: rgba(20, 20, 30, 0.12);
-  --line-strong: rgba(20, 20, 30, 0.24);
-  --accent: #1d7fa6;
-  --accent-strong: #0f6789;
+  --bg: #f6f6f3;
+  --bg-soft: #ecece7;
+  --bg-elevated: #ffffff;
+  --surface: rgba(20, 22, 24, 0.032);
+  --surface-hover: rgba(20, 22, 24, 0.06);
+  --text: #171819;
+  --text-dim: #55585b;
+  --text-faint: #858882;
+  --line: rgba(20, 22, 24, 0.13);
+  --line-strong: rgba(20, 22, 24, 0.28);
+  --accent: #006f9e;
+  --accent-strong: #005a82;
   --accent-ink: #ffffff;
-  --accent-glow: rgba(29, 127, 166, 0.12);
-  --shadow: 0 1px 0 rgba(255, 255, 255, 0.6), 0 22px 50px -28px rgba(20, 25, 40, 0.4);
-  --grade-duo-a: #1a1c22;
-  --grade-duo-b: #1d7fa6;
+  --accent-glow: rgba(0, 111, 158, 0.08);
+  --shadow: 0 18px 40px -30px rgba(20, 22, 24, 0.4);
+  --grade-duo-a: #171819;
+  --grade-duo-b: #006f9e;
 }
 
 /* ---------------------------------------------------------------- Reset --- */
@@ -117,7 +117,7 @@ body {
   font-size: var(--step-0);
   line-height: 1.6;
   font-weight: 400;
-  letter-spacing: -0.011em;
+  letter-spacing: 0;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   overflow-x: hidden;
@@ -155,18 +155,15 @@ h1,
 h2,
 h3,
 h4 {
-  font-weight: 500;
+  font-weight: 560;
   line-height: 1.04;
-  letter-spacing: -0.025em;
+  letter-spacing: 0;
 }
 .display {
   font-family: var(--font-display);
-  font-weight: 400;
-  letter-spacing: -0.01em;
-  line-height: 0.96;
-}
-.display em {
-  font-style: italic;
+  font-weight: 620;
+  letter-spacing: 0;
+  line-height: 0.98;
 }
 strong {
   font-weight: 600;
@@ -179,7 +176,7 @@ em {
   font-family: var(--font-mono);
   font-size: var(--step--1);
   text-transform: uppercase;
-  letter-spacing: 0.22em;
+  letter-spacing: 0.12em;
   color: var(--text-faint);
   font-weight: 500;
 }
@@ -206,13 +203,13 @@ em {
   border-top: 1px solid var(--line);
 }
 .section-head {
-  display: flex;
-  align-items: baseline;
-  gap: 1.2rem;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.7rem;
   margin-bottom: clamp(2.5rem, 6vw, 4.5rem);
-  flex-wrap: wrap;
 }
 .section-index {
+  display: none;
   font-family: var(--font-mono);
   font-size: var(--step--1);
   color: var(--accent);
@@ -224,8 +221,7 @@ em {
   line-height: 1;
 }
 .section-note {
-  margin-left: auto;
-  max-width: 34ch;
+  max-width: 52ch;
   color: var(--text-dim);
   font-size: var(--step--1);
 }
@@ -240,17 +236,19 @@ em {
   border: 1px solid var(--line-strong);
   font-size: var(--step--1);
   font-weight: 500;
-  letter-spacing: -0.01em;
+  letter-spacing: 0;
   transition:
-    border-color 0.4s var(--ease),
-    background 0.4s var(--ease),
-    color 0.4s var(--ease),
-    transform 0.4s var(--ease);
+    border-color 0.18s var(--ease),
+    background 0.18s var(--ease),
+    color 0.18s var(--ease),
+    transform 0.16s var(--ease);
   will-change: transform;
 }
 .btn:hover {
   border-color: var(--text);
-  transform: translateY(-2px);
+}
+.btn:active {
+  transform: scale(0.98);
 }
 .btn--primary {
   background: var(--accent);

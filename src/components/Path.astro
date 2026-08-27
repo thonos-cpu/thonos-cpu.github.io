@@ -14,8 +14,10 @@ const range = (s: string, e: string) => `${fmt(s)} to ${fmt(e)}`;
   <div class="container">
     <div class="section-head">
       <span class="section-index">03</span>
-      <h2 class="section-title">The path</h2>
-      <p class="section-note">Experience, education and a few things I'm proud of.</p>
+      <h2 class="section-title">Experience</h2>
+      <p class="section-note">
+        Roles, education and recognition with the practical details left in.
+      </p>
     </div>
 
     <div class="path__grid">
@@ -28,8 +30,8 @@ const range = (s: string, e: string) => `${fmt(s)} to ${fmt(e)}`;
                 <h3 class="path__role">{job.role}</h3>
                 <p class="path__org">
                   {job.org}
-                  {job.context && <span class="path__context"> · {job.context}</span>}
-                  {job.country && <span class="path__country mono dim"> · {job.country}</span>}
+                  {job.context && <span class="path__context">, {job.context}</span>}
+                  {job.country && <span class="path__country mono dim">, {job.country}</span>}
                 </p>
                 <ul class="path__highlights">
                   {job.highlights.map((h) => (
@@ -159,7 +161,7 @@ const range = (s: string, e: string) => `${fmt(s)} to ${fmt(e)}`;
     top: 0.6em;
     width: 6px;
     height: 1px;
-    background: var(--accent);
+    background: var(--text-faint);
   }
   .path__tags {
     display: flex;
@@ -171,7 +173,7 @@ const range = (s: string, e: string) => `${fmt(s)} to ${fmt(e)}`;
     font-size: 0.66rem;
     color: var(--text-faint);
     border: 1px solid var(--line);
-    border-radius: 999px;
+    border-radius: var(--radius-sm);
     padding: 0.2rem 0.55rem;
   }
   .path__aside {

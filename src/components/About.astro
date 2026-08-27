@@ -4,10 +4,10 @@ import portrait from '../assets/portrait-thanos.jpg';
 import { person, education } from '../data/profile';
 
 const facts = [
-  { k: 'Interests', v: 'Data, ML & backend' },
-  { k: 'Recently', v: 'Intern · ALICE / GSI / CERN' },
+  { k: 'Focus', v: 'Data, ML and backend' },
+  { k: 'Recent', v: 'ALICE / GSI / CERN internship' },
   { k: 'Education', v: `${education[0].degree.split(',')[0]}, University of Patras` },
-  { k: 'Spoken', v: 'Greek · English · French' },
+  { k: 'Languages', v: 'Greek, English, French' },
 ];
 ---
 
@@ -24,7 +24,7 @@ const facts = [
         />
         <span class="about__portrait-grade" aria-hidden="true"></span>
       </div>
-      <p class="about__caption mono dim">Athanasios Tasis · {person.role}</p>
+      <p class="about__caption mono dim">Athanasios Tasis, {person.role}</p>
     </div>
 
     <div class="about__body">
@@ -34,27 +34,28 @@ const facts = [
       </div>
 
       <p class="about__lead display" data-reveal>
-        I'm a student who learns by <em>building things</em>, and figuring out why they break.
+        I care about systems that can be tested, measured and explained.
       </p>
 
       <div class="about__prose" data-reveal>
         <p>
           I'm a final-year Computer Engineering &amp; Informatics student at the University of
-          Patras, interested in data, machine learning and backend development. Recently I did a
-          data-engineering internship with the <strong>ALICE experiment</strong> at GSI / CERN, where
-          I got to work hands-on with large scientific datasets and an HPC cluster.
+          Patras, focused on data, machine learning and backend development. Recently I worked as a
+          data-engineering intern with the <strong>ALICE experiment</strong> at GSI / CERN, using large
+          detector datasets and production HPC workflows.
         </p>
         <p>
-          Most of what I know comes from building projects: a distributed hash-table simulation, a
-          TF-IDF search engine with an evaluation pipeline, and smaller things around spatial
-          indexing, databases and networks. I like understanding <em>why</em> a system behaves the way
-          it does, not just making it work. I mostly write Python and C/C++, and I've used scikit-learn,
-          NumPy and Pandas for the data-heavy ones.
+          My projects include a distributed hash-table simulation, a TF-IDF search engine with an
+          evaluation pipeline, time-series forecasting work, and smaller experiments around spatial
+          indexing, databases and networks. I mostly write Python and C/C++, with scikit-learn,
+          NumPy and Pandas on the data-heavy side.
         </p>
         <p>
-          I'm looking for a graduate or junior role in backend, data or ML, somewhere I can learn
-          from strong engineers and work on real problems. If that sounds like your team, feel free
-          to <a class="about__link" href={`mailto:${person.email}`}>reach out</a>.
+          I'm looking for a graduate or junior role in backend, data or ML where I can learn from
+          strong engineers and work on real problems. If that sounds like your team, feel free to <a
+            class="about__link"
+            href={`mailto:${person.email}`}>reach out</a
+          >.
         </p>
       </div>
 
@@ -105,8 +106,7 @@ const facts = [
     width: 100%;
     height: auto;
     /* Duotone grade so the white-studio shot lives inside the palette. */
-    filter: grayscale(1) contrast(1.05) brightness(0.95);
-    mix-blend-mode: luminosity;
+    filter: grayscale(1) contrast(1.02) brightness(0.98);
     transition:
       filter 0.6s var(--ease),
       transform 0.8s var(--ease);
@@ -114,15 +114,15 @@ const facts = [
   .about__portrait-grade {
     position: absolute;
     inset: 0;
-    background:
-      linear-gradient(180deg, transparent 40%, var(--bg) 100%),
-      radial-gradient(120% 100% at 70% 10%, var(--accent-glow), transparent 55%);
-    mix-blend-mode: screen;
+    background: linear-gradient(
+      180deg,
+      transparent 56%,
+      color-mix(in oklab, var(--bg) 92%, transparent) 100%
+    );
     pointer-events: none;
   }
   .about__portrait:hover img {
-    filter: grayscale(0.55) contrast(1.02) brightness(1);
-    transform: scale(1.02);
+    filter: grayscale(0.25) contrast(1.01) brightness(1);
   }
   .about__caption {
     margin-top: 0.9rem;
@@ -135,11 +135,8 @@ const facts = [
   .about__lead {
     font-size: var(--step-3);
     line-height: 1.05;
-    max-width: 18ch;
+    max-width: 22ch;
     margin-bottom: 2rem;
-  }
-  .about__lead em {
-    color: var(--accent);
   }
   .about__prose {
     max-width: 56ch;

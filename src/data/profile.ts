@@ -10,10 +10,10 @@ export const person = {
   name: 'Athanasios Tasis',
   role: 'Computer Engineering Student',
   // A single line that earns the scroll.
-  headline: 'A final-year Computer Engineering student who likes building things with data.',
+  headline: 'Computer engineering student focused on data systems, ML and backend work.',
   // Longer positioning statement, used in the hero / meta description.
   summary:
-    'Final-year Computer Engineering student building data and ML projects in Python and C/C++, including an internship on CERN’s ALICE experiment.',
+    'Final-year Computer Engineering student building practical data and ML systems in Python and C/C++, including detector-data work for CERN ALICE.',
   // Contact — email is public (also the domain of this site). No phone, no address.
   email: 'athanasios@tasis.info',
   links: {
@@ -23,7 +23,7 @@ export const person = {
     cal: 'https://app.cal.eu/athanasiostasis/book',
   },
   // Neutral region only — never a precise location.
-  availability: 'Europe · open to graduate & junior roles',
+  availability: 'Europe · open to graduate and junior roles',
 } as const;
 
 export interface ExperienceItem {

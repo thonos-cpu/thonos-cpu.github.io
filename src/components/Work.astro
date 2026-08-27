@@ -29,8 +29,8 @@ const catHue: Record<Category, string> = {
       <span class="section-index">02</span>
       <h2 class="section-title">Selected work</h2>
       <p class="section-note">
-        Curated, data &amp; ML first. Every project is pulled live from GitHub. Open any one to read
-        its full, rendered README.
+        A short list of projects with enough implementation detail to inspect. Each entry links to
+        the rendered README and repository metadata.
       </p>
     </div>
 
@@ -48,10 +48,7 @@ const catHue: Record<Category, string> = {
                 <span class="work__num mono">{num(i)}</span>
 
                 <div class="work__main">
-                  <span class="work__cat mono">
-                    <span class="work__cat-dot" aria-hidden="true" />
-                    {CATEGORY_META[meta.category].short}
-                  </span>
+                  <span class="work__cat mono">{CATEGORY_META[meta.category].short}</span>
                   <h3 class="work__title">{repo.name.replace(/[_-]/g, ' ')}</h3>
                   <p class="work__tagline">{meta.tagline}</p>
                   <div class="work__stack">
@@ -98,7 +95,6 @@ const catHue: Record<Category, string> = {
                 class="work__small"
                 style={`--hue:${catHue[categoryFor(repo.name, repo.language)]}`}
               >
-                <span class="work__small-dot" aria-hidden="true" />
                 <span class="work__small-name">{repo.name.replace(/[_-]/g, ' ')}</span>
                 <span class="work__small-lang mono dim">{repo.language ?? '·'}</span>
                 <span class="work__small-arrow" aria-hidden="true">
@@ -126,10 +122,13 @@ const catHue: Record<Category, string> = {
     gap: clamp(1rem, 4vw, 3.5rem);
     padding: clamp(1.6rem, 4vw, 2.8rem) 0;
     border-bottom: 1px solid var(--line);
-    transition: transform 0.5s var(--ease);
+    transition:
+      background 0.18s var(--ease),
+      padding-inline 0.18s var(--ease);
   }
   .work__link:hover {
-    transform: translateX(clamp(0.5rem, 2vw, 1.5rem));
+    background: var(--surface);
+    padding-inline: clamp(0.75rem, 2vw, 1.1rem);
   }
   @media (max-width: 760px) {
     .work__link {
@@ -149,23 +148,15 @@ const catHue: Record<Category, string> = {
     gap: 0.45rem;
     font-size: 0.68rem;
     text-transform: uppercase;
-    letter-spacing: 0.16em;
+    letter-spacing: 0.1em;
     color: var(--text-dim);
-  }
-  .work__cat-dot,
-  .work__small-dot {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: hsl(var(--hue));
-    box-shadow: 0 0 8px hsl(var(--hue) / 0.6);
   }
   .work__title {
     font-family: var(--font-display);
     font-size: clamp(1.7rem, 1.2rem + 2.4vw, 3rem);
     line-height: 1;
     margin: 0.5rem 0 0.4rem;
-    text-transform: capitalize;
+    text-transform: none;
     transition: color 0.4s var(--ease);
   }
   .work__link:hover .work__title {
@@ -186,7 +177,7 @@ const catHue: Record<Category, string> = {
     font-size: 0.68rem;
     color: var(--text-faint);
     border: 1px solid var(--line);
-    border-radius: 999px;
+    border-radius: var(--radius-sm);
     padding: 0.2rem 0.55rem;
   }
   .work__metrics {
@@ -249,7 +240,7 @@ const catHue: Record<Category, string> = {
     color: var(--text-dim);
   }
   .work__more[open] summary::after {
-    content: '–';
+    content: '-';
   }
   .work__grid {
     list-style: none;
@@ -274,7 +265,6 @@ const catHue: Record<Category, string> = {
     background: var(--surface);
   }
   .work__small-name {
-    text-transform: capitalize;
     font-size: var(--step--1);
   }
   .work__small-lang {

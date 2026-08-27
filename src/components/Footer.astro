@@ -15,7 +15,7 @@ const year = new Date().getFullYear();
   <div class="container footer__inner">
     <div class="footer__lead">
       <p class="display footer__cta">
-        Let's build something<br /><em>measurable.</em>
+        Available for data, ML<br />and backend roles.
       </p>
       <div class="footer__actions">
         <button
@@ -41,7 +41,7 @@ const year = new Date().getFullYear();
       </div>
       <div class="footer__col">
         <span class="eyebrow">Colophon</span>
-        <span class="dim">Astro · static · GitHub Pages</span>
+        <span class="dim">Astro, static, GitHub Pages</span>
         <span class="dim">Repo data via GitHub API at build</span>
         <span class="dim mono">synced {synced}</span>
       </div>
@@ -50,7 +50,7 @@ const year = new Date().getFullYear();
 
   <div class="container footer__base">
     <span class="mono dim">© {year} {person.name}</span>
-    <span class="mono dim">Built by hand · {person.links.site.replace('https://', '')}</span>
+    <span class="mono dim">Built by hand, {person.links.site.replace('https://', '')}</span>
   </div>
 
   <p class="container footer__privacy">
@@ -64,7 +64,7 @@ const year = new Date().getFullYear();
   .footer {
     border-top: 1px solid var(--line);
     padding-block: clamp(4rem, 9vh, 7rem) 2rem;
-    background: radial-gradient(120% 80% at 50% 0%, var(--accent-glow), transparent 60%), var(--bg);
+    background: var(--bg);
   }
   .footer__inner {
     display: grid;
@@ -80,7 +80,7 @@ const year = new Date().getFullYear();
   }
   .footer__cta {
     font-size: clamp(2.4rem, 1.6rem + 4vw, 5rem);
-    line-height: 0.98;
+    line-height: 1.02;
     margin-bottom: 1.8rem;
   }
   .footer__actions {
