@@ -17,6 +17,7 @@
 const GC_CODE = process.env.GOATCOUNTER_CODE || 'thanos';
 const GC_TOKEN = process.env.GOATCOUNTER_API_TOKEN || '';
 const GH_TOKEN = process.env.GITHUB_TOKEN || '';
+const GH_TRAFFIC_TOKEN = process.env.GH_TRAFFIC_TOKEN || '';
 const REPO = process.env.GITHUB_REPOSITORY || '';
 
 const now = new Date();
@@ -27,55 +28,135 @@ const END = d(now);
 
 const num = (n) => new Intl.NumberFormat('en-GB').format(n ?? 0);
 
-async function gc(path) {
-  const res = await fetch(`https://${GC_CODE}.goatcounter.com/api/v0${path}`, {
-    headers: { Authorization: `Bearer ${GC_TOKEN}`, 'Content-Type': 'application/json' },
-  });
-  if (!res.ok) throw new Error(`GoatCounter ${path} → ${res.status}`);
-  return res.json();
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+const detail = (error) => {
+  const parts = [error?.message, error?.cause?.code, error?.cause?.message].filter(Boolean);
+  return [...new Set(parts)].join(': ');
+};
+
+const warning = (title, error) => {
+  const message = detail(error).replace(/%/g, '%25').replace(/\r/g, '%0D').replace(/\n/g, '%0A');
+  console.warn(`::warning title=${title}::${message}`);
+};
+
+async function requestJson(url, options, label) {
+  let lastError;
+  for (let attempt = 1; attempt <= 3; attempt += 1) {
+    let res;
+    try {
+      res = await fetch(url, {
+        ...options,
+        signal: globalThis.AbortSignal.timeout(15_000),
+      });
+    } catch (error) {
+      lastError = new Error(`${label} → ${detail(error)}`);
+    }
+
+    if (res?.ok) return res.json();
+
+    if (res) {
+      const body = (await res.text()).trim().replace(/\s+/g, ' ').slice(0, 200);
+      lastError = new Error(`${label} → ${res.status}${body ? `: ${body}` : ''}`);
+      if (res.status !== 429 && res.status < 500) throw lastError;
+    }
+
+    if (attempt < 3) await sleep(500 * 2 ** (attempt - 1));
+  }
+  throw lastError;
 }
 
-async function gh(path) {
-  const res = await fetch(`https://api.github.com${path}`, {
-    headers: {
-      Authorization: `Bearer ${GH_TOKEN}`,
-      Accept: 'application/vnd.github+json',
-      'X-GitHub-Api-Version': '2022-11-28',
+async function gc(path) {
+  return requestJson(
+    `https://${GC_CODE}.goatcounter.com/api/v0${path}`,
+    {
+      headers: {
+        Authorization: `Bearer ${GC_TOKEN}`,
+        'Content-Type': 'application/json',
+      },
     },
-  });
-  if (!res.ok) throw new Error(`GitHub ${path} → ${res.status}`);
-  return res.json();
+    `GoatCounter ${path}`,
+  );
+}
+
+async function gh(path, token = GH_TOKEN) {
+  return requestJson(
+    `https://api.github.com${path}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: 'application/vnd.github+json',
+        'X-GitHub-Api-Version': '2022-11-28',
+      },
+    },
+    `GitHub ${path}`,
+  );
+}
+
+async function goatcounterHits() {
+  const hits = [];
+  const excluded = [];
+
+  while (true) {
+    const params = new globalThis.URLSearchParams({
+      start: START,
+      end: END,
+      limit: '100',
+    });
+    for (const pathId of excluded) params.append('exclude_paths', pathId);
+    const page = await gc(`/stats/hits?${params}`);
+    hits.push(...(page.hits ?? []));
+    if (!page.more || !page.hits?.length) return hits;
+    excluded.push(...page.hits.map((hit) => String(hit.path_id)));
+  }
 }
 
 async function goatcounterSection() {
   if (!GC_TOKEN) return '> GoatCounter API token not configured — skipping visitor analytics.\n';
   const lines = [];
+  let hits = null;
+
   try {
-    const total = await gc(`/stats/total?start=${START}&end=${END}`);
-    lines.push(`**${num(total.total)}** pageviews · **${num(total.total_events)}** events\n`);
-  } catch (e) {
-    lines.push(`_Totals unavailable (${e.message})._\n`);
+    hits = await goatcounterHits();
+  } catch (error) {
+    warning('GoatCounter page breakdown', error);
   }
 
   try {
-    const { hits = [] } = await gc(`/stats/hits?start=${START}&end=${END}&limit=50`);
-    const pages = hits.filter((h) => !h.event).sort((a, b) => b.count - a.count);
-    const events = hits.filter((h) => h.event).sort((a, b) => b.count - a.count);
+    const total = await gc(`/stats/total?start=${START}&end=${END}`);
+    lines.push(`**${num(total.total)}** pageviews · **${num(total.total_events)}** events\n`);
+  } catch (error) {
+    warning('GoatCounter totals', error);
+    if (hits) {
+      const pageviews = hits.filter((hit) => !hit.event).reduce((sum, hit) => sum + hit.count, 0);
+      const events = hits.filter((hit) => hit.event).reduce((sum, hit) => sum + hit.count, 0);
+      lines.push(
+        `**${num(pageviews)}** pageviews · **${num(events)}** events _(calculated from breakdown)_\n`,
+      );
+    } else {
+      lines.push(`_Totals unavailable (${detail(error)})._\n`);
+    }
+  }
+
+  if (hits) {
+    const pages = hits.filter((hit) => !hit.event).sort((a, b) => b.count - a.count);
+    const events = hits.filter((hit) => hit.event).sort((a, b) => b.count - a.count);
 
     if (pages.length) {
       lines.push('\n**Top pages**\n');
       lines.push('| Page | Views |\n| --- | ---: |');
-      for (const p of pages.slice(0, 8)) lines.push(`| \`${p.path}\` | ${num(p.count)} |`);
+      for (const page of pages.slice(0, 8)) lines.push(`| \`${page.path}\` | ${num(page.count)} |`);
       lines.push('');
     }
     if (events.length) {
       lines.push('\n**Engagement (sections & scroll depth)**\n');
       lines.push('| Event | Count |\n| --- | ---: |');
-      for (const e of events.slice(0, 12)) lines.push(`| \`${e.path}\` | ${num(e.count)} |`);
+      for (const event of events.slice(0, 12))
+        lines.push(`| \`${event.path}\` | ${num(event.count)} |`);
       lines.push('');
     }
-  } catch (e) {
-    lines.push(`_Page / event breakdown unavailable (${e.message})._\n`);
+  } else {
+    lines.push('_Page / event breakdown unavailable (see workflow warning)._\n');
   }
 
   try {
@@ -84,11 +165,13 @@ async function goatcounterSection() {
     if (top.length) {
       lines.push('\n**Top countries**\n');
       lines.push('| Country | Visitors |\n| --- | ---: |');
-      for (const c of top) lines.push(`| ${c.name ?? c.id} | ${num(c.count)} |`);
+      for (const country of top)
+        lines.push(`| ${country.name ?? country.id} | ${num(country.count)} |`);
       lines.push('');
     }
-  } catch (e) {
-    lines.push(`_Country breakdown unavailable (${e.message})._\n`);
+  } catch (error) {
+    warning('GoatCounter countries', error);
+    lines.push(`_Country breakdown unavailable (${detail(error)})._\n`);
   }
 
   return lines.join('\n');
@@ -96,19 +179,29 @@ async function goatcounterSection() {
 
 async function githubTrafficSection() {
   if (!REPO) return '';
+  if (!GH_TRAFFIC_TOKEN) {
+    return '\n_GitHub traffic unavailable (GH_TRAFFIC_TOKEN secret not configured)._\n';
+  }
+
   try {
-    const views = await gh(`/repos/${REPO}/traffic/views`);
-    const clones = await gh(`/repos/${REPO}/traffic/clones`).catch(() => ({
-      count: 0,
-      uniques: 0,
-    }));
-    return (
-      `\n**GitHub repo traffic (14-day window)**\n\n` +
-      `- Views: **${num(views.count)}** (**${num(views.uniques)}** unique)\n` +
-      `- Clones: **${num(clones.count)}** (**${num(clones.uniques)}** unique)\n`
-    );
-  } catch (e) {
-    return `\n_GitHub traffic unavailable (${e.message})._\n`;
+    const views = await gh(`/repos/${REPO}/traffic/views`, GH_TRAFFIC_TOKEN);
+    const lines = [
+      '\n**GitHub repo traffic (14-day window)**\n',
+      `- Views: **${num(views.count)}** (**${num(views.uniques)}** unique)`,
+    ];
+
+    try {
+      const clones = await gh(`/repos/${REPO}/traffic/clones`, GH_TRAFFIC_TOKEN);
+      lines.push(`- Clones: **${num(clones.count)}** (**${num(clones.uniques)}** unique)\n`);
+    } catch (error) {
+      warning('GitHub clone traffic', error);
+      lines.push(`- Clones: unavailable (${detail(error)})\n`);
+    }
+
+    return lines.join('\n');
+  } catch (error) {
+    warning('GitHub view traffic', error);
+    return `\n_GitHub traffic unavailable (${detail(error)})._\n`;
   }
 }
 
