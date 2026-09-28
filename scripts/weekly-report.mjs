@@ -47,7 +47,7 @@ async function requestJson(url, options, label) {
     try {
       res = await fetch(url, {
         ...options,
-        signal: AbortSignal.timeout(15_000),
+        signal: globalThis.AbortSignal.timeout(15_000),
       });
     } catch (error) {
       lastError = new Error(`${label} → ${detail(error)}`);
@@ -98,7 +98,7 @@ async function goatcounterHits() {
   const excluded = [];
 
   while (true) {
-    const params = new URLSearchParams({
+    const params = new globalThis.URLSearchParams({
       start: START,
       end: END,
       limit: '100',
