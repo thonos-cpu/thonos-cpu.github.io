@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.3",
-    "astro": "^6.4.8",
+    "astro": "^7.1.1",
     "lenis": "^1",
     "lightningcss": "^1.32.0",
     "pyodide": "^314.0.2",
