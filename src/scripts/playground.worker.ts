@@ -10,6 +10,7 @@
 interface Msg {
   lang: 'javascript' | 'python' | 'lua' | 'sql';
   code: string;
+  trusted: boolean;
 }
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -91,10 +92,11 @@ async function runSQL(code: string, emit: (...a: unknown[]) => void) {
 }
 
 self.onmessage = async (e: MessageEvent<Msg>) => {
-  const { lang, code } = e.data;
+  const { lang, code, trusted } = e.data;
   const out: string[] = [];
   const emit = (...a: unknown[]) => out.push(a.map(fmt).join(' '));
   try {
+    if (trusted !== true) throw new Error('Untrusted execution request blocked.');
     if (lang === 'javascript') await runJS(code, emit);
     else if (lang === 'python') await runPython(code, emit);
     else if (lang === 'lua') await runLua(code, emit);
