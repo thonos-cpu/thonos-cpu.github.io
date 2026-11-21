@@ -2,11 +2,13 @@ import { expect, test } from '@playwright/test';
 
 test('external links prevent reverse-tabnabbing', async ({ page }) => {
   await page.goto('/');
-  const unsafe = await page.locator('a[target="_blank"]').evaluateAll((anchors) =>
-    anchors
-      .filter((anchor) => !anchor.rel.split(/\s+/).includes('noopener'))
-      .map((anchor) => anchor.href),
-  );
+  const unsafe = await page
+    .locator('a[target="_blank"]')
+    .evaluateAll((anchors) =>
+      anchors
+        .filter((anchor) => !anchor.rel.split(/\s+/).includes('noopener'))
+        .map((anchor) => anchor.href),
+    );
   expect(unsafe).toEqual([]);
 });
 

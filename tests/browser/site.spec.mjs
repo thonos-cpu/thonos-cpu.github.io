@@ -92,7 +92,9 @@ test('site has no horizontal overflow at supported viewport widths', async ({ pa
     await page.setViewportSize({ width, height: 900 });
     await page.goto('/');
     await page.evaluate(() => document.fonts.ready);
-    const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+    const overflow = await page.evaluate(
+      () => document.documentElement.scrollWidth - window.innerWidth,
+    );
     expect(overflow, 'Horizontal overflow at ' + width + 'px').toBeLessThanOrEqual(2);
   }
 });
@@ -111,9 +113,11 @@ test('no failed same-origin document requests', async ({ page }) => {
 
 test('all internal navigation URLs remain on this origin', async ({ page }) => {
   await page.goto('/');
-  const anchors = await page.locator('a[href]').evaluateAll((nodes) =>
-    nodes.map((node) => node.getAttribute('href')).filter((href) => href?.startsWith('/')),
-  );
+  const anchors = await page
+    .locator('a[href]')
+    .evaluateAll((nodes) =>
+      nodes.map((node) => node.getAttribute('href')).filter((href) => href?.startsWith('/')),
+    );
   for (const href of anchors) {
     expect(new URL(href, page.url()).origin).toBe(new URL(page.url()).origin);
   }

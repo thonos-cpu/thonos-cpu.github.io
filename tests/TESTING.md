@@ -20,22 +20,22 @@ Browser tests use the built `dist/` output and start the local preview server. T
 
 ## CI checks
 
-| Check | Purpose |
-| --- | --- |
-| Node regression suite | Lockfile integrity, workflow invariants, secrets, links and safe HTML |
-| Data unit tests | Curated metadata, knowledge ranking, fact identity and profile invariants |
-| npm audit | Known high/critical dependency vulnerabilities |
-| CodeQL | JavaScript and TypeScript static analysis |
-| Dependency review | Newly introduced vulnerable packages in pull requests |
-| Gitleaks | Accidental secrets in Git history |
-| Actionlint | Workflow expression and shell syntax |
-| Zizmor | GitHub Actions security smells |
-| Prettier and ESLint | Formatting and code correctness |
-| Astro check | Type checking |
-| Build and output assertions | Valid production generation, assets and links |
-| Playwright | Navigation, JavaScript playground, theme, assistant, mobile and error recovery |
-| axe-core | Automated WCAG 2.x A/AA checks |
-| Lighthouse | Accessibility, performance, SEO and best-practice budgets |
+| Check                       | Purpose                                                                        |
+| --------------------------- | ------------------------------------------------------------------------------ |
+| Node regression suite       | Lockfile integrity, workflow invariants, secrets, links and safe HTML          |
+| Data unit tests             | Curated metadata, knowledge ranking, fact identity and profile invariants      |
+| npm audit                   | Known high/critical dependency vulnerabilities                                 |
+| CodeQL                      | JavaScript and TypeScript static analysis                                      |
+| Dependency review           | Newly introduced vulnerable packages in pull requests                          |
+| Gitleaks                    | Accidental secrets in Git history                                              |
+| Actionlint                  | Workflow expression and shell syntax                                           |
+| Zizmor                      | GitHub Actions security smells                                                 |
+| Prettier and ESLint         | Formatting and code correctness                                                |
+| Astro check                 | Type checking                                                                  |
+| Build and output assertions | Valid production generation, assets and links                                  |
+| Playwright                  | Navigation, JavaScript playground, theme, assistant, mobile and error recovery |
+| axe-core                    | Automated WCAG 2.x A/AA checks                                                 |
+| Lighthouse                  | Accessibility, performance, SEO and best-practice budgets                      |
 
 ## Caveats
 
