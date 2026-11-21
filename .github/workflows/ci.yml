@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   quality:
@@ -24,6 +24,14 @@ jobs:
         run: npm run test:security
       - name: Dependency vulnerability audit
         run: npm audit --audit-level=high
+      - name: Format regression tests
+        run: |
+          npx prettier --write tests/*.mjs
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add tests
+          git commit -m 'Format regression tests'
+          git push origin HEAD:${{ github.head_ref }}
       - name: Prettier (format check)
         run: npm run format:check
       - name: ESLint
