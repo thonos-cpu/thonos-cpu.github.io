@@ -19,7 +19,7 @@
     "format:check": "prettier --check .",
     "lint": "eslint . --max-warnings 0",
     "test:browser": "playwright test",
-    "test:unit": "node --test tests/unit/*.test.mjs",
+    "test:unit": "node --experimental-strip-types --test tests/unit/*.test.mjs",
     "test:all": "npm run test:security && npm run test:unit && npm run check && npm run lint && npm run build && npm run test:site && npm run test:browser"
   },
   "dependencies": {
