@@ -136,7 +136,7 @@ function selectFacts(query: string, topic: FactCategory | null, state: Conversat
   })).filter((item) => item.score >= (topic ? 25 : 12))
     .sort((a, b) => b.score - a.score);
 
-  if (!matches.length && topic && state.topic === topic) {
+  if (!matches.length && topic) {
     const available = FACTS.filter((fact) => fact.category === topic && !state.seenFacts.includes(fact.id));
     return available.slice(0, 1);
   }
@@ -205,4 +205,8 @@ export function respondToUser(question: string, current: ConversationState): Con
   state.seenFacts = state.seenFacts.slice(-40);
 
   return { answer, state, suggestions: suggestionsFor(state) };
+}
+
+export function initialSuggestions(): SuggestedPrompt[] {
+  return SUGGESTED_PROMPTS.slice(0, 5);
 }
