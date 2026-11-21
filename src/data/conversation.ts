@@ -130,19 +130,19 @@ function scoreFact(
 
 function selectFacts(query: string, topic: FactCategory | null, state: ConversationState): PersonalFact[] {
   const queryTerms = terms(query);
-  const matches = INDEX.map((item) => ({
+  const followUp = /\b(more|else|another|other|expand|elaborate|details)\b/.test(query);\n  const previousId = state.seenFacts.at(-1);\n  const relatedPrefix = followUp && previousId?.startsWith('cern-') ? 'cern-' : null;\n  const matches = INDEX.filter((item) => !relatedPrefix || item.fact.id.startsWith(relatedPrefix)).map((item) => ({
     fact: item.fact,
     score: scoreFact(query, queryTerms, topic, item),
   })).filter((item) => item.score >= (topic ? 25 : 12))
     .sort((a, b) => b.score - a.score);
 
   if (!matches.length && topic) {
-    const available = FACTS.filter((fact) => fact.category === topic && !state.seenFacts.includes(fact.id));
+    const available = FACTS.filter((fact) => fact.category === topic && !state.seenFacts.includes(fact.id) && (!relatedPrefix || fact.id.startsWith(relatedPrefix)));
     return available.slice(0, 1);
   }
 
   const fresh = matches.filter(({ fact }) => !state.seenFacts.includes(fact.id));
-  const wantMore = /\b(more|else|another|other|expand|elaborate|details)\b/.test(query);
+  const wantMore = followUp;
   const duplicate = state.seenQueries.includes(query);
   if ((wantMore || duplicate) && !fresh.length) return [];
   const candidates = fresh.length ? fresh : matches;
