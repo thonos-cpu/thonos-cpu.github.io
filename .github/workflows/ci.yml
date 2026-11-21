@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   quality:
@@ -18,7 +18,14 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - run: npm install --no-package-lock
+      - name: Generate and commit dependency lockfile
+        run: |
+          npm install --package-lock-only --ignore-scripts
+          git config user.name github-actions\[bot\]
+          git config user.email 41898282+github-actions\[bot\]@users.noreply.github.com
+          git add package-lock.json
+          git commit -m 'Lock npm dependencies for reproducible CI'
+          git push origin HEAD:${{ github.head_ref }}
       - name: Prettier (format check)
         run: npm run format:check
       - name: ESLint
