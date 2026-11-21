@@ -39,7 +39,14 @@ test('workflow jobs enforce checks before publishing', () => {
     assert.match(workflow, /npm ci/);
     assert.doesNotMatch(workflow, /npm install --no-package-lock/);
   }
-  for (const command of ['format:check', 'npm run lint', 'npm run check', 'npm run build', 'test:security', 'test:site']) {
+  for (const command of [
+    'format:check',
+    'npm run lint',
+    'npm run check',
+    'npm run build',
+    'test:security',
+    'test:site',
+  ]) {
     assert.ok(ci.includes(command), 'CI missing ' + command);
   }
   assert.match(deploy, /needs: build/);

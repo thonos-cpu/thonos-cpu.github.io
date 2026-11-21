@@ -50,7 +50,9 @@ test('all built pages contain basic metadata and safe links', () => {
         const target = localPath(attr[key], page);
         if (target) {
           assert.ok(
-            existsSync(target) || existsSync(target + '.html') || existsSync(join(target, 'index.html')),
+            existsSync(target) ||
+              existsSync(target + '.html') ||
+              existsSync(join(target, 'index.html')),
             'Broken local asset/link in ' + page + ': ' + attr[key],
           );
         }
