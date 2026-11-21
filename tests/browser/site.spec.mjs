@@ -14,7 +14,7 @@ test('navigation reaches the playground and back', async ({ page }) => {
   await page.goto('/playground');
   await expect(page.locator('[data-pg-code]')).toBeVisible();
   await page.locator('a[aria-label*="home"]').click();
-  await expect(page).toHaveURL(/\/$/);
+  await expect(page).toHaveURL(/\/#top$/);
 });
 
 test('theme persists across navigation and reload', async ({ page }) => {
