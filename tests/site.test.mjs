@@ -10,7 +10,9 @@ const files = (dir) =>
     return statSync(file).isDirectory() ? files(file) : [file];
   });
 
-const htmlFiles = files(dist).filter((file) => file.endsWith('.html') && !/\/google[^/]*\.html$/.test(file));
+const htmlFiles = files(dist).filter(
+  (file) => file.endsWith('.html') && !/\/google[^/]*\.html$/.test(file),
+);
 const attrs = (tag) => {
   const parsed = {};
   for (const match of tag.matchAll(/([a-z][\w:-]*)\s*=\s*(?:"([^"]*)"|'([^']*)')/gi)) {
