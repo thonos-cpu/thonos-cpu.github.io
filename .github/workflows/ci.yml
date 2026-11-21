@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   quality:
@@ -19,15 +19,7 @@ jobs:
         with:
           node-version: 22
           cache: npm
-      - name: Regenerate corrupted lockfile
-        run: |
-          npm install --package-lock-only --ignore-scripts
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add package-lock.json
-          git commit -m 'Regenerate valid npm dependency lockfile'
-          git pull --rebase origin ${{ github.head_ref }}
-          git push origin HEAD:${{ github.head_ref }}
+      - run: npm ci
       - name: Prettier (format check)
         run: npm run format:check
       - name: ESLint
