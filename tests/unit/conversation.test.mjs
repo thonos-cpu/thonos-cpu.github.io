@@ -9,13 +9,20 @@ const compiledKnowledge = ts.transpileModule(knowledge, {
   fileName: 'knowledge.ts',
   compilerOptions: { module: ts.ModuleKind.ESNext, target: ts.ScriptTarget.ES2022 },
 }).outputText;
-const compiledConversation = ts.transpileModule(conversation, {
-  fileName: 'conversation.ts',
-  compilerOptions: { module: ts.ModuleKind.ESNext, target: ts.ScriptTarget.ES2022 },
-}).outputText.replace("from './knowledge'", "from './knowledge.js'");
+const compiledConversation = ts
+  .transpileModule(conversation, {
+    fileName: 'conversation.ts',
+    compilerOptions: { module: ts.ModuleKind.ESNext, target: ts.ScriptTarget.ES2022 },
+  })
+  .outputText.replace("from './knowledge'", "from './knowledge.js'");
 const dataUrl = 'data:text/javascript;base64,' + Buffer.from(compiledKnowledge).toString('base64');
-const moduleText = compiledConversation.replace("from './knowledge.js'", 'from ' + JSON.stringify(dataUrl));
-const bot = await import('data:text/javascript;base64,' + Buffer.from(moduleText).toString('base64'));
+const moduleText = compiledConversation.replace(
+  "from './knowledge.js'",
+  'from ' + JSON.stringify(dataUrl),
+);
+const bot = await import(
+  'data:text/javascript;base64,' + Buffer.from(moduleText).toString('base64')
+);
 
 function chat(...queries) {
   let state = bot.createConversationState();

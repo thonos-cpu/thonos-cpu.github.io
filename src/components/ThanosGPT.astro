@@ -326,17 +326,19 @@
       hasAsked = true;
       bubble(query, 'user');
       chips.replaceChildren();
-      queue = queue.then(async () => {
-        const assistant = await loadAssistant();
-        state ??= assistant.createConversationState();
-        const result = assistant.respondToUser(query, state);
-        state = result.state;
-        bubble(result.answer, 'bot');
-        renderChips(result.suggestions);
-      }).catch(() => {
-        bubble('The assistant could not load. Please try again.', 'bot');
-        assistantPromise = null;
-      });
+      queue = queue
+        .then(async () => {
+          const assistant = await loadAssistant();
+          state ??= assistant.createConversationState();
+          const result = assistant.respondToUser(query, state);
+          state = result.state;
+          bubble(result.answer, 'bot');
+          renderChips(result.suggestions);
+        })
+        .catch(() => {
+          bubble('The assistant could not load. Please try again.', 'bot');
+          assistantPromise = null;
+        });
     }
 
     // ---- open / close -----------------------------------------------------
@@ -345,13 +347,18 @@
       lastFocus = document.activeElement as HTMLElement;
       root!.hidden = false;
       if (!log.childElementCount) {
-        bubble('Ask about Athanasios Tasis: work, projects, education, technical background, or contact details.', 'bot');
+        bubble(
+          'Ask about Athanasios Tasis: work, projects, education, technical background, or contact details.',
+          'bot',
+        );
       }
-      void loadAssistant().then((assistant) => {
-        if (!hasAsked && !root!.hidden) renderChips(assistant.initialSuggestions());
-      }).catch(() => {
-        assistantPromise = null;
-      });
+      void loadAssistant()
+        .then((assistant) => {
+          if (!hasAsked && !root!.hidden) renderChips(assistant.initialSuggestions());
+        })
+        .catch(() => {
+          assistantPromise = null;
+        });
       input.focus();
     }
     function close() {

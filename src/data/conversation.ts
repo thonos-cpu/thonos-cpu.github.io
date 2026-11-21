@@ -23,13 +23,87 @@ export interface ConversationReply {
 }
 
 const TOPICS: Partial<Record<FactCategory, string[]>> = {
-  identity: ['who is he', 'who is athanasios', 'what does he do', 'profile', 'biography', 'bio', 'summary', 'about him', 'about athanasios'],
-  education: ['education', 'university', 'degree', 'studies', 'studied', 'coursework', 'courses', 'patras', 'ceid'],
-  experience: ['cern', 'alice', 'gsi', 'internship', 'intern', 'experience', 'employment', 'worked', 'employer', 'teaching', 'detector', 'tpc'],
-  projects: ['project', 'projects', 'portfolio', 'repository', 'repositories', 'repo', 'repos', 'built', 'build', 'chord', 'dht', 'search engine', 'tf-idf', 'tfidf', 'forecasting', 'thesis management'],
-  skills: ['skills', 'skill', 'stack', 'technologies', 'technology', 'tools', 'languages', 'programming', 'python', 'c++', 'sql', 'linux'],
+  identity: [
+    'who is he',
+    'who is athanasios',
+    'what does he do',
+    'profile',
+    'biography',
+    'bio',
+    'summary',
+    'about him',
+    'about athanasios',
+  ],
+  education: [
+    'education',
+    'university',
+    'degree',
+    'studies',
+    'studied',
+    'coursework',
+    'courses',
+    'patras',
+    'ceid',
+  ],
+  experience: [
+    'cern',
+    'alice',
+    'gsi',
+    'internship',
+    'intern',
+    'experience',
+    'employment',
+    'worked',
+    'employer',
+    'teaching',
+    'detector',
+    'tpc',
+  ],
+  projects: [
+    'project',
+    'projects',
+    'portfolio',
+    'repository',
+    'repositories',
+    'repo',
+    'repos',
+    'built',
+    'build',
+    'chord',
+    'dht',
+    'search engine',
+    'tf-idf',
+    'tfidf',
+    'forecasting',
+    'thesis management',
+  ],
+  skills: [
+    'skills',
+    'skill',
+    'stack',
+    'technologies',
+    'technology',
+    'tools',
+    'languages',
+    'programming',
+    'python',
+    'c++',
+    'sql',
+    'linux',
+  ],
   research: ['thesis', 'research', 'reinforcement learning', 'edge computing'],
-  career: ['career', 'role', 'roles', 'job', 'jobs', 'hiring', 'hire', 'fit', 'looking for', 'open to work'],
+  career: [
+    'career',
+    'role',
+    'roles',
+    'job',
+    'jobs',
+    'hiring',
+    'hire',
+    'fit',
+    'looking for',
+    'open to work',
+  ],
   work_style: ['work style', 'debugging', 'debug', 'problem solving', 'approach'],
   achievements: ['award', 'awards', 'scholarship', 'hackathon', 'recognition'],
   contact: ['contact', 'email', 'linkedin', 'reach', 'book a call', 'get in touch'],
@@ -37,25 +111,90 @@ const TOPICS: Partial<Record<FactCategory, string[]>> = {
 };
 
 const STOP = new Set([
-  'a', 'an', 'the', 'is', 'are', 'was', 'were', 'do', 'does', 'did', 'of', 'to',
-  'for', 'in', 'on', 'at', 'and', 'or', 'his', 'he', 'him', 'you', 'your', 'me',
-  'my', 'i', 'can', 'could', 'would', 'what', 'whats', 'tell', 'about', 'please',
-  'with', 'how', 'has', 'have', 'it', 'this', 'that', 'any', 'some', 'give',
-  'show', 'there', 'those', 'them', 'more', 'else', 'another', 'other', 'detail',
-  'details', 'athanasios', 'tasis',
+  'a',
+  'an',
+  'the',
+  'is',
+  'are',
+  'was',
+  'were',
+  'do',
+  'does',
+  'did',
+  'of',
+  'to',
+  'for',
+  'in',
+  'on',
+  'at',
+  'and',
+  'or',
+  'his',
+  'he',
+  'him',
+  'you',
+  'your',
+  'me',
+  'my',
+  'i',
+  'can',
+  'could',
+  'would',
+  'what',
+  'whats',
+  'tell',
+  'about',
+  'please',
+  'with',
+  'how',
+  'has',
+  'have',
+  'it',
+  'this',
+  'that',
+  'any',
+  'some',
+  'give',
+  'show',
+  'there',
+  'those',
+  'them',
+  'more',
+  'else',
+  'another',
+  'other',
+  'detail',
+  'details',
+  'athanasios',
+  'tasis',
 ]);
 
 const SYNONYMS: Record<string, string> = {
-  jobs: 'job', roles: 'role', projects: 'project', repos: 'repo',
-  repositories: 'repository', skills: 'skill', languages: 'language',
-  tools: 'tool', technologies: 'technology', tech: 'technology',
-  programming: 'language', studied: 'study', studies: 'study',
-  worked: 'work', working: 'work', internships: 'internship',
-  models: 'model', learning: 'learning', learnt: 'learn',
+  jobs: 'job',
+  roles: 'role',
+  projects: 'project',
+  repos: 'repo',
+  repositories: 'repository',
+  skills: 'skill',
+  languages: 'language',
+  tools: 'tool',
+  technologies: 'technology',
+  tech: 'technology',
+  programming: 'language',
+  studied: 'study',
+  studies: 'study',
+  worked: 'work',
+  working: 'work',
+  internships: 'internship',
+  models: 'model',
+  learning: 'learning',
+  learnt: 'learn',
 };
 
 function normalize(value: string): string {
-  return value.toLowerCase().normalize('NFD')
+  return value
+    .toLowerCase()
+    .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')
     .replace(/[^a-z0-9+#\s-]/g, ' ')
     .replace(/\s+/g, ' ')
@@ -67,7 +206,8 @@ function containsPhrase(text: string, phrase: string): boolean {
 }
 
 function terms(value: string): string[] {
-  return normalize(value).split(' ')
+  return normalize(value)
+    .split(' ')
     .map((term) => SYNONYMS[term] ?? term)
     .filter((term) => term.length > 1 && !STOP.has(term));
 }
@@ -82,11 +222,17 @@ const INDEX = FACTS.map((fact) => ({
 
 function categorySignals(query: string): [FactCategory, number][] {
   return Object.entries(TOPICS)
-    .map(([topic, phrases]) => [
-      topic as FactCategory,
-      (phrases ?? []).reduce((score, phrase) =>
-        score + (containsPhrase(query, phrase) ? (phrase.includes(' ') ? 9 : 6) : 0), 0),
-    ] as [FactCategory, number])
+    .map(
+      ([topic, phrases]) =>
+        [
+          topic as FactCategory,
+          (phrases ?? []).reduce(
+            (score, phrase) =>
+              score + (containsPhrase(query, phrase) ? (phrase.includes(' ') ? 9 : 6) : 0),
+            0,
+          ),
+        ] as [FactCategory, number],
+    )
     .filter(([, score]) => score > 0)
     .sort((a, b) => b[1] - a[1]);
 }
@@ -101,8 +247,12 @@ function guardrail(query: string): string | null {
 function getTopic(query: string, state: ConversationState): FactCategory | null {
   const signals = categorySignals(query);
   const pointsBack = /\b(it|that|there|those|them|this|previous|earlier)\b/.test(query);
-  const followUp = /^(and|more|what else|anything else|tell me more|elaborate|expand|details|another|other)\b/.test(query);
-  if (state.topic && pointsBack && signals.every(([topic]) => topic === 'skills')) return state.topic;
+  const followUp =
+    /^(and|more|what else|anything else|tell me more|elaborate|expand|details|another|other)\b/.test(
+      query,
+    );
+  if (state.topic && pointsBack && signals.every(([topic]) => topic === 'skills'))
+    return state.topic;
   if (state.topic && (followUp || pointsBack) && signals.length === 0) return state.topic;
   return signals[0]?.[0] ?? null;
 }
@@ -128,19 +278,30 @@ function scoreFact(
   return score + (fact.priority ?? 0) / 5;
 }
 
-function selectFacts(query: string, topic: FactCategory | null, state: ConversationState): PersonalFact[] {
+function selectFacts(
+  query: string,
+  topic: FactCategory | null,
+  state: ConversationState,
+): PersonalFact[] {
   const queryTerms = terms(query);
   const followUp = /\b(more|else|another|other|expand|elaborate|details)\b/.test(query);
   const previousId = state.seenFacts.at(-1);
   const relatedPrefix = followUp && previousId?.startsWith('cern-') ? 'cern-' : null;
-  const matches = INDEX.filter((item) => !relatedPrefix || item.fact.id.startsWith(relatedPrefix)).map((item) => ({
-    fact: item.fact,
-    score: scoreFact(query, queryTerms, topic, item),
-  })).filter((item) => item.score >= (topic ? 25 : 12))
+  const matches = INDEX.filter((item) => !relatedPrefix || item.fact.id.startsWith(relatedPrefix))
+    .map((item) => ({
+      fact: item.fact,
+      score: scoreFact(query, queryTerms, topic, item),
+    }))
+    .filter((item) => item.score >= (topic ? 25 : 12))
     .sort((a, b) => b.score - a.score);
 
   if (!matches.length && topic) {
-    const available = FACTS.filter((fact) => fact.category === topic && !state.seenFacts.includes(fact.id) && (!relatedPrefix || fact.id.startsWith(relatedPrefix)));
+    const available = FACTS.filter(
+      (fact) =>
+        fact.category === topic &&
+        !state.seenFacts.includes(fact.id) &&
+        (!relatedPrefix || fact.id.startsWith(relatedPrefix)),
+    );
     return available.slice(0, 1);
   }
 
@@ -157,8 +318,13 @@ function suggestionsFor(state: ConversationState): SuggestedPrompt[] {
   return SUGGESTED_PROMPTS.filter((prompt) => {
     const query = normalize(prompt.query);
     const topic = getTopic(query, { topic: null, seenFacts: [], seenQueries: [], turns: 0 });
-    return !state.seenQueries.includes(query) &&
-      (!topic || !state.seenFacts.some((id) => FACTS.some((fact) => fact.id === id && fact.category === topic)));
+    return (
+      !state.seenQueries.includes(query) &&
+      (!topic ||
+        !state.seenFacts.some((id) =>
+          FACTS.some((fact) => fact.id === id && fact.category === topic),
+        ))
+    );
   }).slice(0, 3);
 }
 
@@ -196,9 +362,13 @@ export function respondToUser(question: string, current: ConversationState): Con
     answer = facts.map((fact) => fact.text).join(' ');
     for (const fact of facts) if (!state.seenFacts.includes(fact.id)) state.seenFacts.push(fact.id);
     state.topic = topic ?? facts[0].category;
-  } else if (topic && (state.seenQueries.includes(query) ||
-    /\b(more|else|another|other|expand|elaborate|details)\b/.test(query))) {
-    answer = 'I have already shared the available verified details on that topic. I can cover a different part of his profile.';
+  } else if (
+    topic &&
+    (state.seenQueries.includes(query) ||
+      /\b(more|else|another|other|expand|elaborate|details)\b/.test(query))
+  ) {
+    answer =
+      'I have already shared the available verified details on that topic. I can cover a different part of his profile.';
   } else {
     answer = FALLBACK;
   }
