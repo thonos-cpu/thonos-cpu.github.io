@@ -130,7 +130,10 @@ function scoreFact(
 
 function selectFacts(query: string, topic: FactCategory | null, state: ConversationState): PersonalFact[] {
   const queryTerms = terms(query);
-  const followUp = /\b(more|else|another|other|expand|elaborate|details)\b/.test(query);\n  const previousId = state.seenFacts.at(-1);\n  const relatedPrefix = followUp && previousId?.startsWith('cern-') ? 'cern-' : null;\n  const matches = INDEX.filter((item) => !relatedPrefix || item.fact.id.startsWith(relatedPrefix)).map((item) => ({
+  const followUp = /\b(more|else|another|other|expand|elaborate|details)\b/.test(query);
+  const previousId = state.seenFacts.at(-1);
+  const relatedPrefix = followUp && previousId?.startsWith('cern-') ? 'cern-' : null;
+  const matches = INDEX.filter((item) => !relatedPrefix || item.fact.id.startsWith(relatedPrefix)).map((item) => ({
     fact: item.fact,
     score: scoreFact(query, queryTerms, topic, item),
   })).filter((item) => item.score >= (topic ? 25 : 12))
