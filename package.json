@@ -17,7 +17,10 @@
     "test:site": "node --test tests/site.test.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "lint": "eslint . --max-warnings 0"
+    "lint": "eslint . --max-warnings 0",
+    "test:browser": "playwright test",
+    "test:unit": "node --test tests/unit/*.test.mjs",
+    "test:all": "npm run test:security && npm run test:unit && npm run check && npm run lint && npm run build && npm run test:site && npm run test:browser"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.6",
@@ -42,6 +45,8 @@
     "prettier": "^3",
     "prettier-plugin-astro": "^0.14",
     "typescript": "^5",
-    "typescript-eslint": "^8"
+    "typescript-eslint": "^8",
+    "@playwright/test": "1.65.1",
+    "@axe-core/playwright": "4.14.0"
   }
 }
