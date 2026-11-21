@@ -3,6 +3,7 @@ import { expect, test } from '@playwright/test';
 
 for (const route of ['/', '/playground']) {
   test('automated accessibility audit: ' + route, async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.goto(route);
     const results = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
