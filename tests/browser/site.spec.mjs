@@ -13,7 +13,7 @@ test('navigation reaches the playground and back', async ({ page }) => {
   await page.goto('/');
   await page.goto('/playground');
   await expect(page.locator('[data-pg-code]')).toBeVisible();
-  await page.locator('a[aria-label*="home"]').click();
+  await page.locator('a.nav__brand').click();
   await expect(page).toHaveURL(/\/#top$/);
 });
 
