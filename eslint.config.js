@@ -36,6 +36,16 @@ export default [
     },
   },
   {
+    files: ['tests/**/*.mjs'],
+    languageOptions: {
+      globals: {
+        document: 'readonly',
+        window: 'readonly',
+        Response: 'readonly',
+      },
+    },
+  },
+  {
     rules: {
       'no-unused-vars': 'off',
       '@typescript-eslint/no-unused-vars': [

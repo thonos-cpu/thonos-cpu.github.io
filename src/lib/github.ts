@@ -160,7 +160,7 @@ async function renderReadme(repoName: string): Promise<string | null> {
       source: ['srcset', 'media', 'type'],
       '*': ['id', 'class', 'align', 'colspan', 'rowspan', 'start', 'dir', 'aria-hidden'],
     },
-    allowedSchemes: ['http', 'https', 'mailto', 'data'],
+    allowedSchemes: ['http', 'https', 'mailto'],
     transformTags: {
       a: (tagName, attribs) => {
         if (attribs.href && !isAbsolute(attribs.href)) {

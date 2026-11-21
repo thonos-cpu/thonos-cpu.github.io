@@ -51,7 +51,7 @@
   --surface-hover: rgba(255, 255, 255, 0.065);
   --text: #f1f1ec;
   --text-dim: #a7a8a4;
-  --text-faint: #727570;
+  --text-faint: #a9aca6;
   --line: rgba(255, 255, 255, 0.1);
   --line-strong: rgba(255, 255, 255, 0.22);
   --accent: #6bc8f0;
@@ -73,7 +73,7 @@
   --surface-hover: rgba(20, 22, 24, 0.06);
   --text: #171819;
   --text-dim: #55585b;
-  --text-faint: #858882;
+  --text-faint: #575b55;
   --line: rgba(20, 22, 24, 0.13);
   --line-strong: rgba(20, 22, 24, 0.28);
   --accent: #006f9e;
