@@ -8,7 +8,11 @@ for (const route of ['/', '/playground']) {
       .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
       .analyze();
     expect(
-      results.violations.map((v) => ({ id: v.id, impact: v.impact, nodes: v.nodes.length })),
+      results.violations.map((v) => ({
+        id: v.id,
+        impact: v.impact,
+        nodes: v.nodes.map((node) => node.target),
+      })),
     ).toEqual([]);
   });
 
