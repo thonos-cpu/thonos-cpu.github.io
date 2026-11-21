@@ -4,7 +4,7 @@
 // replies with the written answer. Opened by the nav "Ask" button (#thanosgpt-open).
 ---
 
-<div class="tg" data-tg hidden>
+<div class="tg" data-tg data-lenis-prevent hidden>
   <div class="tg__backdrop" data-tg-close aria-hidden="true"></div>
 
   <div class="tg__panel" role="dialog" aria-modal="true" aria-labelledby="tg-title">
@@ -94,6 +94,7 @@
     border-radius: var(--radius);
     box-shadow: var(--shadow);
     overflow: hidden;
+    overscroll-behavior: contain;
     transform: translateY(12px) scale(0.99);
     opacity: 0;
     animation: tg-pop 0.32s var(--ease-out) forwards;
@@ -169,7 +170,9 @@
 
   .tg__log {
     flex: 1;
+    min-height: 0;
     overflow-y: auto;
+    overscroll-behavior: contain;
     padding: 1rem;
     display: flex;
     flex-direction: column;
@@ -378,6 +381,17 @@
       input.value = '';
       ask(q);
     });
+    root.addEventListener(
+      'wheel',
+      (event) => {
+        event.preventDefault();
+        if (!panel.contains(event.target as Node)) return;
+        const scale = event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? log.clientHeight : 1;
+        log.scrollTop += event.deltaY * scale;
+      },
+      { passive: false },
+    );
+
     // keep clicks inside the panel from closing via backdrop
     panel.addEventListener('click', (e) => e.stopPropagation());
   }
