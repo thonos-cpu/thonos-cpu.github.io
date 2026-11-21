@@ -27,6 +27,8 @@ jobs:
         run: npm audit --audit-level=high
       - name: Security regression tests
         run: npm run test:security
+      - name: Deterministic unit tests
+        run: npm run test:unit
       - name: Prettier (format check)
         run: npm run format:check
       - name: ESLint
