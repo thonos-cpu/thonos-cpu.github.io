@@ -31,15 +31,6 @@ jobs:
         run: npm run test:security
       - name: Deterministic unit tests
         run: npm run test:unit
-      - name: Temporary assistant formatting capture
-        run: |
-          npx prettier --write src/components/ThanosGPT.astro src/data/conversation.ts src/data/knowledge.ts tests/unit/conversation.test.mjs
-          for file in src/components/ThanosGPT.astro src/data/conversation.ts src/data/knowledge.ts tests/unit/conversation.test.mjs; do
-            echo "FORMATTED_BEGIN:$file"
-            base64 -w0 "$file"
-            echo
-            echo "FORMATTED_END:$file"
-          done
       - name: Prettier (format check)
         run: npm run format:check
       - name: ESLint
