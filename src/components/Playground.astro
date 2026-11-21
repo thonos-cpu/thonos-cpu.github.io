@@ -247,7 +247,7 @@ FROM repos GROUP BY lang ORDER BY stars DESC;`,
       setRunning(true);
       out.classList.remove('pg__out--error');
       out.textContent = heavy ? 'Running… (first run downloads the runtime)' : 'Running…';
-      worker!.postMessage({ lang: langSel.value, code: editor.value });
+      worker!.postMessage({ lang: langSel.value, code: editor.value, trusted: true });
       // Hard timeout: kill runaway code (infinite loops) and recover.
       clearTimeout(timer);
       timer = window.setTimeout(() => {
