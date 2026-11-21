@@ -70,7 +70,7 @@ async function runSQL(code: string, emit: (...a: unknown[]) => void) {
     // locateFile inside a bundled ES-module worker.
     const wasmUrl = new URL('/playground/sql-wasm.wasm', self.location.origin).href;
     const wasmBinary = await (await fetch(wasmUrl)).arrayBuffer();
-    sqlPromise = initSqlJs({ wasmBinary });
+    sqlPromise = initSqlJs({ wasmBinary, useOldExtensionFunctions: false });
   }
   const SQL = await sqlPromise;
   const db = new SQL.Database();
