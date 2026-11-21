@@ -20,6 +20,10 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - name: Security regression tests
+        run: npm run test:security
+      - name: Dependency vulnerability audit
+        run: npm audit --audit-level=high
       - name: Prettier (format check)
         run: npm run format:check
       - name: ESLint
@@ -31,6 +35,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CI: 'true'
+      - name: Production output regression tests
+        run: npm run test:site
       - name: Upload build for Lighthouse
         uses: actions/upload-artifact@v4
         with:
