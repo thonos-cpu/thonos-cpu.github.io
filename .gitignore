@@ -31,3 +31,6 @@ skills-lock.json
 Thumbs.db
 *.log
 npm-debug.log*
+
+playwright-report/
+test-results/
