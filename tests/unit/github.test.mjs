@@ -57,7 +57,8 @@ function mockGitHub(markdown = malicious) {
     const path = String(url).replace(base, '');
     if (path === '/users/thonos-cpu') return Response.json(defaultUser);
     if (path.startsWith('/users/thonos-cpu/repos?')) return Response.json([repo]);
-    if (path === '/repos/thonos-cpu/example-repo/languages') return Response.json({ JavaScript: 800 });
+    if (path === '/repos/thonos-cpu/example-repo/languages')
+      return Response.json({ JavaScript: 800 });
     if (path === '/repos/thonos-cpu/example-repo/readme') {
       return Response.json({ content: Buffer.from(raw).toString('base64'), encoding: 'base64' });
     }
@@ -91,7 +92,11 @@ test('fetches GitHub profile and sanitizes untrusted README HTML', async () => {
 test('returns cached data when GitHub API is unavailable', async () => {
   const originalFetch = globalThis.fetch;
   try {
-    globalThis.fetch = async () => new Response('rate limited', { status: 429, headers: { 'x-ratelimit-remaining': '0' } });
+    globalThis.fetch = async () =>
+      new Response('rate limited', {
+        status: 429,
+        headers: { 'x-ratelimit-remaining': '0' },
+      });
     const { getGitHubData } = await import('../../src/lib/github.ts?fallback=' + Date.now());
     const data = await getGitHubData();
     assert.equal(data.repos[0].name, 'example-repo');
