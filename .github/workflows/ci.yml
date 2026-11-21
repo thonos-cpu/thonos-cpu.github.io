@@ -31,6 +31,8 @@ jobs:
         run: npm run test:security
       - name: Deterministic unit tests
         run: npm run test:unit
+      - name: Prettier (format check)
+        run: npm run format:check
       - name: Temporary assistant formatting capture
         run: |
           npx prettier --write src/components/ThanosGPT.astro src/data/conversation.ts src/data/knowledge.ts tests/unit/conversation.test.mjs
