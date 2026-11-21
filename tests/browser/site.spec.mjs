@@ -44,6 +44,26 @@ test('profile assistant answers and keeps hostile HTML inert', async ({ page }) 
   await expect(box).toBeHidden();
 });
 
+test('wheel over assistant scrolls conversation rather than the webpage', async ({ page }) => {
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Ask about Athanasios' }).click();
+  const log = page.locator('[data-tg-log]');
+  await log.evaluate((element) => {
+    for (let i = 0; i < 30; i++) {
+      const bubble = document.createElement('div');
+      bubble.className = 'tg__msg tg__msg--bot';
+      bubble.textContent = 'Conversation message ' + i;
+      element.appendChild(bubble);
+    }
+    element.scrollTop = 0;
+  });
+  const pageBefore = await page.evaluate(() => window.scrollY);
+  await page.locator('.tg__head').hover();
+  await page.mouse.wheel(0, 400);
+  await expect.poll(() => log.evaluate((element) => element.scrollTop)).toBeGreaterThan(0);
+  expect(await page.evaluate(() => window.scrollY)).toBe(pageBefore);
+});
+
 test('playground executes JavaScript and keeps output as plain text', async ({ page }) => {
   await page.goto('/playground');
   await page.locator('[data-pg-lang]').selectOption('javascript');
