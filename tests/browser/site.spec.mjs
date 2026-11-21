@@ -44,7 +44,6 @@ test('profile assistant answers and keeps hostile HTML inert', async ({ page }) 
   await expect(box).toBeHidden();
 });
 
-
 test('wheel over assistant scrolls conversation rather than the webpage', async ({ page }) => {
   await page.goto('/');
   await page.getByRole('button', { name: 'Ask about Athanasios' }).click();
