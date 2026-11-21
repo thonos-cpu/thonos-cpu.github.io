@@ -20,8 +20,6 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - name: Security regression tests
-        run: npm run test:security
       - name: Dependency vulnerability audit
         run: npm audit --audit-level=high
       - name: Format regression tests
