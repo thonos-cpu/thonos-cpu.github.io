@@ -82,8 +82,9 @@ test('playground clears output and switches language snippets', async ({ page })
   await expect(page.locator('[data-pg-out]')).toContainText('done');
   await page.locator('[data-pg-clear]').click();
   await expect(page.locator('[data-pg-out]')).toBeEmpty();
+  await page.reload();
   await page.locator('[data-pg-lang]').selectOption('sql');
-  await expect(page.locator('[data-pg-code]')).toContainText('CREATE TABLE');
+  await expect(page.locator('[data-pg-code]')).toHaveValue(/CREATE TABLE/);
 });
 
 test('site has no horizontal overflow at supported viewport widths', async ({ page }) => {
