@@ -116,7 +116,7 @@ export const GUARDRAILS: GuardrailRule[] = [
   },
   {
     id: 'unrelated',
-    triggers: ['weather', 'news', 'stocks', 'sports', 'movie', 'recipe', 'homework unrelated'],
+    triggers: ['weather', 'news', 'stocks', 'sports', 'movie', 'recipe', 'election', 'homework unrelated'],
     response:
       'I only answer questions about Athanasios Tasis and his professional background. Try asking about his projects, CERN work, skills, education, or contact details.',
   },
