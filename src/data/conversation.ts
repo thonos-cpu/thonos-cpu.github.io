@@ -1,7 +1,7 @@
 import {
-  BOT_INTRO,
+  CATEGORY_LABELS,
+  conversationalAnswer,
   FACTS,
-  FALLBACK,
   GUARDRAILS,
   SUGGESTED_PROMPTS,
   type FactCategory,
@@ -344,14 +344,36 @@ export function respondToUser(question: string, current: ConversationState): Con
   const safetyResponse = guardrail(query);
   if (safetyResponse) return { answer: safetyResponse, state, suggestions: suggestionsFor(state) };
 
-  if (/^(hi|hey|hello|yo|hiya)( |$)/.test(query)) {
-    return { answer: BOT_INTRO, state, suggestions: suggestionsFor(state) };
+  if (/^(hi|hey|hello|yo|hiya|good morning|good afternoon|good evening)[!. ]*$/.test(query)) {
+    return {
+      answer:
+        state.turns === 1
+          ? "Hey! I'm Athanasios's portfolio assistant. Curious about his projects, experience, or what he works with?"
+          : "Hey again! What would you like to know?",
+      state,
+      suggestions: suggestionsFor(state),
+    };
   }
-  if (/^(thanks|thank you|thx|cheers)( |$)/.test(query)) {
-    return { answer: "You're welcome.", state, suggestions: suggestionsFor(state) };
+  if (/^(thanks|thank you|thx|cheers)[!. ]*$/.test(query)) {
+    return {
+      answer: state.turns > 2 ? "Of course! Happy to help." : "You're welcome!",
+      state,
+      suggestions: suggestionsFor(state),
+    };
+  }
+  if (/^(how are you|how s it going|whats up|what s up)[!. ]*$/.test(query)) {
+    return {
+      answer: "Doing well, thanks for asking! Want to hear about something Athanasios has been working on?",
+      state,
+      suggestions: suggestionsFor(state),
+    };
   }
   if (/^(help|what can i ask|capabilities)$/.test(query)) {
-    return { answer: BOT_INTRO, state, suggestions: suggestionsFor(state) };
+    return {
+      answer: "I can help you explore his work, from CERN and distributed systems to his thesis and favorite technical tools. You can ask naturally, including follow-up questions.",
+      state,
+      suggestions: suggestionsFor(state),
+    };
   }
 
   const topic = getTopic(query, state);
@@ -359,7 +381,7 @@ export function respondToUser(question: string, current: ConversationState): Con
   let answer: string;
 
   if (facts.length) {
-    answer = facts.map((fact) => fact.text).join(' ');
+    answer = conversationalAnswer(question, facts);
     for (const fact of facts) if (!state.seenFacts.includes(fact.id)) state.seenFacts.push(fact.id);
     state.topic = topic ?? facts[0].category;
   } else if (
@@ -367,10 +389,12 @@ export function respondToUser(question: string, current: ConversationState): Con
     (state.seenQueries.includes(query) ||
       /\b(more|else|another|other|expand|elaborate|details)\b/.test(query))
   ) {
-    answer =
-      'I have already shared the available verified details on that topic. I can cover a different part of his profile.';
+    const subject = CATEGORY_LABELS[topic]?.toLowerCase() ?? 'that topic';
+    answer = `We've covered the main details about his ${subject} so far. I don't want to repeat myself, but you can ask about a specific part of it.`;
   } else {
-    answer = FALLBACK;
+    answer = state.turns > 1
+      ? "I'm not sure I have that detail in his public portfolio. I can still help with his experience, projects, or technical work."
+      : "I don't have a reliable answer to that in his portfolio, but I can tell you about his projects, experience, and technical background.";
   }
 
   if (query && !state.seenQueries.includes(query)) state.seenQueries.push(query);
