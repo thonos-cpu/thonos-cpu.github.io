@@ -10,14 +10,18 @@ import { person } from '../data/profile';
 interface Props {
   title?: string;
   description?: string;
+  profilePage?: boolean;
   /** GoatCounter site code → https://<code>.goatcounter.com. Change to your own. */
 }
 
-const { title = `${person.name} · ${person.role}`, description = person.summary } =
-  Astro.props as Props;
+const {
+  title = `${person.name} · ${person.role}`,
+  description = person.summary,
+  profilePage = false,
+} = Astro.props as Props;
 
 const GOATCOUNTER_CODE = 'thanos';
-const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const canonical = new URL(Astro.url.pathname.replace(/\/?$/, '/'), Astro.site).href;
 const ogImage = new URL('/portraits/thanos-2.jpg', Astro.site).href;
 ---
 
@@ -49,6 +53,11 @@ const ogImage = new URL('/portraits/thanos-2.jpg', Astro.site).href;
 
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="sitemap" href="/sitemap-index.xml" />
+    {
+      profilePage && (
+        <link rel="alternate" type="text/plain" href="/llms.txt" title="Portfolio index" />
+      )
+    }
 
     <!-- No-flash theme: runs before paint -->
     <script is:inline>
@@ -67,19 +76,30 @@ const ogImage = new URL('/portraits/thanos-2.jpg', Astro.site).href;
     </script>
 
     <!-- JSON-LD: structured Person data for search engines -->
-    <script
-      type="application/ld+json"
-      is:inline
-      set:html={JSON.stringify({
-        '@context': 'https://schema.org',
-        '@type': 'Person',
-        name: person.name,
-        jobTitle: person.role,
-        url: person.links.site,
-        email: `mailto:${person.email}`,
-        sameAs: [person.links.github, person.links.linkedin],
-      })}
-    />
+    {
+      profilePage && (
+        <script
+          type="application/ld+json"
+          is:inline
+          set:html={JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'ProfilePage',
+            url: canonical,
+            mainEntity: {
+              '@type': 'Person',
+              '@id': `${canonical}#person`,
+              name: person.name,
+              jobTitle: person.role,
+              description: person.summary,
+              url: canonical,
+              image: ogImage,
+              email: `mailto:${person.email}`,
+              sameAs: [person.links.github, person.links.linkedin],
+            },
+          })}
+        />
+      )
+    }
 
     <!-- Analytics: GoatCounter (the single external service). Privacy-first, no cookies. -->
     <script
