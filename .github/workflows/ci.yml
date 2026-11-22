@@ -25,12 +25,6 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - name: Temporary format preview
-        run: |
-          echo FORMATTED_TEST_BEGIN
-          npx prettier tests/browser/site.spec.mjs | base64 -w0
-          echo
-          echo FORMATTED_TEST_END
       - name: Dependency vulnerability audit
         run: npm audit --audit-level=high
       - name: Security regression tests
