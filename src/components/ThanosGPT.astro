@@ -291,7 +291,6 @@
   let intelligencePromise: Promise<Intelligence> | null = null;
   const loadIntelligence = () => (intelligencePromise ??= import('../data/intelligence'));
 
-
   const root = document.querySelector<HTMLElement>('[data-tg]');
   const openBtn = document.getElementById('thanosgpt-open');
   if (root && openBtn) {
@@ -364,7 +363,11 @@
           void loadIntelligence()
             .then(async (intelligence) => {
               if (request !== lastRequest) return;
-              const revised = intelligence.composeGroundedAnswer(query, result.answer, previousTopic);
+              const revised = intelligence.composeGroundedAnswer(
+                query,
+                result.answer,
+                previousTopic,
+              );
               if (revised !== result.answer) {
                 reply.textContent = revised;
                 history[index].content = revised;
