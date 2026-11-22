@@ -180,6 +180,7 @@
     scrollbar-width: thin;
   }
   .tg__msg {
+    flex-shrink: 0;
     max-width: 85%;
     padding: 0.6rem 0.8rem;
     border-radius: 12px;
@@ -300,6 +301,13 @@
     let hasAsked = false;
 
     // ---- rendering --------------------------------------------------------
+    function scrollToBottom() {
+      log.scrollTop = log.scrollHeight;
+      requestAnimationFrame(() => {
+        if (!root.hidden) log.scrollTop = log.scrollHeight;
+      });
+    }
+
     function bubble(text: string, who: 'bot' | 'user') {
       const el = document.createElement('div');
       el.className = `tg__msg tg__msg--${who}`;
@@ -310,7 +318,7 @@
         .replace(/>/g, '&gt;')
         .replace(/\*([^*]+)\*/g, '<em>$1</em>');
       log.appendChild(el);
-      log.scrollTop = log.scrollHeight;
+      scrollToBottom();
     }
 
     function renderChips(prompts: Prompt[]) {
@@ -323,6 +331,7 @@
         b.addEventListener('click', () => ask(prompt.query));
         chips.appendChild(b);
       }
+      scrollToBottom();
     }
 
     function ask(query: string) {
@@ -349,6 +358,7 @@
     function open() {
       lastFocus = document.activeElement as HTMLElement;
       root!.hidden = false;
+      window.dispatchEvent(new Event('profile-assistant:open'));
       if (!log.childElementCount) {
         bubble(
           'Ask about Athanasios Tasis: work, projects, education, technical background, or contact details.',
@@ -366,6 +376,7 @@
     }
     function close() {
       root!.hidden = true;
+      window.dispatchEvent(new Event('profile-assistant:close'));
       lastFocus?.focus();
     }
 
@@ -385,6 +396,7 @@
       'wheel',
       (event) => {
         event.preventDefault();
+        event.stopPropagation();
         if (!panel.contains(event.target as Node)) return;
         const scale = event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? log.clientHeight : 1;
         log.scrollTop += event.deltaY * scale;
