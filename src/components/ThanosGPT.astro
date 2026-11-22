@@ -304,7 +304,7 @@
     function scrollToBottom() {
       log.scrollTop = log.scrollHeight;
       requestAnimationFrame(() => {
-        if (!root.hidden) log.scrollTop = log.scrollHeight;
+        if (!root!.hidden) log.scrollTop = log.scrollHeight;
       });
     }
 
