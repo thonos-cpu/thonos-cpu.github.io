@@ -26,27 +26,32 @@ npm run test:unit
 npm run format:check
 npm run lint
 npm run check
-npm run build
+rm -f .cache/github.json
+CI=true npm run build
 npm run test:site
 ```
 
-Then run the browser suite against that fresh build. On a Linux CI host, use:
+The unit tests write an example project to the generated `.cache/github.json`. Remove that fixture before building. Otherwise a local build can pass the site tests with only the example project, and Lighthouse will be missing its real project page.
+
+GitHub currently has the browser workflow disabled. For UI changes, run the browser suite locally against the fresh build and report its result in the PR. On a Linux host, use:
 
 ```sh
 npx playwright install --with-deps chromium firefox webkit
 CI=true npm run test:browser
 ```
 
-Playwright starts the preview server on port 4321. Leave that port free. The suite covers Chromium, Firefox, WebKit and mobile Chromium. For a failed GitHub run, download its `playwright-report` artifact to inspect the failing test and trace.
+Playwright starts the preview server on port 4321. Leave that port free. The suite covers Chromium, Firefox, WebKit and mobile Chromium. If the workflow is enabled again, download its `playwright-report` artifact to inspect the failing test and trace.
 
 `npm run test:all` omits the audit and format check. A clean build also needs access to GitHub for portfolio data. If rate-limited locally, supply a read-only `GITHUB_TOKEN` through the environment. Keep tokens out of commits, logs and client code.
 
 ## What GitHub runs
 
+The table lists the triggers configured in Git. Check current enablement with `gh workflow list --all` when an expected run is missing.
+
 | Workflow                                             | When it runs (UTC)                          | What to check                                                                                                                      |
 | ---------------------------------------------------- | ------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
 | [CI](.github/workflows/ci.yml)                       | PR to main, push to main, Mon 04:00, manual | Quality steps above, then Lighthouse on the built site. Dependency review runs only on PRs and fails on high or critical findings. |
-| [Browser tests](.github/workflows/browser-tests.yml) | PR to main, Sun 02:00, manual               | Builds the site and runs Playwright and axe accessibility checks.                                                                  |
+| [Browser tests](.github/workflows/browser-tests.yml) | PR to main, Sun 02:00, manual               | Currently disabled in GitHub. When enabled, builds the site and runs Playwright and axe accessibility checks.                      |
 | [Supply chain](.github/workflows/supply-chain.yml)   | PR to main, push to main, Mon 03:00, manual | actionlint checks workflows, Gitleaks scans full Git history, and zizmor audits Actions security.                                  |
 | [CodeQL](.github/workflows/codeql.yml)               | PR to main, push to main, Mon 06:00         | Analyzes JavaScript and TypeScript with security-and-quality queries.                                                              |
 | [Pages](.github/workflows/deploy.yml)                | Push to main, daily 05:00, manual           | Builds and publishes `dist/`. Confirm the deploy job succeeded before reporting the change live.                                   |
