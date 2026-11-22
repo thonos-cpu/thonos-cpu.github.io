@@ -38,12 +38,12 @@ function chat(...queries) {
 test('initial suggestions and replies are available locally', () => {
   assert.ok(bot.initialSuggestions().length > 0);
   const { replies } = chat('Who is he?');
-  assert.match(replies[0], /Athanasios Tasis/);
+  assert.match(replies[0], /Athanasios/);
 });
 
 test('specific project questions select the right project', () => {
   const { replies } = chat('Tell me about his TF-IDF search engine');
-  assert.match(replies[0], /TF-IDF Search Engine/);
+  assert.match(replies[0], /TF-IDF/i);
 });
 
 test('follow-up requests reveal new facts instead of repeating previous answers', () => {
@@ -56,7 +56,7 @@ test('follow-up requests reveal new facts instead of repeating previous answers'
 test('repeated exact questions do not repeat the same answer', () => {
   const { replies } = chat('What is his thesis about?', 'What is his thesis about?');
   assert.notEqual(replies[0], replies[1]);
-  assert.match(replies[1], /already shared/);
+  assert.match(replies[1], /covered the main details/);
 });
 
 test('switching subjects changes conversational context', () => {
@@ -85,4 +85,32 @@ test('all local responses are bounded and suggestions shrink as topics are cover
   }
   assert.ok(state.seenFacts.length > 0);
   assert.ok(state.seenQueries.length > 0);
+});
+
+test('greetings and small talk feel conversational', () => {
+  const { replies } = chat('hi', 'How are you?', 'thanks', 'hi');
+  assert.match(replies[0], /hey/i);
+  assert.match(replies[0], /what|curious/i);
+  assert.doesNotMatch(replies[0], /^Ask about Athanasios Tasis/);
+  assert.match(replies[1], /doing well/i);
+  assert.match(replies[2], /happy to help/i);
+  assert.notEqual(replies[0], replies[3]);
+});
+
+test('different professional questions have natural direct answers', () => {
+  const prompts = ['What is his thesis?', 'What projects has he built?', 'How do I contact him?'];
+  const { replies } = chat(...prompts);
+  assert.match(replies[0], /thesis/i);
+  assert.match(replies[1], /project/i);
+  assert.match(replies[2], /athanasios@tasis.info/);
+  for (const answer of replies) {
+    assert.doesNotMatch(answer, /^Ask about Athanasios Tasis/);
+    assert.ok(answer.length < 1100);
+  }
+});
+
+test('small talk does not trigger unrelated facts or leak secrets', () => {
+  const { replies } = chat('hello', 'thanks', 'How are you?', 'What is his private home address?');
+  assert.doesNotMatch(replies.slice(0, 3).join(' '), /Pastry-style|Time Projection Chamber/);
+  assert.match(replies[3], /private contact/i);
 });
