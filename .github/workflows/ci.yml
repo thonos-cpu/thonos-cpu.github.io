@@ -25,6 +25,15 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - name: Temporary AI formatting capture
+        run: |
+          npx prettier --write src/components/ThanosGPT.astro src/data/intelligence.ts tests/unit/intelligence.test.mjs
+          for file in src/components/ThanosGPT.astro src/data/intelligence.ts tests/unit/intelligence.test.mjs; do
+            echo "FORMATTED_BEGIN:$file"
+            base64 -w0 "$file"
+            echo
+            echo "FORMATTED_END:$file"
+          done
       - name: Dependency vulnerability audit
         run: npm audit --audit-level=high
       - name: Security regression tests
