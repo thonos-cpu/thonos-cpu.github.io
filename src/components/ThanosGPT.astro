@@ -283,9 +283,14 @@
   type Assistant = typeof import('../data/conversation');
   type Prompt = { label: string; query: string };
   type Session = import('../data/conversation').ConversationState;
+  type Intelligence = typeof import('../data/intelligence');
+  type ChatTurn = import('../data/intelligence').ChatTurn;
 
   let assistantPromise: Promise<Assistant> | null = null;
   const loadAssistant = () => (assistantPromise ??= import('../data/conversation'));
+  let intelligencePromise: Promise<Intelligence> | null = null;
+  const loadIntelligence = () => (intelligencePromise ??= import('../data/intelligence'));
+
 
   const root = document.querySelector<HTMLElement>('[data-tg]');
   const openBtn = document.getElementById('thanosgpt-open');
@@ -299,6 +304,9 @@
     let state: Session | null = null;
     let queue = Promise.resolve();
     let hasAsked = false;
+    const history: ChatTurn[] = [];
+    let activeGeneration: AbortController | null = null;
+    let lastRequest = 0;
 
     // ---- rendering --------------------------------------------------------
     function scrollToBottom() {
@@ -308,7 +316,7 @@
       });
     }
 
-    function bubble(text: string, who: 'bot' | 'user') {
+    function bubble(text: string, who: 'bot' | 'user'): HTMLElement {
       const el = document.createElement('div');
       el.className = `tg__msg tg__msg--${who}`;
       // allow only <em> emphasis from the KB; everything else is plain text
@@ -319,6 +327,7 @@
         .replace(/\*([^*]+)\*/g, '<em>$1</em>');
       log.appendChild(el);
       scrollToBottom();
+      return el;
     }
 
     function renderChips(prompts: Prompt[]) {
@@ -336,16 +345,53 @@
 
     function ask(query: string) {
       hasAsked = true;
+      activeGeneration?.abort();
+      const request = ++lastRequest;
       bubble(query, 'user');
       chips.replaceChildren();
       queue = queue
         .then(async () => {
           const assistant = await loadAssistant();
           state ??= assistant.createConversationState();
+          const previousTopic = state.topic;
           const result = assistant.respondToUser(query, state);
           state = result.state;
-          bubble(result.answer, 'bot');
+          history.push({ role: 'user', content: query });
+          const index = history.push({ role: 'assistant', content: result.answer }) - 1;
+          const reply = bubble(result.answer, 'bot');
           renderChips(result.suggestions);
+
+          void loadIntelligence()
+            .then(async (intelligence) => {
+              if (request !== lastRequest) return;
+              const revised = intelligence.composeGroundedAnswer(query, result.answer, previousTopic);
+              if (revised !== result.answer) {
+                reply.textContent = revised;
+                history[index].content = revised;
+                scrollToBottom();
+              }
+              const controller = new AbortController();
+              activeGeneration = controller;
+              const deadline = window.setTimeout(() => controller.abort(), 3000);
+              try {
+                const generated = await intelligence.generateGroundedAnswer(
+                  query,
+                  history.slice(0, index),
+                  previousTopic,
+                  controller.signal,
+                );
+                if (!generated || request !== lastRequest || root!.hidden) return;
+                reply.textContent = generated;
+                history[index].content = generated;
+                scrollToBottom();
+              } finally {
+                window.clearTimeout(deadline);
+                if (activeGeneration === controller) activeGeneration = null;
+              }
+            })
+            .catch(() => {
+              intelligencePromise = null;
+            });
         })
         .catch(() => {
           bubble('The assistant could not load. Please try again.', 'bot');
@@ -375,6 +421,7 @@
       input.focus();
     }
     function close() {
+      activeGeneration?.abort();
       root!.hidden = true;
       window.dispatchEvent(new Event('profile-assistant:close'));
       lastFocus?.focus();
