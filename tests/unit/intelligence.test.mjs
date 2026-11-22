@@ -11,7 +11,8 @@ function transpile(path) {
 }
 
 const knowledgeUrl =
-  'data:text/javascript;base64,' + Buffer.from(transpile('src/data/knowledge.ts')).toString('base64');
+  'data:text/javascript;base64,' +
+  Buffer.from(transpile('src/data/knowledge.ts')).toString('base64');
 const moduleText = transpile('src/data/intelligence.ts').replace(
   "from './knowledge'",
   'from ' + JSON.stringify(knowledgeUrl),
@@ -21,7 +22,11 @@ const intelligence = await import(
 );
 
 test('retrieves different relevant facts for arbitrary multi-part questions', () => {
-  const evidence = intelligence.retrieveEvidence('Which projects use distributed systems and search?', null, 5);
+  const evidence = intelligence.retrieveEvidence(
+    'Which projects use distributed systems and search?',
+    null,
+    5,
+  );
   assert.ok(evidence.some((fact) => fact.id === 'projects-dht'));
   assert.ok(evidence.some((fact) => fact.id === 'projects-tfidf'));
 });
