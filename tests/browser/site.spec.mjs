@@ -64,6 +64,33 @@ test('wheel over assistant scrolls conversation rather than the webpage', async 
   expect(await page.evaluate(() => window.scrollY)).toBe(pageBefore);
 });
 
+test('assistant auto-scrolls to latest reply and restores page scroll on close', async ({ page }) => {
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Ask about Athanasios' }).click();
+  const log = page.locator('[data-tg-log]');
+  const input = page.locator('[data-tg-input]');
+  for (let i = 0; i < 12; i++) {
+    await input.fill(i % 2 === 0 ? 'What projects has he built?' : 'Tell me more');
+    await input.press('Enter');
+    await expect(log.locator('.tg__msg--bot')).toHaveCount(i + 2);
+  }
+  await expect
+    .poll(() =>
+      log.evaluate((element) => element.scrollHeight - element.scrollTop - element.clientHeight),
+    )
+    .toBeLessThanOrEqual(2);
+  const pageBefore = await page.evaluate(() => window.scrollY);
+  await log.hover();
+  await page.mouse.wheel(0, -450);
+  await expect.poll(() => log.evaluate((element) => element.scrollTop)).toBeGreaterThanOrEqual(0);
+  expect(await page.evaluate(() => window.scrollY)).toBe(pageBefore);
+  await page.keyboard.press('Escape');
+  await expect(page.locator('[data-tg]')).toBeHidden();
+  await page.mouse.move(30, 300);
+  await page.mouse.wheel(0, 600);
+  await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(pageBefore);
+});
+
 test('playground executes JavaScript and keeps output as plain text', async ({ page }) => {
   await page.goto('/playground');
   await page.locator('[data-pg-lang]').selectOption('javascript');
