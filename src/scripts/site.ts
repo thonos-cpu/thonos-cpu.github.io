@@ -12,6 +12,8 @@ const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 let lenis: Lenis | null = null;
 if (!reduceMotion) {
   lenis = new Lenis({ duration: 1.05, smoothWheel: true });
+  window.addEventListener('profile-assistant:open', () => lenis?.stop());
+  window.addEventListener('profile-assistant:close', () => lenis?.start());
   const raf = (time: number) => {
     lenis?.raf(time);
     requestAnimationFrame(raf);
