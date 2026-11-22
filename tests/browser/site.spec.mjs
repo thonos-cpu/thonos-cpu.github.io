@@ -64,7 +64,9 @@ test('wheel over assistant scrolls conversation rather than the webpage', async 
   expect(await page.evaluate(() => window.scrollY)).toBe(pageBefore);
 });
 
-test('assistant auto-scrolls to latest reply and restores page scroll on close', async ({ page }) => {
+test('assistant auto-scrolls to latest reply and restores page scroll on close', async ({
+  page,
+}) => {
   await page.goto('/');
   await page.getByRole('button', { name: 'Ask about Athanasios' }).click();
   const log = page.locator('[data-tg-log]');
