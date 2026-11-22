@@ -349,28 +349,30 @@ export function respondToUser(question: string, current: ConversationState): Con
       answer:
         state.turns === 1
           ? "Hey! I'm Athanasios's portfolio assistant. Curious about his projects, experience, or what he works with?"
-          : "Hey again! What would you like to know?",
+          : 'Hey again! What would you like to know?',
       state,
       suggestions: suggestionsFor(state),
     };
   }
   if (/^(thanks|thank you|thx|cheers)[!. ]*$/.test(query)) {
     return {
-      answer: state.turns > 2 ? "Of course! Happy to help." : "You're welcome!",
+      answer: state.turns > 2 ? 'Of course! Happy to help.' : "You're welcome!",
       state,
       suggestions: suggestionsFor(state),
     };
   }
   if (/^(how are you|how s it going|whats up|what s up)[!. ]*$/.test(query)) {
     return {
-      answer: "Doing well, thanks for asking! Want to hear about something Athanasios has been working on?",
+      answer:
+        'Doing well, thanks for asking! Want to hear about something Athanasios has been working on?',
       state,
       suggestions: suggestionsFor(state),
     };
   }
   if (/^(help|what can i ask|capabilities)$/.test(query)) {
     return {
-      answer: "I can help you explore his work, from CERN and distributed systems to his thesis and favorite technical tools. You can ask naturally, including follow-up questions.",
+      answer:
+        'I can help you explore his work, from CERN and distributed systems to his thesis and favorite technical tools. You can ask naturally, including follow-up questions.',
       state,
       suggestions: suggestionsFor(state),
     };
@@ -392,9 +394,10 @@ export function respondToUser(question: string, current: ConversationState): Con
     const subject = CATEGORY_LABELS[topic]?.toLowerCase() ?? 'that topic';
     answer = `We've covered the main details about his ${subject} so far. I don't want to repeat myself, but you can ask about a specific part of it.`;
   } else {
-    answer = state.turns > 1
-      ? "I'm not sure I have that detail in his public portfolio. I can still help with his experience, projects, or technical work."
-      : "I don't have a reliable answer to that in his portfolio, but I can tell you about his projects, experience, and technical background.";
+    answer =
+      state.turns > 1
+        ? "I'm not sure I have that detail in his public portfolio. I can still help with his experience, projects, or technical work."
+        : "I don't have a reliable answer to that in his portfolio, but I can tell you about his projects, experience, and technical background.";
   }
 
   if (query && !state.seenQueries.includes(query)) state.seenQueries.push(query);
