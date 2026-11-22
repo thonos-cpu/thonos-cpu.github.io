@@ -74,11 +74,9 @@ test('assistant auto-scrolls to latest reply and restores page scroll on close',
     await input.press('Enter');
     await expect(log.locator('.tg__msg--bot')).toHaveCount(i + 2);
   }
-  await expect
-    .poll(() =>
-      log.evaluate((element) => element.scrollHeight - element.scrollTop - element.clientHeight),
-    )
-    .toBeLessThanOrEqual(2);
+  const distanceFromBottom = () =>
+    log.evaluate((element) => element.scrollHeight - element.scrollTop - element.clientHeight);
+  await expect.poll(distanceFromBottom).toBeLessThanOrEqual(2);
   const pageBefore = await page.evaluate(() => window.scrollY);
   await log.hover();
   await page.mouse.wheel(0, -450);
