@@ -545,7 +545,9 @@ export const conversationalAnswer = (
     query,
   );
   const limit = brief ? 1 : broad ? 3 : 2;
-  const selected = facts.filter((fact, index, all) => all.findIndex((item) => item.id === fact.id) === index).slice(0, limit);
+  const selected = facts
+    .filter((fact, index, all) => all.findIndex((item) => item.id === fact.id) === index)
+    .slice(0, limit);
 
   const natural = selected.map((fact) =>
     fact.text
@@ -555,9 +557,15 @@ export const conversationalAnswer = (
       .replace(/^He is looking for /, "He's looking for ")
       .replace(/^His diploma thesis topic is /, 'His thesis focuses on ')
       .replace(/^The work involved /, 'That involved ')
-      .replace(/^The Distributed Systems project implements /, 'His Distributed Systems project implements ')
+      .replace(
+        /^The Distributed Systems project implements /,
+        'His Distributed Systems project implements ',
+      )
       .replace(/^The TF-IDF Search Engine project includes /, 'His TF-IDF search engine covers ')
-      .replace(/^The Temp Hum Prediction Model project forecasts /, 'His Temp Hum Prediction Model forecasts ')
+      .replace(
+        /^The Temp Hum Prediction Model project forecasts /,
+        'His Temp Hum Prediction Model forecasts ',
+      )
       .replace(/^The Thesis Management Website is /, 'His Thesis Management Website is ')
       .replace(/^Relevant coursework includes /, 'His coursework includes ')
       .replace(/^Good first projects to read are /, "I'd start with ")
