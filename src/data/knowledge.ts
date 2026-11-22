@@ -420,7 +420,10 @@ export const detectCategories = (question: string): FactCategory[] => {
 export const findGuardrailResponse = (question: string): string | null => {
   const normalizedQuestion = normalize(question);
   const rule = GUARDRAILS.find((item) =>
-    item.triggers.some((trigger) => normalizedQuestion.includes(normalize(trigger))),
+    item.triggers.some((trigger) => {
+      const phrase = normalize(trigger);
+      return phrase.length > 0 && ` ${normalizedQuestion} `.includes(` ${phrase} `);
+    }),
   );
   return rule?.response ?? null;
 };
@@ -529,4 +532,42 @@ export const getRelatedQuestions = (question: string, limit = 5): SuggestedPromp
     ),
   })).sort((a, b) => b.score - a.score);
   return ranked.slice(0, limit).map((item) => item.prompt);
+};
+
+export const conversationalAnswer = (
+  question: string,
+  facts: PersonalFact[],
+  maxCharacters = 950,
+): string => {
+  const query = normalize(question);
+  const brief = /\b(short|brief|quick|one sentence|summarize)\b/.test(query);
+  const broad = /\b(projects|skills|stack|compare|difference|overview|examples|why|how)\b/.test(
+    query,
+  );
+  const limit = brief ? 1 : broad ? 3 : 2;
+  const selected = facts.filter((fact, index, all) => all.findIndex((item) => item.id === fact.id) === index).slice(0, limit);
+
+  const natural = selected.map((fact) =>
+    fact.text
+      .replace(/^Athanasios Tasis is /, 'Athanasios is ')
+      .replace(/^He is /, "He's ")
+      .replace(/^He is studying /, "He's studying ")
+      .replace(/^He is looking for /, "He's looking for ")
+      .replace(/^His diploma thesis topic is /, 'His thesis focuses on ')
+      .replace(/^The work involved /, 'That involved ')
+      .replace(/^The Distributed Systems project implements /, 'His Distributed Systems project implements ')
+      .replace(/^The TF-IDF Search Engine project includes /, 'His TF-IDF search engine covers ')
+      .replace(/^The Temp Hum Prediction Model project forecasts /, 'His Temp Hum Prediction Model forecasts ')
+      .replace(/^The Thesis Management Website is /, 'His Thesis Management Website is ')
+      .replace(/^Relevant coursework includes /, 'His coursework includes ')
+      .replace(/^Good first projects to read are /, "I'd start with ")
+      .replace(/^Professional contact channels are /, 'You can reach him professionally through '),
+  );
+
+  if (!natural.length) return "I don't have enough reliable information about that on this site.";
+  let answer = natural.join(' ');
+  if (/\bwhy\b/.test(query) && selected.length > 1) {
+    answer = "Here's what his background shows: " + answer;
+  }
+  return trimAnswer(answer, maxCharacters);
 };
