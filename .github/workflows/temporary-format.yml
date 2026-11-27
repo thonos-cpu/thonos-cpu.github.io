@@ -1,0 +1,21 @@
+name: Temporary Astro formatting
+on:
+  pull_request:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  format:
+    if: github.head_ref == 'fix-astro-prettier-upgrade'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+        with:
+          node-version: 22
+      - run: npm ci
+      - run: npx prettier --write '**/*.astro'
+      - run: |
+          node --input-type=module -e 'import fs from "node:fs"; import {execFileSync} from "node:child_process"; for(const p of execFileSync("git",["diff","--name-only"],{encoding:"utf8"}).trim().split("\n").filter(Boolean)) console.log("FORMAT_RESULT "+JSON.stringify({path:p,content:fs.readFileSync(p,"utf8")}));'
