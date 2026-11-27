@@ -22,64 +22,58 @@ const range = (s: string, e: string) => `${fmt(s)} to ${fmt(e)}`;
 
     <div class="path__grid">
       <ol class="path__timeline">
-        {
-          experience.map((job) => (
-            <li class="path__item" data-reveal>
-              <div class="path__when mono">{range(job.start, job.end)}</div>
-              <div class="path__content">
-                <h3 class="path__role">{job.role}</h3>
-                <p class="path__org">
-                  {job.org}
-                  {job.context && <span class="path__context">, {job.context}</span>}
-                  {job.country && <span class="path__country mono dim">, {job.country}</span>}
-                </p>
-                <ul class="path__highlights">
-                  {job.highlights.map((h) => (
-                    <li>{h}</li>
-                  ))}
-                </ul>
-                <div class="path__tags">
-                  {job.tags.map((t) => (
-                    <span class="path__tag mono">{t}</span>
-                  ))}
-                </div>
+        {experience.map((job) => (
+          <li class="path__item" data-reveal>
+            <div class="path__when mono">{range(job.start, job.end)}</div>
+            <div class="path__content">
+              <h3 class="path__role">{job.role}</h3>
+              <p class="path__org">
+                {job.org}
+                {job.context && <span class="path__context">, {job.context}</span>}
+                {job.country && <span class="path__country mono dim">, {job.country}</span>}
+              </p>
+              <ul class="path__highlights">
+                {job.highlights.map((h) => (
+                  <li>{h}</li>
+                ))}
+              </ul>
+              <div class="path__tags">
+                {job.tags.map((t) => (
+                  <span class="path__tag mono">{t}</span>
+                ))}
               </div>
-            </li>
-          ))
-        }
+            </div>
+          </li>
+        ))}
       </ol>
 
       <aside class="path__aside">
         <div class="path__card" data-reveal>
           <span class="eyebrow">Education</span>
-          {
-            education.map((ed) => (
-              <div class="path__edu">
-                <h4>{ed.degree}</h4>
-                <p class="path__org">{ed.org}</p>
-                <p class="mono dim path__when">{range(ed.start, ed.end)}</p>
-                {ed.note && <p class="path__note dim">{ed.note}</p>}
-                <div class="path__tags">
-                  {ed.coursework.map((c) => (
-                    <span class="path__tag mono">{c}</span>
-                  ))}
-                </div>
+          {education.map((ed) => (
+            <div class="path__edu">
+              <h4>{ed.degree}</h4>
+              <p class="path__org">{ed.org}</p>
+              <p class="mono dim path__when">{range(ed.start, ed.end)}</p>
+              {ed.note && <p class="path__note dim">{ed.note}</p>}
+              <div class="path__tags">
+                {ed.coursework.map((c) => (
+                  <span class="path__tag mono">{c}</span>
+                ))}
               </div>
-            ))
-          }
+            </div>
+          ))}
         </div>
 
         <div class="path__card" data-reveal>
           <span class="eyebrow">Recognition</span>
           <ul class="path__awards">
-            {
-              achievements.map((a) => (
-                <li>
-                  <strong>{a.title}</strong>
-                  <span class="dim">{a.detail}</span>
-                </li>
-              ))
-            }
+            {achievements.map((a) => (
+              <li>
+                <strong>{a.title}</strong>
+                <span class="dim">{a.detail}</span>
+              </li>
+            ))}
           </ul>
         </div>
       </aside>

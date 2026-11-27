@@ -35,48 +35,42 @@ const catHue: Record<Category, string> = {
     </div>
 
     <ol class="work__list">
-      {
-        featured.map((repo, i) => {
-          const meta = FEATURED[repo.name]!;
-          return (
-            <li class="work__row" data-reveal style={`--hue:${catHue[meta.category]}`}>
-              <a
-                class="work__link"
-                href={`/projects/${repo.slug}`}
-                aria-label={`Open ${repo.name}`}
-              >
-                <span class="work__num mono">{num(i)}</span>
+      {featured.map((repo, i) => {
+        const meta = FEATURED[repo.name]!;
+        return (
+          <li class="work__row" data-reveal style={`--hue:${catHue[meta.category]}`}>
+            <a class="work__link" href={`/projects/${repo.slug}`} aria-label={`Open ${repo.name}`}>
+              <span class="work__num mono">{num(i)}</span>
 
-                <div class="work__main">
-                  <span class="work__cat mono">{CATEGORY_META[meta.category].short}</span>
-                  <h3 class="work__title">{repo.name.replace(/[_-]/g, ' ')}</h3>
-                  <p class="work__tagline">{meta.tagline}</p>
-                  <div class="work__stack">
-                    {meta.stack.map((s) => (
-                      <span class="work__chip mono">{s}</span>
-                    ))}
-                  </div>
+              <div class="work__main">
+                <span class="work__cat mono">{CATEGORY_META[meta.category].short}</span>
+                <h3 class="work__title">{repo.name.replace(/[_-]/g, ' ')}</h3>
+                <p class="work__tagline">{meta.tagline}</p>
+                <div class="work__stack">
+                  {meta.stack.map((s) => (
+                    <span class="work__chip mono">{s}</span>
+                  ))}
                 </div>
+              </div>
 
-                {meta.metrics && (
-                  <dl class="work__metrics">
-                    {meta.metrics.map((m) => (
-                      <div class="work__metric">
-                        <dt class="work__metric-v mono">{m.value}</dt>
-                        <dd class="work__metric-l mono dim">{m.label}</dd>
-                      </div>
-                    ))}
-                  </dl>
-                )}
+              {meta.metrics && (
+                <dl class="work__metrics">
+                  {meta.metrics.map((m) => (
+                    <div class="work__metric">
+                      <dt class="work__metric-v mono">{m.value}</dt>
+                      <dd class="work__metric-l mono dim">{m.label}</dd>
+                    </div>
+                  ))}
+                </dl>
+              )}
 
-                <span class="work__arrow" aria-hidden="true">
-                  ↗
-                </span>
-              </a>
-            </li>
-          );
-        })
-      }
+              <span class="work__arrow" aria-hidden="true">
+                ↗
+              </span>
+            </a>
+          </li>
+        );
+      })}
     </ol>
 
     <details class="work__more">
@@ -85,25 +79,23 @@ const catHue: Record<Category, string> = {
         <span class="mono dim">{others.length} more on GitHub</span>
       </summary>
       <ul class="work__grid">
-        {
-          others.map((repo) => (
-            <li>
-              <a
-                href={repo.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                class="work__small"
-                style={`--hue:${catHue[categoryFor(repo.name, repo.language)]}`}
-              >
-                <span class="work__small-name">{repo.name.replace(/[_-]/g, ' ')}</span>
-                <span class="work__small-lang mono dim">{repo.language ?? '·'}</span>
-                <span class="work__small-arrow" aria-hidden="true">
-                  ↗
-                </span>
-              </a>
-            </li>
-          ))
-        }
+        {others.map((repo) => (
+          <li>
+            <a
+              href={repo.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="work__small"
+              style={`--hue:${catHue[categoryFor(repo.name, repo.language)]}`}
+            >
+              <span class="work__small-name">{repo.name.replace(/[_-]/g, ' ')}</span>
+              <span class="work__small-lang mono dim">{repo.language ?? '·'}</span>
+              <span class="work__small-arrow" aria-hidden="true">
+                ↗
+              </span>
+            </a>
+          </li>
+        ))}
       </ul>
     </details>
   </div>

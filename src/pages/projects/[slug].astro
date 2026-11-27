@@ -28,7 +28,9 @@ function fmt(d: string) {
 <Base title={`${title}, Athanasios Tasis`} description={meta?.tagline ?? repo.description ?? title}>
   <article class="project section">
     <div class="container project__head">
-      <a href="/#work" class="project__back mono">← back to work</a>
+      <a href="/#work" class="project__back mono">
+        ← back to work
+      </a>
 
       <span class="eyebrow project__cat">{CATEGORY_META[category].label}</span>
       <h1 class="display project__title">{title}</h1>
@@ -37,43 +39,40 @@ function fmt(d: string) {
 
       <div class="project__bar">
         <div class="project__tags">
-          {
-            (meta?.stack ?? [repo.language].filter(Boolean)).map((s) => (
-              <span class="tag mono">{s}</span>
-            ))
-          }
+          {(meta?.stack ?? [repo.language].filter(Boolean)).map((s) => (
+            <span class="tag mono">{s}</span>
+          ))}
         </div>
         <div class="project__links">
           <a class="btn" href={repo.url} target="_blank" rel="noopener noreferrer">
-            View source <span class="arrow" aria-hidden="true">↗</span>
+            View source{' '}
+            <span class="arrow" aria-hidden="true">
+              ↗
+            </span>
           </a>
-          {
-            repo.homepage && (
-              <a
-                class="btn btn--primary"
-                href={repo.homepage}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Live{' '}
-                <span class="arrow" aria-hidden="true">
-                  ↗
-                </span>
-              </a>
-            )
-          }
+          {repo.homepage && (
+            <a
+              class="btn btn--primary"
+              href={repo.homepage}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Live{' '}
+              <span class="arrow" aria-hidden="true">
+                ↗
+              </span>
+            </a>
+          )}
         </div>
       </div>
 
       <dl class="project__stats mono">
-        {
-          meta?.metrics?.map((m) => (
-            <div>
-              <dt class="project__stat-v">{m.value}</dt>
-              <dd class="project__stat-l dim">{m.label}</dd>
-            </div>
-          ))
-        }
+        {meta?.metrics?.map((m) => (
+          <div>
+            <dt class="project__stat-v">{m.value}</dt>
+            <dd class="project__stat-l dim">{m.label}</dd>
+          </div>
+        ))}
         <div>
           <dt class="project__stat-v">★ {repo.stars}</dt>
           <dd class="project__stat-l dim">stars</dd>
@@ -85,46 +84,40 @@ function fmt(d: string) {
       </dl>
     </div>
 
-    {
-      meta?.blurb && (
-        <div class="container">
-          <p class="project__blurb">{meta.blurb}</p>
-        </div>
-      )
-    }
+    {meta?.blurb && (
+      <div class="container">
+        <p class="project__blurb">{meta.blurb}</p>
+      </div>
+    )}
 
-    {
-      meta?.gallery && meta.gallery.length > 0 && (
-        <div class="container project__gallery">
-          <span class="eyebrow project__gallery-label">Output artifacts</span>
-          <div class="project__gallery-grid">
-            {meta.gallery.map((g) => (
-              <figure class="project__shot">
-                <img src={g.src} alt={g.alt} loading="lazy" />
-                <figcaption class="mono dim">{g.caption}</figcaption>
-              </figure>
-            ))}
-          </div>
+    {meta?.gallery && meta.gallery.length > 0 && (
+      <div class="container project__gallery">
+        <span class="eyebrow project__gallery-label">Output artifacts</span>
+        <div class="project__gallery-grid">
+          {meta.gallery.map((g) => (
+            <figure class="project__shot">
+              <img src={g.src} alt={g.alt} loading="lazy" />
+              <figcaption class="mono dim">{g.caption}</figcaption>
+            </figure>
+          ))}
         </div>
-      )
-    }
+      </div>
+    )}
 
     <div class="container project__readme-wrap">
       <span class="eyebrow project__readme-label">Rendered README</span>
-      {
-        repo.readmeHtml ? (
-          <div class="project__readme markdown-body" set:html={repo.readmeHtml} />
-        ) : (
-          <p class="dim">
-            This repository has no README yet.
-            <a href={repo.url} target="_blank" rel="noopener noreferrer">
-              {' '}
-              View it on GitHub ↗
-            </a>
-            .
-          </p>
-        )
-      }
+      {repo.readmeHtml ? (
+        <div class="project__readme markdown-body" set:html={repo.readmeHtml} />
+      ) : (
+        <p class="dim">
+          This repository has no README yet.
+          <a href={repo.url} target="_blank" rel="noopener noreferrer">
+            {' '}
+            View it on GitHub ↗
+          </a>
+          .
+        </p>
+      )}
     </div>
   </article>
 </Base>
