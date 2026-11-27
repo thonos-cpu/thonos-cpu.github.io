@@ -15,7 +15,9 @@ const year = new Date().getFullYear();
   <div class="container footer__inner">
     <div class="footer__lead">
       <p class="display footer__cta">
-        Available for data, ML<br />and backend roles.
+        Available for data, ML
+        <br />
+        and backend roles.
       </p>
       <div class="footer__actions">
         <button
@@ -26,17 +28,27 @@ const year = new Date().getFullYear();
           data-cal-origin="https://app.cal.eu"
           data-cal-config='{"layout":"month_view","theme":"auto"}'
         >
-          Book a call <span class="arrow" aria-hidden="true">↗</span>
+          Book a call{' '}
+          <span class="arrow" aria-hidden="true">
+            ↗
+          </span>
         </button>
-        <a class="btn" href={`mailto:${person.email}`}> Send an email </a>
+        <a class="btn" href={`mailto:${person.email}`}>
+          {' '}
+          Send an email{' '}
+        </a>
       </div>
     </div>
 
     <div class="footer__meta">
       <div class="footer__col">
         <span class="eyebrow">Elsewhere</span>
-        <a href={person.links.github} target="_blank" rel="noopener noreferrer">GitHub ↗</a>
-        <a href={person.links.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn ↗</a>
+        <a href={person.links.github} target="_blank" rel="noopener noreferrer">
+          GitHub ↗
+        </a>
+        <a href={person.links.linkedin} target="_blank" rel="noopener noreferrer">
+          LinkedIn ↗
+        </a>
         <a href={`mailto:${person.email}`}>Email ↗</a>
       </div>
       <div class="footer__col">
@@ -49,7 +61,9 @@ const year = new Date().getFullYear();
   </div>
 
   <div class="container footer__base">
-    <span class="mono dim">© {year} {person.name}</span>
+    <span class="mono dim">
+      © {year} {person.name}
+    </span>
     <span class="mono dim">Built by hand, {person.links.site.replace('https://', '')}</span>
   </div>
 

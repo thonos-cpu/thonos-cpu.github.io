@@ -41,8 +41,8 @@ const facts = [
         <p>
           I'm a final-year Computer Engineering &amp; Informatics student at the University of
           Patras, focused on data, machine learning and backend development. Recently I worked as a
-          data-engineering intern with the <strong>ALICE experiment</strong> at GSI / CERN, using large
-          detector datasets and production HPC workflows.
+          data-engineering intern with the <strong>ALICE experiment</strong> at GSI / CERN, using
+          large detector datasets and production HPC workflows.
         </p>
         <p>
           My projects include a distributed hash-table simulation, a TF-IDF search engine with an
@@ -52,22 +52,21 @@ const facts = [
         </p>
         <p>
           I'm looking for a graduate or junior role in backend, data or ML where I can learn from
-          strong engineers and work on real problems. If that sounds like your team, feel free to <a
-            class="about__link"
-            href={`mailto:${person.email}`}>reach out</a
-          >.
+          strong engineers and work on real problems. If that sounds like your team, feel free to{' '}
+          <a class="about__link" href={`mailto:${person.email}`}>
+            reach out
+          </a>
+          .
         </p>
       </div>
 
       <dl class="about__facts" data-reveal>
-        {
-          facts.map((f) => (
-            <div class="about__fact">
-              <dt class="eyebrow">{f.k}</dt>
-              <dd>{f.v}</dd>
-            </div>
-          ))
-        }
+        {facts.map((f) => (
+          <div class="about__fact">
+            <dt class="eyebrow">{f.k}</dt>
+            <dd>{f.v}</dd>
+          </div>
+        ))}
       </dl>
     </div>
   </div>

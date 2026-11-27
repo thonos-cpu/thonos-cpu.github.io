@@ -28,31 +28,27 @@ const fmtPct = (p: number) => (p < 1 ? '<1' : Math.round(p)) + '%';
         role="img"
         aria-label="Distribution of programming languages across all repositories"
       >
-        {
-          top.map((l, i) => (
-            <span
-              class="skills__seg"
-              style={`width:${l.pct}%;--h:${HUES[i % HUES.length]}`}
-              title={`${l.name} · ${fmtPct(l.pct)}`}
-            />
-          ))
-        }
+        {top.map((l, i) => (
+          <span
+            class="skills__seg"
+            style={`width:${l.pct}%;--h:${HUES[i % HUES.length]}`}
+            title={`${l.name} · ${fmtPct(l.pct)}`}
+          />
+        ))}
         {restPct > 0 && <span class="skills__seg skills__seg--rest" style={`width:${restPct}%`} />}
       </div>
       <ul class="skills__legend">
-        {
-          top.map((l, i) => (
-            <li class="mono">
-              <span
-                class="skills__swatch"
-                style={`--h:${HUES[i % HUES.length]}`}
-                aria-hidden="true"
-              />
-              {l.name}
-              <span class="dim">{fmtPct(l.pct)}</span>
-            </li>
-          ))
-        }
+        {top.map((l, i) => (
+          <li class="mono">
+            <span
+              class="skills__swatch"
+              style={`--h:${HUES[i % HUES.length]}`}
+              aria-hidden="true"
+            />
+            {l.name}
+            <span class="dim">{fmtPct(l.pct)}</span>
+          </li>
+        ))}
       </ul>
     </div>
   </div>
